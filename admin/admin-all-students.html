@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School – Student Master</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Poppins;background:#f4f6fb;}
+header{background:linear-gradient(135deg,#1e2a78,#283593);color:white;padding:18px 25px;font-size:20px;font-weight:600;}
+.container{padding:25px;}
+.top-bar{display:flex;justify-content:space-between;margin-bottom:15px;}
+.search-bar{display:flex;gap:10px;}
+.search-bar input{padding:9px 12px;border-radius:6px;border:1px solid #ccc;}
+button{padding:7px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;}
+.edit{background:#5c6bc0;color:white}
+.view{background:#3498db;color:white}
+.export{background:#16a085;color:white}
+.table-wrapper{background:white;border-radius:10px;overflow:auto;box-shadow:0 10px 25px rgba(0,0,0,.08);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:12px;border-bottom:1px solid #eee;}
+th{background:#eef1ff;}
+tr:hover{background:#f9fbff;}
+.status-ok{background:#e6f9ed;color:#0f9d58;padding:4px 10px;border-radius:6px;font-size:12px;}
+.status-passout{background:#fce4ec;color:#c2185b;padding:4px 10px;border-radius:6px;font-size:12px;}
+.status-transfer{background:#fff3cd;color:#d97706;padding:4px 10px;border-radius:6px;font-size:12px;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);}
+.modal-box{background:white;width:500px;margin:60px auto;padding:20px;border-radius:10px;}
+.field{width:100%;padding:9px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;}
+.preview{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;}
+</style>
+</head>
+
+<body>
+
+<header>🏫 Vision School – Student Master</header>
+
+<div class="container">
+
+<div class="top-bar">
+  <div class="search-bar">
+    <input id="searchName" placeholder="Search Name" oninput="applyFilters()">
+    <input id="searchClass" placeholder="Search Class" oninput="applyFilters()">
+  </div>
+  <button class="export" onclick="exportStudents()">Export Students</button>
+</div>
+
+<div class="table-wrapper">
+<table>
+  <thead>
+    <tr>
+      <th>Photo</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile</th>
+      <th>Class</th>
+      <th>Section</th>
+      <th>Roll</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="studentsBody"></tbody>
+</table>
+</div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="editModal">
+  <div class="modal-box">
+    <h3>Edit Student</h3>
+    <input type="hidden" id="studentId">
+    <img id="photoPreview" class="preview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    <input type="file" id="photoFile" class="field" accept="image/*">
+    <input id="mobile" class="field" placeholder="Mobile">
+    <input id="dob" class="field" type="date">
+    <input id="father_name" class="field" placeholder="Father Name">
+    <input id="address" class="field" placeholder="Address">
+    <input id="applied_class" class="field" placeholder="Class">
+    <input id="section" class="field" placeholder="Section">
+    <input id="roll_no" class="field" placeholder="Roll No">
+    <div class="modal-actions">
+      <button onclick="closeModal()">Cancel</button>
+      <button class="edit" onclick="saveStudent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase=createClient(
+  "https://gocoupvzzsgouwdkdmzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+)
+
+const studentsBody=document.getElementById("studentsBody")
+let studentsCache=[]
+
+async function loadStudents(){
+  const {data,error}=await supabase
+    .from("profiles")
+    .select("id,full_name,email,students(*)")
+    .eq("role","student")
+  if(error){ alert(error.message); return }
+  studentsCache=data||[]
+  renderTable(studentsCache)
+}
+
+function renderTable(data){
+  studentsBody.innerHTML=""
+  data.forEach(p=>{
+    const s=p.students?.[0]
+    if(!s)return
+
+    let statusClass="status-ok", statusText="active"
+    if(s.status==="passout"){ statusClass="status-passout"; statusText="passout"; }
+    if(s.status==="transferred"){ statusClass="status-transfer"; statusText="TC"; }
+
+    studentsBody.innerHTML+=`
+      <tr>
+        <td><img src="${s.photo_url||'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" width="35" style="border-radius:50%"></td>
+        <td>${p.full_name}</td>
+        <td>${p.email}</td>
+        <td>${s.mobile||"-"}</td>
+        <td>${s.applied_class||"-"}</td>
+        <td>${s.section||"-"}</td>
+        <td>${s.roll_no||"-"}</td>
+        <td><span class="${statusClass}">${statusText}</span></td>
+        <td>
+          <button class="edit" onclick="editStudent('${s.id}')">Edit</button>
+          <button class="view" onclick="viewStudent('${s.id}')">View</button>
+        </td>
+      </tr>
+    `
+  })
+}
+
+window.editStudent=async(id)=>{
+  document.getElementById("editModal").style.display="block"
+  const {data}=await supabase.from("students").select("*").eq("id",id).single()
+  document.getElementById("studentId").value=id
+  document.getElementById("mobile").value=data.mobile||""
+  document.getElementById("dob").value=data.dob||""
+  document.getElementById("father_name").value=data.father_name||""
+  document.getElementById("address").value=data.address||""
+  document.getElementById("applied_class").value=data.applied_class||""
+  document.getElementById("section").value=data.section||""
+  document.getElementById("roll_no").value=data.roll_no||""
+  document.getElementById("photoPreview").src=data.photo_url || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+  document.getElementById("photoFile").value=""
+}
+
+window.saveStudent=async()=>{
+  const id=document.getElementById("studentId").value
+  const photoFile=document.getElementById("photoFile").files[0]
+  let photo_url=document.getElementById("photoPreview").src
+
+  if(photoFile){
+    const fileExt=photoFile.name.split('.').pop()
+    const fileName=`students/${id}.${fileExt}`
+    const {error:uploadError}=await supabase.storage.from('student-photos').upload(fileName, photoFile, {upsert:true})
+    if(uploadError){ alert(uploadError.message); return }
+    const {data}=supabase.storage.from('student-photos').getPublicUrl(fileName)
+    photo_url=data.publicUrl
+  }
+
+  await supabase.from("students").update({
+    mobile:document.getElementById("mobile").value,
+    dob:document.getElementById("dob").value,
+    father_name:document.getElementById("father_name").value,
+    address:document.getElementById("address").value,
+    applied_class:document.getElementById("applied_class").value,
+    section:document.getElementById("section").value,
+    roll_no:document.getElementById("roll_no").value,
+    photo_url
+  }).eq("id",id)
+
+  closeModal()
+  loadStudents()
+}
+
+window.closeModal=()=>{ document.getElementById("editModal").style.display="none" }
+
+window.exportStudents=()=>{
+  let csv="Name,Email,Mobile,Class\n"
+  studentsCache.forEach(p=>{
+    const s=p.students?.[0]
+    if(!s)return
+    csv+=`${p.full_name},${p.email},${s.mobile||""},${s.applied_class||""}\n`
+  })
+  const blob=new Blob([csv])
+  const link=document.createElement("a")
+  link.href=URL.createObjectURL(blob)
+  link.download="students.csv"
+  link.click()
+}
+
+window.viewStudent=(id)=>{ window.location.href="student-profile.html?id="+id }
+
+window.applyFilters=()=>{
+  const nameFilter=document.getElementById("searchName").value.toLowerCase()
+  const classFilter=document.getElementById("searchClass").value.toLowerCase()
+  const filtered=studentsCache.filter(p=>{
+    const s=p.students?.[0]
+    if(!s)return false
+    const matchName=p.full_name.toLowerCase().includes(nameFilter)
+    const matchClass=!classFilter || (s.applied_class && s.applied_class.toLowerCase().includes(classFilter))
+    return matchName && matchClass
+  })
+  renderTable(filtered)
+}
+
+loadStudents()
+</script>
+
+</body>
+</html>

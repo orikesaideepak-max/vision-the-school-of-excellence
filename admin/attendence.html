@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School – Attendance Analytics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family:"Poppins", sans-serif; background: linear-gradient(135deg,#f0f5ff,#fff0f6); padding: 25px; }
+h1 { text-align:center; margin-bottom:20px; font-weight:600; }
+.back { cursor:pointer; color:#4f46e5; font-weight:500; margin-bottom:15px; display:inline-block; }
+.search-container { display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-bottom:25px; }
+.search-container input { padding:10px 12px; border-radius:6px; border:1px solid #ccc; width:250px; font-size:14px; }
+.charts { display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-bottom:40px; }
+.chart-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-radius:18px; padding:20px; width:360px; box-shadow:0 20px 40px rgba(0,0,0,0.1); transition: transform 0.4s ease, box-shadow 0.4s ease; cursor:pointer; }
+.chart-card:hover { transform: translateY(-10px) scale(1.03); box-shadow:0 30px 60px rgba(79,70,229,0.25); }
+.chart-title { text-align:center; font-weight:500; margin-bottom:10px; }
+canvas { max-width:100%; }
+.list-container { max-width:1000px; margin:auto; background:white; padding:25px; border-radius:18px; box-shadow:0 15px 35px rgba(0,0,0,0.08); }
+.student-block { margin-bottom:20px; padding:15px; border-radius:12px; background:linear-gradient(135deg,#f8fafc,#eef2ff); transition:transform 0.3s ease; }
+.student-block:hover { transform:scale(1.01); }
+.student-title { font-weight:600; margin-bottom:8px; color:#1e293b; font-size:16px; }
+.attendance { font-size:14px; margin-top:5px; }
+.high { color:#16a34a; font-weight:600; }
+.low { color:#dc2626; font-weight:600; }
+.details { font-size:13px; margin-top:5px; color:#374151; }
+.no-record { text-align:center; color:#6b7280; font-style:italic; padding:20px 0; }
+</style>
+</head>
+<body>
+
+<div class="back" onclick="history.back()">⬅ Back to Dashboard</div>
+<h1>📊 Attendance Analytics</h1>
+
+<!-- Search Bars -->
+<div class="search-container">
+  <input type="text" id="searchName" placeholder="Search by Name" oninput="applyFilters()">
+  <input type="text" id="searchClass" placeholder="Search by Class" oninput="applyFilters()">
+</div>
+
+<div class="charts">
+  <div class="chart-card">
+    <div class="chart-title">Class-wise Avg Attendance</div>
+    <canvas id="attendanceChart"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Boys vs Girls Attendance</div>
+    <canvas id="genderChart"></canvas>
+  </div>
+</div>
+
+<div class="list-container" id="studentsContainer">
+  <h2>Attendance Details</h2>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+  "https://gocoupvzzsgouwdkdmzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+
+let students = [];
+let attendance = [];
+let filteredStudents = [];
+
+async function loadAttendance() {
+  const { data: sData, error: sErr } = await supabase.from("profiles").select("id, full_name, gender, class").eq("role","student");
+  const { data: aData, error: aErr } = await supabase.from("attendance").select("student_id,status,session,teacher_name,marked_at");
+
+  if(sErr || aErr){ console.error(sErr || aErr); return; }
+
+  students = sData;
+  attendance = aData;
+  filteredStudents = [...students];
+
+  renderCharts();
+  renderList();
+}
+
+function renderCharts(){
+  const classes = Array.from(new Set(students.map(s=>s.class))).sort();
+  let classAvg = [];
+  let boysTotal = 0, girlsTotal = 0;
+
+  classes.forEach(c=>{
+    const clsStudents = students.filter(s=>s.class===c);
+    if(!clsStudents.length){ classAvg.push(0); return; }
+
+    const percList = clsStudents.map(s=>{
+      const rec = attendance.filter(a=>a.student_id===s.id);
+      return rec.length ? Math.round(rec.filter(r=>r.status==="Present").length/rec.length*100) : 0;
+    });
+    classAvg.push(Math.round(percList.reduce((a,b)=>a+b,0)/percList.length));
+
+    boysTotal += clsStudents.filter(s=>s.gender==="male").length;
+    girlsTotal += clsStudents.filter(s=>s.gender==="female").length;
+  });
+
+  new Chart(document.getElementById("attendanceChart"),{
+    type:"bar",
+    data:{ labels:classes, datasets:[{ label:"Avg Attendance %", data:classAvg, backgroundColor:"#4f46e5" }] },
+    options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, max:100 } } }
+  });
+
+  new Chart(document.getElementById("genderChart"),{
+    type:"doughnut",
+    data:{ labels:["Boys","Girls"], datasets:[{ data:[boysTotal,girlsTotal], backgroundColor:["#3b82f6","#ec4899"] }] },
+    options:{ responsive:true, plugins:{ legend:{ position:"bottom" } } }
+  });
+}
+
+function renderList(){
+  const container = document.getElementById("studentsContainer");
+  container.innerHTML = "<h2>Attendance Details</h2>";
+
+  if(!filteredStudents.length){ 
+    container.innerHTML += `<div class="no-record">No matching records found.</div>`;
+    return;
+  }
+
+  filteredStudents.forEach(s=>{
+    const records = attendance.filter(a=>a.student_id===s.id);
+    const perc = records.length ? Math.round(records.filter(r=>r.status==="Present").length/records.length*100) : 0;
+
+    let detailsHTML = '';
+    records.forEach(r=>{
+      const dateTime = r.marked_at ? new Date(r.marked_at) : new Date();
+      detailsHTML += `<div class="details">${r.session} - ${r.status} by ${r.teacher_name} on ${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString()}</div>`;
+    });
+
+    container.innerHTML += `
+      <div class="student-block">
+        <div class="student-title">${s.full_name} (${s.class})</div>
+        <div class="attendance">Attendance: <span class="${perc>=75?'high':'low'}">${perc}%</span></div>
+        ${detailsHTML}
+      </div>
+    `;
+  });
+}
+
+// Filter logic
+window.applyFilters = function(){
+  const nameFilter = document.getElementById("searchName").value.toLowerCase();
+  const classFilter = document.getElementById("searchClass").value.toLowerCase();
+
+  filteredStudents = students.filter(s=>{
+    const matchName = s.full_name.toLowerCase().includes(nameFilter);
+    const matchClass = !classFilter || (s.class && s.class.toLowerCase().includes(classFilter));
+    return matchName && matchClass;
+  });
+
+  renderList();
+}
+
+loadAttendance();
+</script>
+
+</body>
+</html>

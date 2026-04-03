@@ -1,0 +1,233 @@
+
+/* ===== GLOBAL ===== */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins;
+}
+
+body{
+background:#f9fafc;
+color:#333;
+}
+
+/* ===== LAYOUT ===== */
+.dashboard{
+display:flex;
+height:100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+width:260px;
+background:#ffffff;
+padding:20px;
+border-right:1px solid #eee;
+box-shadow:0 0 20px rgba(0,0,0,0.05);
+}
+
+.logo-box{
+text-align:center;
+margin-bottom:30px;
+}
+
+.logo-box img{
+width:70px;
+border-radius:50%;
+border:3px solid #d4af37;
+transition:0.4s;
+}
+
+.logo-box img:hover{
+transform:scale(1.1);
+box-shadow:0 0 20px rgba(212,175,55,0.5);
+}
+
+.logo-box h2{
+color:#d4af37;
+margin-top:10px;
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar li{
+padding:12px;
+border-radius:10px;
+margin-bottom:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.sidebar li:hover{
+background:#f1f5f9;
+transform:translateX(5px);
+}
+
+/* ===== MAIN ===== */
+.main{
+flex:1;
+padding:25px;
+overflow:auto;
+}
+
+/* ===== TOPBAR ===== */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.topbar h1{
+color:#d4af37;
+}
+
+/* ===== BUTTON ===== */
+button{
+padding:10px 18px;
+border:none;
+border-radius:8px;
+background:#d4af37;
+color:#fff;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+background:#b8962e;
+}
+
+/* ===== SECTION ===== */
+.section{
+display:none;
+animation:fade 0.4s ease;
+}
+
+.section.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(10px)}
+to{opacity:1; transform:translateY(0)}
+}
+
+/* ===== CLASS BUTTONS ===== */
+#classesContainer{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin:20px 0;
+}
+
+#classesContainer button{
+background:#fff;
+border:1px solid #ddd;
+color:#333;
+}
+
+#classesContainer button:hover{
+background:#d4af37;
+color:#fff;
+}
+
+/* ===== STUDENTS ===== */
+.students{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.student-list{
+background:#fff;
+padding:15px;
+border-radius:12px;
+width:48%;
+box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+.student-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:8px 0;
+border-bottom:1px dashed #ddd;
+}
+
+.student-name{
+cursor:pointer;
+color:#d4af37;
+font-weight:500;
+}
+
+.student-name:hover{
+text-decoration:underline;
+}
+
+.student-percentage{
+font-size:12px;
+color:#777;
+}
+
+/* ===== ATTENDANCE BUTTONS ===== */
+.present,.absent,.late{
+width:30px;
+height:30px;
+border-radius:50%;
+border:none;
+color:white;
+margin-left:5px;
+}
+
+.present{background:#22c55e}
+.absent{background:#ef4444}
+.late{background:#f59e0b}
+
+.activeBtn{
+outline:2px solid black;
+}
+
+/* ===== TABLE ===== */
+table{
+width:100%;
+background:white;
+border-collapse:collapse;
+margin-top:10px;
+border-radius:10px;
+overflow:hidden;
+}
+
+th{
+background:#d4af37;
+color:white;
+}
+
+th,td{
+padding:10px;
+text-align:center;
+border-bottom:1px solid #eee;
+}
+
+/* ===== POPUP ===== */
+#studentPopup{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:25px;
+border-radius:12px;
+width:400px;
+box-shadow:0 20px 50px rgba(0,0,0,0.2);
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+.sidebar{display:none;}
+.student-list{width:100%;}
+}

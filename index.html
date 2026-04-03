@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School | Login</title>
+
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<!-- WATERMARK LOGO -->
+<div class="watermark-logo">
+  <img src="hii.jpg">
+</div>
+
+<!-- FLOATING LOGO -->
+<div class="logo">
+  <img src="hii.jpg">
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="role-container">
+
+  <h1>VISION SCHOOL</h1>
+  <p>Select your role to continue</p>
+
+  <div class="role-buttons">
+    <a href="login.html" class="role-btn">ADMIN</a>
+    <a href="login.html" class="role-btn">TEACHER</a>
+    <a href="login.html" class="role-btn">STUDENT</a>
+  </div>
+
+  <div style="text-align:center;">
+    <a href="https://www.instagram.com/vision_edu_society" target="_blank" class="gallery-btn">
+      VIEW FULL GALLERY
+    </a>
+  </div>
+
+</div>
+
+<!-- FULL WIDTH IMAGE STRIP -->
+<div class="image-strip">
+  <div class="image-track">
+
+    <!-- IMAGES -->
+    <img src="image.png">
+    <img src="2.jpeg">
+    <img src="3.jpeg">
+    <img src="4.jpeg">
+    <img src="5.jpeg">
+    <img src="6.jpeg">
+    <img src="7.jpeg">
+    <img src="8.jpeg">
+    <img src="9.jpeg">
+    <img src="10.jpeg">
+    <img src="11.jpeg">
+    <img src="12.jpeg">
+    <img src="13.jpeg">
+    <img src="14.jpeg">
+    <img src="15.jpeg">
+
+    <!-- DUPLICATE FOR LOOP -->
+    <img src="image.png">
+    <img src="2.jpeg">
+    <img src="3.jpeg">
+    <img src="4.jpeg">
+    <img src="5.jpeg">
+    <img src="6.jpeg">
+
+  </div>
+</div>
+
+<div class="footer-text">
+  © 2026 Vision School Management System
+</div>
+
+<!-- JS -->
+<script>
+const track = document.querySelector(".image-track");
+
+// AUTO SCROLL (SMOOTH LOOP)
+let scrollAmount = 0;
+
+function autoScroll() {
+  scrollAmount += 0.5;
+  track.style.transform = `translateX(-${scrollAmount}px)`;
+
+  if (scrollAmount >= track.scrollWidth / 2) {
+    scrollAmount = 0;
+  }
+
+  requestAnimationFrame(autoScroll);
+}
+
+autoScroll();
+
+// DRAG FUNCTION
+let isDown = false;
+let startX;
+let scrollLeft;
+
+const strip = document.querySelector(".image-strip");
+
+strip.addEventListener("mousedown", (e) => {
+  isDown = true;
+  startX = e.pageX;
+  strip.style.cursor = "grabbing";
+});
+
+strip.addEventListener("mouseleave", () => {
+  isDown = false;
+  strip.style.cursor = "grab";
+});
+
+strip.addEventListener("mouseup", () => {
+  isDown = false;
+  strip.style.cursor = "grab";
+});
+
+strip.addEventListener("mousemove", (e) => {
+  if (!isDown) return;
+  e.preventDefault();
+
+  const x = e.pageX;
+  const walk = (x - startX) * 1.5;
+
+  scrollAmount -= walk;
+  startX = x;
+});
+</script>
+
+</body>
+</html>

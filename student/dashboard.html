@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School – Fee Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script type="module">
+
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+"https://gocoupvzzsgouwdkdmzu.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+
+let profile = null;
+let feeData = null;
+
+async function initDashboard(){
+
+const { data:{ user } } = await supabase.auth.getUser();
+
+if(!user){
+alert("Please login first");
+window.location="login.html";
+return;
+}
+
+await loadProfile(user.id);
+
+}
+
+async function loadProfile(userId){
+
+const { data, error } = await supabase
+.from("profiles")
+.select("*")
+.eq("user_id",userId)
+.single();
+
+if(error || !data){
+alert("Profile not found");
+return;
+}
+
+profile = data;
+
+document.getElementById("studentName").innerText = profile.full_name;
+
+await loadFees();
+await loadPayments();
+
+}
+
+async function loadFees(){
+
+const { data, error } = await supabase
+.from("fees")
+.select("*")
+.eq("student_id",profile.id)
+.single();
+
+if(error || !data){
+
+console.log("Fee record missing");
+
+document.getElementById("totalFee").innerText="Not Set";
+document.getElementById("paidFee").innerText="0";
+document.getElementById("dueFee").innerText="0";
+
+feeData = {
+total_fee:0,
+paid_fee:0,
+due_fee:0
+};
+
+return;
+
+}
+
+feeData = data;
+
+document.getElementById("totalFee").innerText = "₹"+data.total_fee;
+document.getElementById("paidFee").innerText = "₹"+data.paid_fee;
+document.getElementById("dueFee").innerText = "₹"+data.due_fee;
+
+}
+
+async function payFees(){
+
+let amount = parseInt(document.getElementById("amount").value);
+let method = document.getElementById("method").value;
+
+if(!amount || amount <=0){
+alert("Enter valid amount");
+return;
+}
+
+if(amount > feeData.due_fee){
+alert("Amount greater than pending fee");
+return;
+}
+
+let newPaid = feeData.paid_fee + amount;
+let newDue = feeData.due_fee - amount;
+
+const { error:updateError } = await supabase
+.from("fees")
+.update({
+paid_fee:newPaid,
+due_fee:newDue
+})
+.eq("student_id",profile.id);
+
+if(updateError){
+alert("Fee update failed");
+console.log(updateError);
+return;
+}
+
+const { error:insertError } = await supabase
+.from("fee_payments")
+.insert({
+student_id:profile.id,
+student_name:profile.full_name,
+class:profile.class,
+amount_paid:amount,
+payment_method:method
+});
+
+if(insertError){
+alert("Payment record failed");
+console.log(insertError);
+return;
+}
+
+alert("Payment Successful");
+
+document.getElementById("amount").value="";
+
+await loadFees();
+await loadPayments();
+
+}
+
+async function loadPayments(){
+
+const { data, error } = await supabase
+.from("fee_payments")
+.select("*")
+.eq("student_id",profile.id)
+.order("payment_date",{ascending:false});
+
+if(error){
+console.log(error);
+return;
+}
+
+let table = document.getElementById("payments");
+table.innerHTML="";
+
+data.forEach(p=>{
+
+table.innerHTML+=`
+<tr>
+<td>${p.payment_date.split("T")[0]}</td>
+<td>₹${p.amount_paid}</td>
+<td>${p.payment_method}</td>
+</tr>
+`;
+
+});
+
+}
+
+window.payFees = payFees;
+
+window.onload = initDashboard;
+
+</script>
+
+<style>
+
+body{
+font-family:Poppins;
+background:#f4f6fb;
+margin:0;
+}
+
+header{
+background:#1e2a38;
+color:white;
+padding:20px;
+font-size:22px;
+}
+
+.container{
+padding:30px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+margin-bottom:30px;
+}
+
+.card{
+flex:1;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card h3{
+margin:0;
+font-size:18px;
+}
+
+.card p{
+font-size:24px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.paybox{
+background:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:30px;
+}
+
+input,select{
+padding:10px;
+width:200px;
+margin-right:10px;
+}
+
+button{
+background:#007bff;
+color:white;
+border:none;
+padding:10px 20px;
+cursor:pointer;
+border-radius:5px;
+}
+
+table{
+width:100%;
+background:white;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
+}
+
+th{
+background:#f2f2f2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+Vision School – Fee Dashboard
+</header>
+
+<div class="container">
+
+<h2>Welcome <span id="studentName"></span></h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Fee</h3>
+<p id="totalFee"></p>
+</div>
+
+<div class="card">
+<h3>Paid Fee</h3>
+<p id="paidFee"></p>
+</div>
+
+<div class="card">
+<h3>Pending Fee</h3>
+<p id="dueFee"></p>
+</div>
+
+</div>
+
+<div class="paybox">
+
+<h3>Pay Fees</h3>
+
+<input type="number" id="amount" placeholder="Enter amount">
+
+<select id="method">
+<option>UPI</option>
+<option>Card</option>
+<option>Net Banking</option>
+</select>
+
+<button onclick="payFees()">Pay</button>
+
+</div>
+
+<h3>Payment History</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Amount</th>
+<th>Method</th>
+</tr>
+</thead>
+
+<tbody id="payments"></tbody>
+
+</table>
+
+</div>
+
+</body>
+</html>

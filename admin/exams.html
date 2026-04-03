@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Exam Panel</title>
+<link rel="stylesheet" href="exam_admin.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>School Admin - Exam Panel</h1>
+
+  <!-- Create Exam -->
+  <section class="card">
+    <h2>Create Exam</h2>
+    <input type="text" id="examName" placeholder="Exam Name">
+    <input type="text" id="examClass" placeholder="Class / Grade">
+    <input type="date" id="examDate">
+    <input type="time" id="examTime">
+    <input type="number" id="examDuration" placeholder="Duration (minutes)">
+    <input type="number" id="examTotalMarks" placeholder="Total Marks">
+    <button id="createExamBtn">Create Exam</button>
+  </section>
+
+  <!-- Exam List -->
+  <section class="card">
+    <h2>Exam Schedule</h2>
+    <ul id="examList"></ul>
+  </section>
+
+  <!-- Assign Students -->
+  <section class="card">
+    <h2>Assign Students</h2>
+    <select id="selectExamAssign"></select>
+    <input type="text" id="studentName" placeholder="Student Name">
+    <button id="assignStudentBtn">Assign Student</button>
+    <ul id="assignedStudentsList"></ul>
+  </section>
+
+  <!-- Upload Questions -->
+  <section class="card">
+    <h2>Upload Questions</h2>
+    <select id="selectExamQuestions"></select>
+    <input type="text" id="questionText" placeholder="Question">
+    <input type="text" id="optionA" placeholder="Option A">
+    <input type="text" id="optionB" placeholder="Option B">
+    <input type="text" id="optionC" placeholder="Option C">
+    <input type="text" id="optionD" placeholder="Option D">
+    <input type="text" id="correctOption" placeholder="Correct Option (A/B/C/D)">
+    <button id="addQuestionBtn">Add Question</button>
+    <ul id="questionsList"></ul>
+  </section>
+</div>
+
+<script src="exam_admin.js"></script>
+</body>
+</html>

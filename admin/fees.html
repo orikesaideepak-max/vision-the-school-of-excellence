@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School – Fee Management</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+// Supabase client
+const supabase = createClient(
+    "https://gocoupvzzsgouwdkdmzu.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+
+let students = [];
+let fees = [];
+let payments = [];
+let filteredStudents = [];
+let nameFilter = "";
+let classFilter = "";
+
+// Load data
+async function loadData(){
+    const { data: sData } = await supabase.from("profiles").select("id, full_name, mobile, class").eq("role","student");
+    const { data: fData } = await supabase.from("fees").select("*");
+    const { data: pData } = await supabase.from("fee_payments").select("*");
+
+    students = sData || [];
+    fees = fData || [];
+    payments = pData || [];
+
+    filteredStudents = [...students];
+    renderTable();
+}
+
+// Render table
+function renderTable(){
+    const table = document.getElementById("students");
+    table.innerHTML = "";
+
+    filteredStudents.forEach(s => {
+        let feeRow = fees.find(f => f.student_id === s.id);
+        let total = feeRow ? feeRow.total_fee : 0;
+        let paid = feeRow ? feeRow.paid_fee : 0;
+        let due = feeRow ? feeRow.due_fee : total;
+
+        table.innerHTML += `
+        <tr>
+            <td>${s.full_name}</td>
+            <td>${s.mobile || "-"}</td>
+            <td>${s.class || "-"}</td>
+
+            <td>
+                <input type="number" id="total_${s.id}" value="${total}">
+                <button onclick="updateTotal('${s.id}')">Save</button>
+            </td>
+
+            <td>₹${paid}</td>
+            <td style="color:${due>0?'red':'green'};">₹${due}</td>
+
+            <!-- RECEIPT INPUT -->
+            <td>
+                <input type="text" id="receipt_${s.id}" placeholder="Receipt No">
+            </td>
+
+            <!-- PAYMENT -->
+            <td>
+                <input type="number" id="pay_${s.id}" placeholder="Pay">
+                <button onclick="payFee('${s.id}','${s.full_name}')">Pay</button>
+            </td>
+
+            <td>
+                <button onclick="viewHistory('${s.id}')">History</button>
+                <button onclick="sendWhatsApp('${s.full_name}','${s.mobile}',${due})">WA</button>
+            </td>
+        </tr>
+        `;
+    });
+}
+
+// Filters
+window.searchStudentsByName = function(){
+    nameFilter = document.getElementById("searchName").value.toLowerCase();
+    applyFilters();
+}
+window.searchStudentsByClass = function(){
+    classFilter = document.getElementById("searchClass").value.toLowerCase();
+    applyFilters();
+}
+
+function applyFilters(){
+    filteredStudents = students.filter(s => {
+        const matchName = s.full_name.toLowerCase().includes(nameFilter) || (s.mobile && s.mobile.includes(nameFilter));
+        const matchClass = !classFilter || (s.class && s.class.toLowerCase().includes(classFilter));
+        return matchName && matchClass;
+    });
+    renderTable();
+}
+
+// Ensure fee row
+async function ensureFeeRow(studentId){
+    let feeRow = fees.find(f => f.student_id === studentId);
+    if(!feeRow){
+        const { data } = await supabase.from("fees")
+            .upsert([{ student_id: studentId, total_fee: 0, paid_fee: 0, due_fee: 0 }], { onConflict: ['student_id'] })
+            .select();
+        fees.push(data[0]);
+        return data[0];
+    }
+    return feeRow;
+}
+
+// Update total
+window.updateTotal = async function(studentId){
+    let total = Number(document.getElementById("total_"+studentId).value);
+    if(isNaN(total) || total < 0){ alert("Enter valid total fee"); return; }
+
+    let feeRow = await ensureFeeRow(studentId);
+
+    await supabase.from("fees").upsert([
+        { student_id: studentId, total_fee: total, due_fee: total - feeRow.paid_fee }
+    ], { onConflict: ['student_id'] });
+
+    alert("Total Fee Updated ✅");
+    await loadData();
+}
+
+// Pay fee (UPDATED WITH RECEIPT)
+window.payFee = async function(studentId, name){
+
+    let amt = Number(document.getElementById("pay_"+studentId).value);
+    let receipt = document.getElementById("receipt_"+studentId).value;
+
+    if(!receipt){
+        alert("Enter receipt number");
+        return;
+    }
+
+    if(isNaN(amt) || amt <= 0){
+        alert("Enter valid amount");
+        return;
+    }
+
+    let feeRow = await ensureFeeRow(studentId);
+
+    let newPaid = feeRow.paid_fee + amt;
+    let newDue = feeRow.total_fee - newPaid;
+
+    if(newDue < 0){
+        alert("Amount exceeds total fee");
+        return;
+    }
+
+    // Save payment with receipt
+    await supabase.from("fee_payments").insert([
+        {
+            student_id: studentId,
+            student_name: name,
+            class: feeRow.class || "",
+            amount_paid: amt,
+            receipt_no: receipt,
+            payment_method: "Cash"
+        }
+    ]);
+
+    // Update fee table
+    await supabase.from("fees").upsert([
+        { student_id: studentId, paid_fee: newPaid, due_fee: newDue }
+    ], { onConflict: ['student_id'] });
+
+    alert("Payment Saved ✅");
+    await loadData();
+}
+
+// History (UPDATED)
+window.viewHistory = function(studentId){
+    let history = payments.filter(p => p.student_id === studentId);
+
+    let msg = "Payment History:\n\n";
+
+    history.forEach(p => {
+        msg += `Receipt: ${p.receipt_no || "-"} | ₹${p.amount_paid} - ${new Date(p.payment_date).toLocaleString()}\n`;
+    });
+
+    alert(msg);
+}
+
+// WhatsApp
+window.sendWhatsApp = function(name, phone, due){
+    if(!phone){ alert("No phone number"); return; }
+
+    let msg = `Vision School Fee Reminder\n\nStudent: ${name}\nRemaining Fee: ₹${due}\n\nPlease clear dues.`;
+
+    window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`);
+}
+
+window.onload = loadData;
+</script>
+
+<style>
+body{ font-family:Poppins; background:#f4f6fb; margin:0; }
+header{ background:#1e2a38; color:white; padding:20px; text-align:center; font-size:22px; }
+.container{ padding:30px; }
+input.search-bar{ padding:8px; width:250px; margin:0 10px 15px 0; border-radius:4px; border:1px solid #ccc; }
+table{ width:100%; background:white; border-collapse:collapse; }
+th, td{ padding:10px; border-bottom:1px solid #ddd; }
+input{ padding:5px; width:90px; }
+button{ padding:5px 10px; border:none; border-radius:4px; cursor:pointer; margin:2px; }
+button:nth-child(1){ background:#007bff; color:white; }
+button:nth-child(2){ background:#28a745; color:white; }
+button:nth-child(3){ background:#25D366; color:white; }
+</style>
+
+</head>
+
+<body>
+
+<header>Vision School – Fee Management Panel</header>
+
+<div class="container">
+
+<input type="text" id="searchName" class="search-bar" placeholder="Search by Name or Phone" oninput="searchStudentsByName()">
+<input type="text" id="searchClass" class="search-bar" placeholder="Search by Class" oninput="searchStudentsByClass()">
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Class</th>
+<th>Total Fee</th>
+<th>Paid</th>
+<th>Due</th>
+<th>Receipt No</th> <!-- NEW -->
+<th>Pay</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="students"></tbody>
+
+</table>
+
+</div>
+
+</body>
+</html>

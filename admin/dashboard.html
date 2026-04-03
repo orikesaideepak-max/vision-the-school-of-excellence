@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision School Admin Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+
+<!-- Supabase -->
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://gocoupvzzsgouwdkdmzu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ===== PROTECT ADMIN PAGE =====
+async function protectAdminPage(){
+    const { data:{user}, error } = await supabase.auth.getUser();
+    if(!user || error){
+        alert("Login required");
+        window.location.href="/login.html";
+        return;
+    }
+
+    const { data:profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("user_id",user.id)
+        .single();
+
+    if(!profile || profile.role!=="admin"){
+        alert("Access denied");
+        window.location.href="/login.html";
+        return;
+    }
+
+    fetchAllUsers();
+}
+
+protectAdminPage();
+
+// ===== CREATE / UPDATE USER =====
+window.createUser = async function(){
+    const full_name=document.getElementById("full_name").value.trim();
+    const email=document.getElementById("email").value.trim();
+    const role=document.getElementById("role").value;
+    const password=document.getElementById("password").value.trim();
+    const errorBox=document.getElementById("error");
+
+    errorBox.innerText="";
+    if(!full_name || !email || !role){
+        errorBox.innerText="Full Name, Email, Role required";
+        return;
+    }
+
+    const { data:existing } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("email",email)
+        .single();
+
+    let userId;
+
+    if(existing){
+        userId=existing.user_id;
+        await supabase
+            .from("profiles")
+            .update({full_name,role})
+            .eq("user_id",userId);
+        alert("Profile Updated");
+    }else{
+        if(!password){
+            errorBox.innerText="Password required";
+            return;
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options:{data:{full_name,role}}
+        });
+
+        if(error){
+            errorBox.innerText=error.message;
+            return;
+        }
+
+        userId=data.user.id;
+
+        await supabase.from("profiles").insert({
+            user_id:userId,
+            full_name,
+            email,
+            role
+        });
+
+        alert("User Created");
+    }
+
+    document.getElementById("full_name").value="";
+    document.getElementById("email").value="";
+    document.getElementById("password").value="";
+    document.getElementById("role").value="";
+
+    fetchAllUsers();
+};
+
+// ===== DELETE USER =====
+window.deleteUser = async function(id){
+    if(!confirm("Delete user?")) return;
+    await supabase.from("profiles").delete().eq("user_id",id);
+    fetchAllUsers();
+};
+
+// ===== EDIT USER =====
+window.editUser = function(id,name,role,email){
+    document.getElementById("full_name").value=name;
+    document.getElementById("email").value=email;
+    document.getElementById("role").value=role;
+};
+
+// ===== FETCH USERS =====
+async function fetchAllUsers(){
+    const { data:users } = await supabase
+        .from("profiles")
+        .select("user_id,full_name,email,role");
+
+    const students=document.getElementById("students_list");
+    const teachers=document.getElementById("teachers_list");
+    const admins=document.getElementById("admins_list");
+
+    students.innerHTML="";
+    teachers.innerHTML="";
+    admins.innerHTML="";
+
+    let sc=0,tc=0,ac=0;
+
+    users.forEach(u=>{
+        const li=document.createElement("li");
+        li.innerHTML=`
+            ${u.full_name} (${u.email})
+            <button onclick="editUser('${u.user_id}','${u.full_name}','${u.role}','${u.email}')">Edit</button>
+            <button onclick="deleteUser('${u.user_id}')">Delete</button>
+        `;
+        if(u.role==="student"){ students.appendChild(li); sc++; }
+        else if(u.role==="teacher"){ teachers.appendChild(li); tc++; }
+        else{ admins.appendChild(li); ac++; }
+    });
+
+    document.getElementById("student-count").innerText=sc;
+    document.getElementById("teacher-count").innerText=tc;
+    document.getElementById("admin-count").innerText=ac;
+}
+
+// ===== LOGOUT =====
+window.logout = async function(){
+    await supabase.auth.signOut();
+    window.location.href="/login.html";
+};
+</script>
+</head>
+
+<body>
+<div class="dashboard">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<div class="logo-box">
+    <img src="hii.jpg" alt="Vision Logo">
+    <h2>VISION</h2>
+    <p>School Admin</p>
+</div>
+<ul>
+    <li onclick="window.location.href='dashboard.html'">📊 Dashboard</li>
+    <li onclick="window.location.href='admin-all-students.html'">👨‍🎓 Students</li>
+    <li onclick="window.location.href='teachers.html'">👨‍🏫 Teachers</li>
+    <li onclick="window.location.href='classes.html'">🏫 Classes</li>
+    <li onclick="window.location.href='subjects.html'">📚 Subjects</li>
+    <li onclick="window.location.href='attendence.html'">📅 Attendance</li>
+    <li onclick="window.location.href='exams.html'">📝 Exams</li>
+    <li onclick="window.location.href='results.html'">📊 Results</li>
+    <li onclick="window.location.href='fees.html'">💰 Fees</li>
+    <li onclick="window.location.href='notices.html'">📢 Notices</li>
+    <li onclick="window.location.href='events.html'">🎉 Events</li>
+    <li onclick="window.location.href='timetable.html'">🕒 Timetable</li>
+    <li onclick="window.location.href='assignments.html'">📝 Assignments</li>
+    <li onclick="window.location.href='leave-requests.html'">🛑 Leave Requests</li>
+    <li onclick="window.location.href='messages.html'">💬 Messages</li>
+    <li onclick="window.location.href='reports.html'">📈 Reports</li>
+    <li onclick="window.location.href='profile-settings.html'">⚙️ Settings</li>
+    <li onclick="logout()">🚪 Logout</li>
+</ul>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+<div class="topbar">
+<h1>Admin Dashboard</h1>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="stats-container">
+<div class="stat-card"><h2 id="student-count">0</h2><p>Total Students</p></div>
+<div class="stat-card"><h2 id="teacher-count">0</h2><p>Total Teachers</p></div>
+<div class="stat-card"><h2 id="admin-count">0</h2><p>Total Admins</p></div>
+</div>
+
+<div class="quick-actions">
+<button onclick="window.location.href='students-analytics.html'">📊 View Analytics</button>
+<button onclick="window.location.href='admin-all-students.html'">👨‍🎓 Student Details</button>
+</div>
+
+<div class="admin-container">
+<h2>Create / Manage Users</h2>
+<p id="error" class="error"></p>
+
+<input type="text" id="full_name" placeholder="Full Name">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Temporary Password">
+<select id="role">
+<option value="">Select Role</option>
+<option value="student">Student</option>
+<option value="teacher">Teacher</option>
+<option value="admin">Admin</option>
+</select>
+<button onclick="createUser()">Create / Update User</button>
+
+<hr>
+
+<h3>Students</h3>
+<ul id="students_list"></ul>
+<h3>Teachers</h3>
+<ul id="teachers_list"></ul>
+<h3>Admins</h3>
+<ul id="admins_list"></ul>
+</div>
+
+</div>
+</div>
+</body>
+</html>

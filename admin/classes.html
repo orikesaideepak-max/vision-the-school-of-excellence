@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vision School – Students by Class</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Poppins", sans-serif; background: linear-gradient(135deg,#eef2ff,#fdf2f8); padding: 25px; }
+h1 { text-align: center; margin-bottom: 20px; font-weight: 600; }
+.back { cursor: pointer; color: #4f46e5; font-weight: 500; margin-bottom: 15px; display: inline-block; }
+.list-container { max-width: 1000px; margin: auto; background: #fff; padding: 25px; border-radius: 18px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+.class-block { margin-bottom: 25px; padding: 20px; border-radius: 14px; background: linear-gradient(135deg,#f8fafc,#eef2ff); transition: transform 0.3s ease; }
+.class-block:hover { transform: scale(1.02); }
+.class-title { font-weight: 600; margin-bottom: 12px; color: #1e293b; }
+.students-row { display: flex; justify-content: space-between; gap: 20px; }
+.students-col { width: 48%; background: white; padding: 15px; border-radius: 10px; box-shadow: inset 0 0 8px rgba(0,0,0,0.05); }
+.students-col b { color: #4f46e5; display: block; margin-bottom: 8px; }
+ul { list-style: none; padding: 0; margin: 0; }
+li { padding: 4px 0; font-size: 14px; }
+@media (max-width:768px){ .students-row{flex-direction:column;} .students-col{width:100%;} }
+</style>
+</head>
+<body>
+
+<div class="back" onclick="history.back()">⬅ Back to Dashboard</div>
+<h1>📚 Students by Class</h1>
+
+<div class="list-container" id="studentsContainer">
+  <!-- Dynamic content here -->
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+  "https://gocoupvzzsgouwdkdmzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+
+async function loadClasses() {
+  const { data: students } = await supabase
+    .from("profiles")
+    .select("id, full_name, gender, class")
+    .eq("role","student");
+
+  if (!students) return;
+
+  const classes = ["Nursery","LKG","UKG","1","2","3","4","5","6","7","8","9","10"];
+  const container = document.getElementById("studentsContainer");
+  container.innerHTML = "";
+
+  classes.forEach(c => {
+    const clsStudents = students.filter(s => s.class === c);
+    if (!clsStudents.length) return;
+
+    const boys = clsStudents.filter(s => s.gender.toLowerCase() === "male");
+    const girls = clsStudents.filter(s => s.gender.toLowerCase() === "female");
+
+    container.innerHTML += `
+      <div class="class-block">
+        <div class="class-title">${c} | Total: ${clsStudents.length} | Boys: ${boys.length} | Girls: ${girls.length}</div>
+        <div class="students-row">
+          <div class="students-col">
+            <b>Boys</b>
+            <ul>${boys.map(s=>`<li>${s.full_name}</li>`).join("")}</ul>
+          </div>
+          <div class="students-col">
+            <b>Girls</b>
+            <ul>${girls.map(s=>`<li>${s.full_name}</li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+loadClasses();
+</script>
+
+</body>
+</html>

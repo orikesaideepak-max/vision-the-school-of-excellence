@@ -1,0 +1,142 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* ===== PAGE BACKGROUND ===== */
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+    url("hi.jpg") no-repeat center center / cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== AUTH BOX ===== */
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 45px 40px;
+  background: rgba(10, 10, 10, 0.88);
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+  border: 1px solid rgba(212,175,55,0.35);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+/* ===== TITLE ===== */
+.auth-box h2 {
+  color: #d4af37;
+  margin-bottom: 28px;
+  letter-spacing: 1.5px;
+  font-size: 1.8rem;
+}
+
+/* ===== INPUTS ===== */
+.auth-box input {
+  width: 100%;
+  padding: 14px 15px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: #0f0f0f;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-box input::placeholder {
+  color: #aaa;
+}
+
+.auth-box input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 12px rgba(212,175,55,0.45);
+}
+
+/* ===== BUTTON ===== */
+.auth-box button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #000, #1c1c1c);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* GOLD SHINE EFFECT */
+.auth-box button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 120%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(212,175,55,0.4),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.auth-box button:hover::before {
+  left: 120%;
+}
+
+.auth-box button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(212,175,55,0.45);
+}
+
+.auth-box button:active {
+  transform: translateY(-1px);
+}
+
+/* ===== ERROR TEXT ===== */
+.error {
+  margin-top: 14px;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
+/* ===== LINKS ===== */
+.auth-box p {
+  margin-top: 18px;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.auth-box a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-box a:hover {
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .auth-box {
+    padding: 35px 25px;
+  }
+}

@@ -1,0 +1,272 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Profile | Vision School</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:Poppins;
+background:#f4f6fb;
+}
+
+/* HEADER */
+
+header{
+background:linear-gradient(135deg,#1e2a78,#3949ab);
+color:white;
+padding:18px 25px;
+font-size:20px;
+font-weight:600;
+}
+
+/* PAGE */
+
+.container{
+padding:30px;
+max-width:900px;
+margin:auto;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 12px 30px rgba(0,0,0,0.1);
+}
+
+/* TOP PROFILE */
+
+.profile-top{
+display:flex;
+gap:30px;
+align-items:center;
+margin-bottom:25px;
+}
+
+.profile-photo{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #eef1ff;
+}
+
+.student-name{
+font-size:24px;
+font-weight:600;
+}
+
+.email{
+color:#777;
+}
+
+/* GRID */
+
+.details{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-top:20px;
+}
+
+.field{
+background:#f9fbff;
+padding:12px;
+border-radius:8px;
+font-size:14px;
+}
+
+.label{
+font-weight:600;
+font-size:12px;
+color:#666;
+}
+
+.value{
+margin-top:4px;
+}
+
+/* BUTTON */
+
+.back{
+margin-top:25px;
+padding:10px 18px;
+border:none;
+border-radius:6px;
+background:#3949ab;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>🏫 Vision School – Student Profile</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="profile-top">
+
+<img id="photo" class="profile-photo" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+
+<div>
+<div id="name" class="student-name">Loading...</div>
+<div id="email" class="email"></div>
+</div>
+
+</div>
+
+<h3>Personal Details</h3>
+
+<div class="details">
+
+<div class="field">
+<div class="label">Mobile</div>
+<div id="mobile" class="value"></div>
+</div>
+
+<div class="field">
+<div class="label">Date of Birth</div>
+<div id="dob" class="value"></div>
+</div>
+
+<div class="field">
+<div class="label">Gender</div>
+<div id="gender" class="value"></div>
+</div>
+
+<div class="field">
+<div class="label">Father Name</div>
+<div id="father" class="value"></div>
+</div>
+
+<div class="field">
+<div class="label">Address</div>
+<div id="address" class="value"></div>
+</div>
+
+</div>
+
+<h3 style="margin-top:30px;">Academic Details</h3>
+
+<div class="details">
+
+<div class="field">
+<div class="label">Admission Number</div>
+<div id="admission"></div>
+</div>
+
+<div class="field">
+<div class="label">Class</div>
+<div id="class"></div>
+</div>
+
+<div class="field">
+<div class="label">Section</div>
+<div id="section"></div>
+</div>
+
+<div class="field">
+<div class="label">Roll Number</div>
+<div id="roll"></div>
+</div>
+
+<div class="field">
+<div class="label">Academic Year</div>
+<div id="year"></div>
+</div>
+
+<div class="field">
+<div class="label">Status</div>
+<div id="status"></div>
+</div>
+
+</div>
+
+<button class="back" onclick="goBack()">← Back to Students</button>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+"https://gocoupvzzsgouwdkdmzu.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+)
+
+/* GET ID FROM URL */
+
+const params=new URLSearchParams(window.location.search)
+const id=params.get("id")
+
+/* LOAD STUDENT */
+
+async function loadStudent(){
+
+const {data,error}=await supabase
+.from("students")
+.select(`
+*,
+profiles(full_name,email)
+`)
+.eq("id",id)
+.single()
+
+if(error){
+console.log(error)
+return
+}
+
+document.getElementById("name").textContent=data.profiles.full_name
+document.getElementById("email").textContent=data.profiles.email
+
+document.getElementById("mobile").textContent=data.mobile || "-"
+document.getElementById("dob").textContent=data.dob || "-"
+document.getElementById("gender").textContent=data.gender || "-"
+document.getElementById("father").textContent=data.father_name || "-"
+document.getElementById("address").textContent=data.address || "-"
+
+document.getElementById("admission").textContent=data.admission_no || "-"
+document.getElementById("class").textContent=data.applied_class || "-"
+document.getElementById("section").textContent=data.section || "-"
+document.getElementById("roll").textContent=data.roll_no || "-"
+document.getElementById("year").textContent=data.academic_year || "-"
+document.getElementById("status").textContent=data.status || "-"
+
+if(data.photo_url){
+document.getElementById("photo").src=data.photo_url
+}
+
+}
+
+function goBack(){
+
+window.history.back()
+
+}
+
+loadStudent()
+
+</script>
+
+</body>
+</html>
+```

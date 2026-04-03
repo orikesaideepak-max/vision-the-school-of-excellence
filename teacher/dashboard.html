@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Vision School – Teacher Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="td.css">
+
+<!-- SUPABASE -->
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+window.supabase = createClient(
+"https://gocoupvzzsgouwdkdmzu.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+)
+</script>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<!-- ================= SIDEBAR ================= -->
+<div class="sidebar">
+
+<div class="logo-box">
+<img src="hii.jpg">
+<h2>VISION</h2>
+<p>Teacher Panel</p>
+</div>
+
+<ul>
+<li onclick="showSection('dashboard')">📊 Dashboard</li>
+<li onclick="showSection('attendance')">📅 Attendance</li>
+<li onclick="showSection('students')">👨‍🎓 Students</li>
+<li onclick="showSection('assignments')">📝 Assignments</li>
+<li onclick="showSection('marks')">📊 Marks / Results</li>
+<li onclick="showSection('lessonplanner')">📘 Lesson Planner</li>
+<li onclick="showSection('notices')">📢 Notices</li>
+<li onclick="showSection('messages')">💬 Messages</li>
+<li onclick="showSection('analytics')">📈 Analytics</li>
+<li onclick="showSection('reports')">📂 Reports</li>
+<li onclick="showSection('timetable')">🗓️ Timetable</li>
+<li onclick="showSection('materials')">📚 Materials</li>
+<li onclick="showSection('leave')">📌 Leave</li>
+<li onclick="showSection('settings')">⚙️ Settings</li>
+<li onclick="logout()">🚪 Logout</li>
+</ul>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+<div class="main">
+
+<div class="topbar">
+<h1>Teacher Dashboard</h1>
+<button onclick="logout()">Logout</button>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard" class="section active">
+<h2>Welcome, <span id="teacherNameDashboard"></span></h2>
+<p>Quick overview of your classes, attendance, assignments, and messages.</p>
+</div>
+
+<!-- ================= ATTENDANCE ================= -->
+<div id="attendance" class="section">
+<h2>Select Class</h2>
+<div id="classesContainer"></div>
+
+<div class="form-row">
+<label>Teacher:</label>
+<input id="teacherName" disabled>
+
+<label>Session:</label>
+<select id="sessionSelect">
+<option>Morning</option>
+<option>Afternoon</option>
+</select>
+
+<span id="currentDateTime"></span>
+</div>
+
+<div class="students">
+
+<div class="student-list">
+<h3>Boys</h3>
+<div id="boysContainer"></div>
+</div>
+
+<div class="student-list">
+<h3>Girls</h3>
+<div id="girlsContainer"></div>
+</div>
+
+</div>
+
+<button id="submitAttendance">Submit Attendance</button>
+
+<h3>Attendance History</h3>
+<div id="historyContainer"></div>
+
+</div>
+
+<!-- ================= STUDENTS ================= -->
+<div id="students" class="section">
+<h2>Students List</h2>
+<div id="allStudents"></div>
+</div>
+
+<!-- ================= ASSIGNMENTS ================= -->
+<div id="assignments" class="section">
+<h2>Assignments</h2>
+<input id="assignmentText" placeholder="Enter assignment">
+<button onclick="addAssignment()">Add</button>
+<div id="assignmentList"></div>
+</div>
+
+<!-- ================= MARKS ================= -->
+<div id="marks" class="section">
+<h2>Marks / Results</h2>
+<input id="examName" placeholder="Exam Name">
+<input id="marksInput" placeholder="Marks">
+<button onclick="addMarks()">Save</button>
+<div id="marksList"></div>
+</div>
+
+<!-- ================= LESSON PLANNER ================= -->
+<div id="lessonplanner" class="section">
+<h2>Lesson Planner</h2>
+<textarea id="lessonText" placeholder="Write lesson plan"></textarea>
+<button onclick="addLesson()">Save Plan</button>
+<div id="lessonList"></div>
+</div>
+
+<!-- ================= NOTICES ================= -->
+<div id="notices" class="section">
+<h2>Notices</h2>
+<textarea id="noticeText" placeholder="Write notice"></textarea>
+<button onclick="addNotice()">Post Notice</button>
+<div id="noticeList"></div>
+</div>
+
+<!-- ================= MESSAGES ================= -->
+<div id="messages" class="section">
+<h2>Messages</h2>
+<textarea id="msgText" placeholder="Send message"></textarea>
+<button onclick="sendMessage()">Send</button>
+<div id="msgList"></div>
+</div>
+
+<!-- ================= ANALYTICS ================= -->
+<div id="analytics" class="section">
+<h2>Analytics</h2>
+<p>Charts and insights will appear here.</p>
+</div>
+
+<!-- ================= REPORTS ================= -->
+<div id="reports" class="section">
+<h2>Reports</h2>
+<p>Attendance, assignments, and marks reports download coming soon.</p>
+</div>
+
+<!-- ================= TIMETABLE ================= -->
+<div id="timetable" class="section">
+<h2>Timetable</h2>
+<p>Weekly schedule will be displayed here.</p>
+</div>
+
+<!-- ================= MATERIALS ================= -->
+<div id="materials" class="section">
+<h2>Materials</h2>
+<p>Upload or view teaching materials.</p>
+</div>
+
+<!-- ================= LEAVE ================= -->
+<div id="leave" class="section">
+<h2>Leave</h2>
+<p>Apply for leave or view leave status.</p>
+</div>
+
+<!-- ================= SETTINGS ================= -->
+<div id="settings" class="section">
+<h2>Settings</h2>
+<p>Change password, profile settings, and preferences.</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= POPUP ================= -->
+<div id="studentPopup" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#fff; padding:20px; border:2px solid #333; z-index:1000;">
+<h3 id="popupName"></h3>
+<div id="popupHistory"></div>
+<button onclick="closePopup()">Close</button>
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script type="module">
+
+const supabase = window.supabase
+let teacherName = ""
+let teacherClass = ""
+const classes = ["Nursery","LKG","UKG","1","2","3","4","5","6","7","8","9","10"]
+const attendanceData = {}
+const studentMap = {} // Map of student ID -> name
+
+/* SECTION SWITCH */
+window.showSection = function(id){
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+}
+
+/* TIME */
+setInterval(()=>{
+  document.getElementById("currentDateTime").innerText = new Date().toLocaleString()
+},1000)
+
+/* LOAD TEACHER */
+async function loadTeacher(){
+  const {data:{user}} = await supabase.auth.getUser()
+  if(!user){ alert("Login required"); location.href="login.html"; return; }
+  const {data} = await supabase.from("profiles").select("full_name").eq("user_id",user.id).single()
+  teacherName = data.full_name
+  document.getElementById("teacherName").value = teacherName
+  document.getElementById("teacherNameDashboard").innerText = teacherName
+}
+loadTeacher()
+
+/* LOAD CLASSES */
+const classesContainer = document.getElementById("classesContainer")
+classes.forEach(c=>{
+  let btn=document.createElement("button")
+  btn.innerText=c
+  btn.onclick=()=>loadClass(c)
+  classesContainer.appendChild(btn)
+})
+
+/* LOAD CLASS STUDENTS AND HISTORY */
+window.loadClass = async function(cls){
+  teacherClass=cls
+  // Load students
+  const {data:students} = await supabase.from("profiles").select("id,full_name,gender,class").eq("role","student").eq("class",cls)
+  document.getElementById("boysContainer").innerHTML=""
+  document.getElementById("girlsContainer").innerHTML=""
+  attendanceData[cls]={}
+  students.forEach(s=>{
+    studentMap[s.id] = s.full_name // Save name for history
+    let row=document.createElement("div")
+    row.className="student-item"
+    row.innerHTML=`<div>
+      <span class="student-name" onclick="showStudentHistory('${s.id}')">${s.full_name}</span>
+    </div>
+    <div>
+      <button class="present">P</button><button class="absent">A</button><button class="late">L</button>
+    </div>`
+    const p=row.querySelector(".present")
+    const a=row.querySelector(".absent")
+    const l=row.querySelector(".late")
+    p.onclick=()=>setAttendance(cls,s.id,"Present",p,a,l)
+    a.onclick=()=>setAttendance(cls,s.id,"Absent",a,p,l)
+    l.onclick=()=>setAttendance(cls,s.id,"Late",l,p,a)
+    if(s.gender==="male") document.getElementById("boysContainer").appendChild(row)
+    else document.getElementById("girlsContainer").appendChild(row)
+  })
+
+  // Load attendance history
+  await loadAttendanceHistory(cls)
+}
+
+/* LOAD ATTENDANCE HISTORY */
+async function loadAttendanceHistory(cls){
+  const {data:history} = await supabase.from("attendance").select("*").eq("class",cls).order('dateTime',{ascending:false})
+  const historyContainer = document.getElementById("historyContainer")
+  historyContainer.innerHTML = ""
+  if(history.length===0){
+    historyContainer.innerHTML = "<p>No attendance records yet.</p>"
+  } else {
+    history.forEach(h=>{
+      const dt = new Date(h.dateTime).toLocaleString()
+      const studentName = studentMap[h.student_id] || h.student_id
+      historyContainer.innerHTML += `<p>${dt} - ${h.teacher_name} - ${h.session} - <strong onclick="showStudentHistory('${h.student_id}')" style="cursor:pointer;color:blue;">${studentName}</strong> - ${h.status}</p>`
+    })
+  }
+}
+
+/* SHOW STUDENT POPUP HISTORY */
+window.showStudentHistory = async function(studentId){
+  const {data:history} = await supabase.from("attendance").select("*").eq("student_id",studentId).order('dateTime',{ascending:false})
+  const popup = document.getElementById("studentPopup")
+  document.getElementById("popupName").innerText = studentMap[studentId] || studentId
+  const popupHistory = document.getElementById("popupHistory")
+  popupHistory.innerHTML = ""
+  if(history.length===0){
+    popupHistory.innerHTML = "<p>No attendance records.</p>"
+  } else {
+    history.forEach(h=>{
+      const dt = new Date(h.dateTime).toLocaleString()
+      popupHistory.innerHTML += `<p>${dt} - ${h.teacher_name} - ${h.session} - ${h.status}</p>`
+    })
+  }
+  popup.style.display="block"
+}
+
+/* SET ATTENDANCE */
+function setAttendance(cls,id,status,b1,b2,b3){
+  b1.classList.add("activeBtn")
+  b2.classList.remove("activeBtn")
+  b3.classList.remove("activeBtn")
+  attendanceData[cls][id]=status
+}
+
+/* SUBMIT ATTENDANCE */
+document.getElementById("submitAttendance").onclick=async()=>{
+  const session = document.getElementById("sessionSelect").value
+  const rows=Object.entries(attendanceData[teacherClass]).map(([id,status])=>({
+    student_id:id,
+    class:teacherClass,
+    status,
+    teacher_name:teacherName,
+    session,
+    dateTime:new Date().toISOString()
+  }))
+  await supabase.from("attendance").insert(rows)
+  alert("Attendance Saved")
+  await loadClass(teacherClass) // Refresh students & history
+}
+
+/* STUDENTS LIST */
+async function loadStudents(){
+  const {data} = await supabase.from("profiles").select("full_name,class,gender").eq("role","student")
+  let html=""
+  data.forEach(s=>{html+=`${s.full_name} - Class ${s.class} - ${s.gender}<br>`})
+  document.getElementById("allStudents").innerHTML=html
+}
+loadStudents()
+
+/* EXTRA FEATURES */
+window.addAssignment=()=>{ let val=document.getElementById("assignmentText").value; if(val) document.getElementById("assignmentList").innerHTML+=`<p>${val}</p>` }
+window.addMarks=()=>{ let exam=document.getElementById("examName").value; let marks=document.getElementById("marksInput").value; if(exam && marks) document.getElementById("marksList").innerHTML+=`<p>${exam} : ${marks}</p>` }
+window.addLesson=()=>{ let val=document.getElementById("lessonText").value; if(val) document.getElementById("lessonList").innerHTML+=`<p>${val}</p>` }
+window.addNotice=()=>{ let val=document.getElementById("noticeText").value; if(val) document.getElementById("noticeList").innerHTML+=`<p>${val}</p>` }
+window.sendMessage=()=>{ let val=document.getElementById("msgText").value; if(val) document.getElementById("msgList").innerHTML+=`<p>${val}</p>` }
+
+/* POPUP */
+window.closePopup=()=>{document.getElementById("studentPopup").style.display="none"}
+
+/* LOGOUT */
+window.logout=async()=>{
+  await supabase.auth.signOut()
+  location.href="login.html"
+}
+
+</script>
+
+</body>
+</html>
