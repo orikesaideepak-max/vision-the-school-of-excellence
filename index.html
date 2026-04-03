@@ -3,8 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Vision School | Login</title>
-
 <link rel="stylesheet" href="index.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* Optional: hide scrollbar for smoother look */
+.image-strip::-webkit-scrollbar {
+  display: none;
+}
+.image-strip {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
 </head>
 
 <body>
@@ -42,7 +52,6 @@
 <!-- FULL WIDTH IMAGE STRIP -->
 <div class="image-strip">
   <div class="image-track">
-
     <!-- IMAGES -->
     <img src="1.jpg.jpeg">
     <img src="2.jpg.jpeg">
@@ -56,16 +65,14 @@
     <img src="10.jpg.jpeg">
     <img src="11.jpg.jpeg">
     <img src="12.jpg.jpeg">
-   
 
     <!-- DUPLICATE FOR LOOP -->
-    <img src="image.png">
-    <img src="2.jpeg">
-    <img src="3.jpeg">
-    <img src="4.jpeg">
-    <img src="5.jpeg">
-    <img src="6.jpeg">
-
+    <img src="1.jpg.jpeg">
+    <img src="2.jpg.jpeg">
+    <img src="3.jpg.jpeg">
+    <img src="4.jpg.jpeg">
+    <img src="5.jpg.jpeg">
+    <img src="6.jpg.jpeg">
   </div>
 </div>
 
@@ -76,39 +83,32 @@
 <!-- JS -->
 <script>
 const track = document.querySelector(".image-track");
+const strip = document.querySelector(".image-strip");
 
-// AUTO SCROLL (SMOOTH LOOP)
 let scrollAmount = 0;
+let speed = 0.5; // auto scroll speed
 
+// AUTO SCROLL LOOP
 function autoScroll() {
-  scrollAmount += 0.5;
-  track.style.transform = `translateX(-${scrollAmount}px)`;
-
+  scrollAmount += speed;
   if (scrollAmount >= track.scrollWidth / 2) {
     scrollAmount = 0;
   }
-
+  track.style.transform = `translateX(-${scrollAmount}px)`;
   requestAnimationFrame(autoScroll);
 }
-
 autoScroll();
 
-// DRAG FUNCTION
+// DRAG FUNCTION (Desktop + Mobile)
 let isDown = false;
 let startX;
 let scrollLeft;
 
-const strip = document.querySelector(".image-strip");
-
 strip.addEventListener("mousedown", (e) => {
   isDown = true;
-  startX = e.pageX;
+  startX = e.pageX - strip.offsetLeft;
+  scrollLeft = scrollAmount;
   strip.style.cursor = "grabbing";
-});
-
-strip.addEventListener("mouseleave", () => {
-  isDown = false;
-  strip.style.cursor = "grab";
 });
 
 strip.addEventListener("mouseup", () => {
@@ -116,15 +116,35 @@ strip.addEventListener("mouseup", () => {
   strip.style.cursor = "grab";
 });
 
+strip.addEventListener("mouseleave", () => {
+  isDown = false;
+  strip.style.cursor = "grab";
+});
+
 strip.addEventListener("mousemove", (e) => {
   if (!isDown) return;
   e.preventDefault();
-
-  const x = e.pageX;
+  const x = e.pageX - strip.offsetLeft;
   const walk = (x - startX) * 1.5;
+  scrollAmount = scrollLeft - walk;
+});
 
-  scrollAmount -= walk;
-  startX = x;
+// Touch events for mobile
+strip.addEventListener("touchstart", (e) => {
+  isDown = true;
+  startX = e.touches[0].pageX - strip.offsetLeft;
+  scrollLeft = scrollAmount;
+});
+
+strip.addEventListener("touchmove", (e) => {
+  if (!isDown) return;
+  const x = e.touches[0].pageX - strip.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  scrollAmount = scrollLeft - walk;
+});
+
+strip.addEventListener("touchend", () => {
+  isDown = false;
 });
 </script>
 
