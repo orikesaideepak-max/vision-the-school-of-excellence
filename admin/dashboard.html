@@ -38,7 +38,6 @@ async function protectAdminPage(){
 
     fetchAllUsers();
 }
-
 protectAdminPage();
 
 // ===== CREATE / UPDATE USER =====
@@ -65,10 +64,9 @@ window.createUser = async function(){
 
     if(existing){
         userId=existing.user_id;
-        await supabase
-            .from("profiles")
-            .update({full_name,role})
-            .eq("user_id",userId);
+        await supabase.from("profiles")
+        .update({full_name,role})
+        .eq("user_id",userId);
         alert("Profile Updated");
     }else{
         if(!password){
@@ -77,8 +75,7 @@ window.createUser = async function(){
         }
 
         const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
+            email,password,
             options:{data:{full_name,role}}
         });
 
@@ -90,10 +87,7 @@ window.createUser = async function(){
         userId=data.user.id;
 
         await supabase.from("profiles").insert({
-            user_id:userId,
-            full_name,
-            email,
-            role
+            user_id:userId, full_name, email, role
         });
 
         alert("User Created");
@@ -140,10 +134,13 @@ async function fetchAllUsers(){
     users.forEach(u=>{
         const li=document.createElement("li");
         li.innerHTML=`
-            ${u.full_name} (${u.email})
-            <button onclick="editUser('${u.user_id}','${u.full_name}','${u.role}','${u.email}')">Edit</button>
-            <button onclick="deleteUser('${u.user_id}')">Delete</button>
+            <span>${u.full_name} (${u.email})</span>
+            <div class="action-buttons">
+              <button onclick="editUser('${u.user_id}','${u.full_name}','${u.role}','${u.email}')">Edit</button>
+              <button onclick="deleteUser('${u.user_id}')">Delete</button>
+            </div>
         `;
+
         if(u.role==="student"){ students.appendChild(li); sc++; }
         else if(u.role==="teacher"){ teachers.appendChild(li); tc++; }
         else{ admins.appendChild(li); ac++; }
@@ -163,40 +160,33 @@ window.logout = async function(){
 </head>
 
 <body>
+
 <div class="dashboard">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
 <div class="logo-box">
-    <img src="hii.jpg" alt="Vision Logo">
-    <h2>VISION</h2>
-    <p>School Admin</p>
+<img src="hii.jpg">
+<h2>VISION</h2>
+<p>School Admin</p>
 </div>
+
 <ul>
-    <li onclick="window.location.href='dashboard.html'">📊 Dashboard</li>
-    <li onclick="window.location.href='admin-all-students.html'">👨‍🎓 Students</li>
-    <li onclick="window.location.href='teachers.html'">👨‍🏫 Teachers</li>
-    <li onclick="window.location.href='classes.html'">🏫 Classes</li>
-    <li onclick="window.location.href='subjects.html'">📚 Subjects</li>
-    <li onclick="window.location.href='attendence.html'">📅 Attendance</li>
-    <li onclick="window.location.href='exams.html'">📝 Exams</li>
-    <li onclick="window.location.href='results.html'">📊 Results</li>
-    <li onclick="window.location.href='fees.html'">💰 Fees</li>
-    <li onclick="window.location.href='notices.html'">📢 Notices</li>
-    <li onclick="window.location.href='events.html'">🎉 Events</li>
-    <li onclick="window.location.href='timetable.html'">🕒 Timetable</li>
-    <li onclick="window.location.href='assignments.html'">📝 Assignments</li>
-    <li onclick="window.location.href='leave-requests.html'">🛑 Leave Requests</li>
-    <li onclick="window.location.href='messages.html'">💬 Messages</li>
-    <li onclick="window.location.href='reports.html'">📈 Reports</li>
-    <li onclick="window.location.href='profile-settings.html'">⚙️ Settings</li>
-    <li onclick="logout()">🚪 Logout</li>
+<li onclick="window.location.href='dashboard.html'">📊 Dashboard</li>
+<li onclick="window.location.href='admin-all-students.html'">👨‍🎓 Students</li>
+<li onclick="window.location.href='teachers.html'">👨‍🏫 Teachers</li>
+<li onclick="window.location.href='classes.html'">🏫 Classes</li>
+<li onclick="window.location.href='subjects.html'">📚 Subjects</li>
+<li onclick="window.location.href='fees.html'">💰 Fees</li>
+<li onclick="logout()">🚪 Logout</li>
 </ul>
 </div>
 
 <!-- MAIN -->
 <div class="main">
+
 <div class="topbar">
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
 <h1>Admin Dashboard</h1>
 <button onclick="logout()">Logout</button>
 </div>
@@ -207,11 +197,6 @@ window.logout = async function(){
 <div class="stat-card"><h2 id="admin-count">0</h2><p>Total Admins</p></div>
 </div>
 
-<div class="quick-actions">
-<button onclick="window.location.href='students-analytics.html'">📊 View Analytics</button>
-<button onclick="window.location.href='admin-all-students.html'">👨‍🎓 Student Details</button>
-</div>
-
 <div class="admin-container">
 <h2>Create / Manage Users</h2>
 <p id="error" class="error"></p>
@@ -219,25 +204,37 @@ window.logout = async function(){
 <input type="text" id="full_name" placeholder="Full Name">
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Temporary Password">
+
 <select id="role">
 <option value="">Select Role</option>
 <option value="student">Student</option>
 <option value="teacher">Teacher</option>
 <option value="admin">Admin</option>
 </select>
+
 <button onclick="createUser()">Create / Update User</button>
 
 <hr>
 
 <h3>Students</h3>
 <ul id="students_list"></ul>
+
 <h3>Teachers</h3>
 <ul id="teachers_list"></ul>
+
 <h3>Admins</h3>
 <ul id="admins_list"></ul>
+
 </div>
 
 </div>
 </div>
+
+<script>
+function toggleSidebar(){
+  document.querySelector(".sidebar").classList.toggle("active");
+}
+</script>
+
 </body>
 </html>

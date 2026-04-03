@@ -1,10 +1,10 @@
 /* ================= DESIGN TOKENS ================= */
 :root {
-  --bg-main: #f9fafc;       /* Background */
-  --bg-card: #ffffff;       /* Cards */
-  --bg-soft: #f1f5f9;       /* Sections */
+  --bg-main: #f9fafc;
+  --bg-card: #ffffff;
+  --bg-soft: #f1f5f9;
 
-  --accent-gold: #d4af37;   /* Highlight color */
+  --accent-gold: #d4af37;
   --accent-light: #f5e6a6;
 
   --text-main: #1a1a1a;
@@ -28,12 +28,14 @@
 body {
   background: var(--bg-main);
   color: var(--text-main);
+  overflow: hidden;
 }
 
 /* ================= DASHBOARD ================= */
 .dashboard {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* ================= SIDEBAR ================= */
@@ -43,6 +45,11 @@ body {
   border-right: 1px solid var(--border-light);
   padding: 25px;
   box-shadow: var(--shadow-soft);
+
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: 0.3s ease;
 }
 
 /* LOGO */
@@ -90,7 +97,10 @@ body {
 .main {
   flex: 1;
   padding: 25px;
+
+  height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ================= TOPBAR ================= */
@@ -104,6 +114,13 @@ body {
 .topbar h1 {
   color: var(--accent-gold);
   font-weight: 600;
+}
+
+/* MOBILE MENU BUTTON */
+.menu-btn {
+  display: none;
+  font-size: 22px;
+  cursor: pointer;
 }
 
 /* ================= BUTTON ================= */
@@ -203,6 +220,7 @@ li {
   background: var(--bg-soft);
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   transition: 0.3s;
 }
 
@@ -217,44 +235,46 @@ li:hover {
   text-align: center;
 }
 
-/* ================= RESPONSIVE ================= */
-@media(max-width:768px){
-  .sidebar { display:none; }
-  .stats-container { flex-direction: column; }
-}
-
-/* ================= DASHBOARD ================= */
-.dashboard {
-  display: flex;
-  height: 100vh;
-  overflow: hidden; /* Prevent the whole page from scrolling */
-}
-
-/* ================= SIDEBAR ================= */
-.sidebar {
-  width: 250px;
-  background: var(--bg-card);
-  border-right: 1px solid var(--border-light);
-  padding: 25px;
-  box-shadow: var(--shadow-soft);
-
-  height: 100vh;         /* Full height */
-  overflow-y: auto;      /* Enable vertical scrolling */
-  overflow-x: hidden;    /* Prevent horizontal scroll */
-  position: relative;
-}
-
-/* ================= MAIN ================= */
-.main {
-  flex: 1;
-  padding: 25px;
-
-  height: 100vh;         /* Full height */
-  overflow-y: auto;      /* Enable vertical scrolling */
-  overflow-x: hidden;    /* Prevent horizontal scroll */
-}
-
-/* Optional: Smooth scrolling for better UX */
+/* ================= SMOOTH SCROLL ================= */
 .sidebar, .main {
   scroll-behavior: smooth;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+@media(max-width:768px){
+
+  /* SHOW MENU BUTTON */
+  .menu-btn {
+    display: block;
+  }
+
+  /* SIDEBAR HIDDEN */
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    z-index: 999;
+    height: 100%;
+  }
+
+  /* ACTIVE SIDEBAR */
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* MAIN FULL WIDTH */
+  .main {
+    width: 100%;
+    padding: 15px;
+  }
+
+  /* STACK STATS */
+  .stats-container {
+    flex-direction: column;
+  }
+
+  /* SMALL TEXT */
+  .topbar h1 {
+    font-size: 18px;
+  }
 }
