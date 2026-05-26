@@ -175,6 +175,11 @@ window.logout = async function(){
 <li onclick="window.location.href='dashboard.html'">📊 Dashboard</li>
 <li onclick="window.location.href='admin-all-students.html'">👨‍🎓 Students</li>
 <li onclick="window.location.href='teachers.html'">👨‍🏫 Teachers</li>
+
+<!-- NEW BUTTONS -->
+<li onclick="window.location.href='students-analytics.html'">📈 Students Analytics</li>
+<li onclick="window.location.href='attendance.html'">📅 Attendance</li>
+
 <li onclick="window.location.href='classes.html'">🏫 Classes</li>
 <li onclick="window.location.href='subjects.html'">📚 Subjects</li>
 <li onclick="window.location.href='fees.html'">💰 Fees</li>
@@ -191,10 +196,17 @@ window.logout = async function(){
 <button onclick="logout()">Logout</button>
 </div>
 
+<!-- STATS -->
 <div class="stats-container">
 <div class="stat-card"><h2 id="student-count">0</h2><p>Total Students</p></div>
 <div class="stat-card"><h2 id="teacher-count">0</h2><p>Total Teachers</p></div>
 <div class="stat-card"><h2 id="admin-count">0</h2><p>Total Admins</p></div>
+</div>
+
+<!-- 🔥 QUICK ACTION BUTTONS (NEW) -->
+<div class="quick-actions">
+<button onclick="window.location.href='students-analytics.html'">📊 View Students Analytics</button>
+<button onclick="window.location.href='attendance.html'">📅 Manage Attendance</button>
 </div>
 
 <div class="admin-container">
