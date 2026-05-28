@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -24,7 +24,12 @@ body{
     font-family:'Poppins',sans-serif;
     background:#eef2f7;
     color:#222;
+    overflow-x:hidden;
 }
+
+/* =========================================================
+HEADER
+========================================================= */
 
 header{
 
@@ -34,24 +39,33 @@ header{
 
     color:white;
 
-    padding:22px;
+    padding:20px;
 
     text-align:center;
 
-    font-size:30px;
+    font-size:32px;
 
     font-weight:700;
 
     letter-spacing:1px;
 
     box-shadow:0 4px 15px rgba(0,0,0,0.2);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
 }
 
 .container{
-    padding:25px;
+    width:100%;
+    padding:20px;
 }
 
-/* SEARCH */
+/* =========================================================
+SEARCH
+========================================================= */
 
 .search-wrapper{
 
@@ -62,42 +76,55 @@ header{
     gap:15px;
 
     margin-bottom:25px;
+
+    justify-content:center;
 }
 
 .search-bar{
 
-    padding:14px;
+    padding:14px 16px;
 
-    width:260px;
+    width:280px;
 
     border:none;
 
-    border-radius:12px;
+    border-radius:14px;
 
     background:white;
 
-    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
 
     font-size:14px;
 
     outline:none;
+
+    transition:0.3s;
 }
 
 .search-bar:focus{
+
+    transform:translateY(-2px);
+
     border:2px solid #2563eb;
 }
 
-/* TABLE */
+/* =========================================================
+TABLE
+========================================================= */
 
 .table-wrapper{
+
+    width:100%;
 
     overflow-x:auto;
 
     background:white;
 
-    border-radius:18px;
+    border-radius:22px;
 
     box-shadow:0 4px 20px rgba(0,0,0,0.08);
+
+    padding:10px;
 }
 
 table{
@@ -125,6 +152,8 @@ th{
     font-weight:600;
 
     text-align:center;
+
+    white-space:nowrap;
 }
 
 td{
@@ -136,17 +165,29 @@ td{
     text-align:center;
 
     font-size:14px;
+
+    white-space:nowrap;
+}
+
+tr{
+
+    transition:0.3s;
 }
 
 tr:hover{
+
     background:#f8fafc;
+
+    transform:scale(1.002);
 }
 
-/* INPUTS */
+/* =========================================================
+INPUTS
+========================================================= */
 
 td input{
 
-    width:95px;
+    width:90px;
 
     padding:8px;
 
@@ -157,21 +198,28 @@ td input{
     outline:none;
 
     text-align:center;
+
+    transition:0.3s;
 }
 
 td input:focus{
+
     border:2px solid #2563eb;
+
+    transform:scale(1.03);
 }
 
-/* BUTTONS */
+/* =========================================================
+BUTTONS
+========================================================= */
 
 button{
 
     border:none;
 
-    padding:8px 14px;
+    padding:9px 14px;
 
-    border-radius:8px;
+    border-radius:10px;
 
     color:white;
 
@@ -181,11 +229,16 @@ button{
 
     transition:0.3s;
 
-    margin:2px;
+    margin:3px;
+
+    font-size:13px;
 }
 
 button:hover{
-    transform:scale(1.05);
+
+    transform:translateY(-2px);
+
+    opacity:0.92;
 }
 
 .save-btn{
@@ -204,7 +257,9 @@ button:hover{
     background:#22c55e;
 }
 
-/* AMOUNTS */
+/* =========================================================
+AMOUNTS
+========================================================= */
 
 .total-amount{
     color:#2563eb;
@@ -224,21 +279,25 @@ button:hover{
     font-size:15px;
 }
 
-/* CHARTS */
+/* =========================================================
+CHARTS
+========================================================= */
 
 .chart-section{
-    margin-top:45px;
+    margin-top:50px;
 }
 
 .chart-title{
 
     text-align:center;
 
-    font-size:32px;
+    font-size:34px;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 
     color:#0f172a;
+
+    font-weight:700;
 }
 
 #chartsContainer{
@@ -246,7 +305,7 @@ button:hover{
     display:grid;
 
     grid-template-columns:
-    repeat(auto-fit,minmax(380px,1fr));
+    repeat(auto-fit,minmax(360px,1fr));
 
     gap:30px;
 }
@@ -255,7 +314,7 @@ button:hover{
 
     background:white;
 
-    border-radius:22px;
+    border-radius:24px;
 
     padding:25px;
 
@@ -265,6 +324,7 @@ button:hover{
 }
 
 .chart-card:hover{
+
     transform:translateY(-5px);
 }
 
@@ -275,9 +335,13 @@ button:hover{
     margin-bottom:20px;
 
     color:#0f172a;
+
+    font-size:28px;
 }
 
-/* SUMMARY */
+/* =========================================================
+SUMMARY
+========================================================= */
 
 .fee-summary{
 
@@ -290,15 +354,19 @@ button:hover{
 
 .summary-box{
 
-    padding:14px;
+    padding:16px;
 
-    border-radius:12px;
+    border-radius:14px;
 
     color:white;
 
     font-weight:600;
 
     text-align:center;
+
+    font-size:15px;
+
+    box-shadow:0 3px 8px rgba(0,0,0,0.08);
 }
 
 .total-box{
@@ -313,7 +381,9 @@ button:hover{
     background:#dc2626;
 }
 
-/* STUDENTS */
+/* =========================================================
+STUDENT LIST
+========================================================= */
 
 .student-list{
 
@@ -331,6 +401,8 @@ button:hover{
     margin-bottom:15px;
 
     text-align:center;
+
+    color:#0f172a;
 }
 
 .student-name{
@@ -346,22 +418,110 @@ button:hover{
     border-left:5px solid #2563eb;
 
     box-shadow:0 2px 6px rgba(0,0,0,0.05);
+
+    font-size:14px;
 }
 
-/* MOBILE */
+/* =========================================================
+MOBILE VIEW
+========================================================= */
 
 @media(max-width:768px){
 
     header{
+
         font-size:22px;
+
+        padding:16px;
     }
 
-    .chart-title{
-        font-size:24px;
+    .container{
+        padding:12px;
+    }
+
+    .search-wrapper{
+
+        flex-direction:column;
+
+        align-items:center;
     }
 
     .search-bar{
+
         width:100%;
+    }
+
+    .chart-title{
+
+        font-size:24px;
+    }
+
+    #chartsContainer{
+
+        grid-template-columns:1fr;
+    }
+
+    .chart-card{
+
+        padding:18px;
+    }
+
+    .chart-card h2{
+
+        font-size:22px;
+    }
+
+    table{
+
+        min-width:1000px;
+    }
+
+    th,td{
+
+        font-size:12px;
+
+        padding:10px;
+    }
+
+    td input{
+
+        width:75px;
+
+        padding:6px;
+    }
+
+    button{
+
+        padding:7px 10px;
+
+        font-size:11px;
+    }
+}
+
+/* =========================================================
+SMALL MOBILE
+========================================================= */
+
+@media(max-width:480px){
+
+    header{
+
+        font-size:19px;
+    }
+
+    .chart-title{
+
+        font-size:20px;
+    }
+
+    .summary-box{
+
+        font-size:13px;
+    }
+
+    .student-name{
+
+        font-size:13px;
     }
 }
 
@@ -1007,6 +1167,8 @@ function renderClassCharts(){
 
                 responsive:true,
 
+                maintainAspectRatio:true,
+
                 plugins:{
 
                     legend:{
@@ -1101,4 +1263,3 @@ Class Wise Fee Analytics
 
 </body>
 </html>
-```
