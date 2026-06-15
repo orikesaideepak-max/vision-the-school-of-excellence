@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance - Vision School</title>
+
+<link rel="stylesheet" href="td.css">
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+window.supabase = createClient(
+  "https://gocoupvzzsgouwdkdmzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+</script>
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar">
+  <h2>VISION</h2>
+
+  <a href="./attendance.html">📅 Attendance</a>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main class="main">
+
+  <div class="topbar">
+    <h2>Attendance</h2>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- CLASS -->
+  <section class="section">
+    <h3>Select Class</h3>
+    <div id="classesContainer"></div>
+  </section>
+
+  <!-- TEACHER INFO -->
+  <section class="section">
+    <h3>Teacher Info</h3>
+
+    <input id="teacherName" disabled>
+
+    <select id="sessionSelect">
+      <option>Morning</option>
+      <option>Afternoon</option>
+    </select>
+
+    <p id="currentDateTime"></p>
+  </section>
+
+  <!-- STUDENTS -->
+  <section class="section">
+    <h3>Students</h3>
+
+    <h4>Boys</h4>
+    <div id="boysContainer"></div>
+
+    <h4>Girls</h4>
+    <div id="girlsContainer"></div>
+  </section>
+
+  <!-- SUBMIT -->
+  <section class="section">
+    <button class="primary" id="submitAttendance">Submit Attendance</button>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="section">
+    <h3>Attendance History</h3>
+    <div id="historyContainer"></div>
+  </section>
+
+</main>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script type="module">
+
+const supabase = window.supabase;
+
+let teacherName = "";
+let teacherClass = "";
+
+const classes = ["Nursery","LKG","UKG","1","2","3","4","5","6","7","8","9","10"];
+
+const attendanceData = {};
+const studentMap = {};
+
+/* CLOCK */
+setInterval(() => {
+  document.getElementById("currentDateTime").innerText =
+    new Date().toLocaleString();
+}, 1000);
+
+/* TEACHER */
+async function loadTeacher() {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    location.href = "./login.html";
+    return;
+  }
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("user_id", user.id)
+    .single();
+
+  teacherName = data.full_name;
+  document.getElementById("teacherName").value = teacherName;
+}
+
+loadTeacher();
+
+/* CLASS BUTTONS */
+const classBox = document.getElementById("classesContainer");
+
+classes.forEach(cls => {
+  const btn = document.createElement("button");
+  btn.innerText = cls;
+  btn.onclick = () => loadClass(cls);
+  classBox.appendChild(btn);
+});
+
+/* LOAD CLASS */
+window.loadClass = async function (cls) {
+
+  teacherClass = cls;
+
+  const { data: students } = await supabase
+    .from("profiles")
+    .select("id, full_name, gender")
+    .eq("role", "student")
+    .eq("class", cls);
+
+  document.getElementById("boysContainer").innerHTML = "";
+  document.getElementById("girlsContainer").innerHTML = "";
+
+  attendanceData[cls] = {};
+
+  students.forEach(s => {
+
+    studentMap[s.id] = s.full_name;
+
+    const row = document.createElement("div");
+    row.className = "student-item";
+
+    row.innerHTML = `
+      <div>${s.full_name}</div>
+      <div>
+        <button class="p">P</button>
+        <button class="a">A</button>
+        <button class="l">L</button>
+      </div>
+    `;
+
+    const p = row.querySelector(".p");
+    const a = row.querySelector(".a");
+    const l = row.querySelector(".l");
+
+    p.onclick = () => setAttendance(cls, s.id, "Present", p, a, l);
+    a.onclick = () => setAttendance(cls, s.id, "Absent", a, p, l);
+    l.onclick = () => setAttendance(cls, s.id, "Late", l, p, a);
+
+    const boys = document.getElementById("boysContainer");
+    const girls = document.getElementById("girlsContainer");
+
+    if (s.gender === "male") boys.appendChild(row);
+    else girls.appendChild(row);
+  });
+
+  loadHistory(cls);
+};
+
+/* SET ATTENDANCE */
+function setAttendance(cls, id, status, b1, b2, b3) {
+
+  b1.classList.add("active");
+  b2.classList.remove("active");
+  b3.classList.remove("active");
+
+  attendanceData[cls][id] = status;
+}
+
+/* SUBMIT */
+document.getElementById("submitAttendance").onclick = async () => {
+
+  const session = document.getElementById("sessionSelect").value;
+
+  const rows = Object.entries(attendanceData[teacherClass] || {}).map(
+    ([id, status]) => ({
+      student_id: id,
+      class: teacherClass,
+      status,
+      teacher_name: teacherName,
+      session,
+      dateTime: new Date().toISOString()
+    })
+  );
+
+  if (!rows.length) {
+    alert("No attendance selected");
+    return;
+  }
+
+  await supabase.from("attendance").insert(rows);
+
+  alert("Attendance Saved");
+
+  loadClass(teacherClass);
+};
+
+/* HISTORY */
+async function loadHistory(cls) {
+
+  const { data } = await supabase
+    .from("attendance")
+    .select("*")
+    .eq("class", cls)
+    .order("dateTime", { ascending: false });
+
+  const box = document.getElementById("historyContainer");
+  box.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    box.innerHTML = "<p>No attendance history</p>";
+    return;
+  }
+
+  data.forEach(h => {
+    box.innerHTML += `
+      <p>
+        ${new Date(h.dateTime).toLocaleString()} -
+        ${h.teacher_name} -
+        ${h.session} -
+        <b>${studentMap[h.student_id] || h.student_id}</b> -
+        ${h.status}
+      </p>
+    `;
+  });
+};
+
+/* LOGOUT */
+window.logout = async () => {
+  await supabase.auth.signOut();
+  location.href = "./login.html";
+};
+
+</script>
+
+</body>
+</html>

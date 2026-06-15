@@ -2,57 +2,56 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Vision School | Login</title>
-<link rel="stylesheet" href="index.css">
+<title>Vision School</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-/* Optional: hide scrollbar for smoother look */
-.image-strip::-webkit-scrollbar {
-  display: none;
-}
-.image-strip {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-</style>
+
+<link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-<!-- WATERMARK LOGO -->
-<div class="watermark-logo">
-  <img src="hii.jpg">
+<!-- WATERMARK -->
+<div class="watermark"></div>
+
+<!-- TOP LOGO -->
+<div class="top-logo">
+  <img src="hii.jpg" alt="logo">
 </div>
 
-<!-- FLOATING LOGO -->
-<div class="logo">
-  <img src="hii.jpg">
-</div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-box">
 
-<!-- MAIN CONTENT -->
-<div class="role-container">
+    <h1 id="title">VISION THE SCHOOL OF EXCELLENCE</h1>
 
-  <h1>VISION SCHOOL</h1>
-  <p>Select your role to continue</p>
+    <p id="tagline">Empowering students with knowledge & discipline</p>
 
-  <div class="role-buttons">
-    <a href="login.html" class="role-btn">ADMIN</a>
-    <a href="login.html" class="role-btn">TEACHER</a>
-    <a href="login.html" class="role-btn">STUDENT</a>
+    <!-- QUOTE BOX -->
+    <div id="quoteBox">
+      <p id="quote">
+        “Education is the most powerful weapon which you can use to change the world.”
+      </p>
+    </div>
+
+    <div class="btn-group">
+      <button onclick="go('admin')">Admin</button>
+      <button onclick="go('teacher')">Teacher</button>
+      <button onclick="go('student')">Student</button>
+      <button onclick="openGallery()">Gallery</button>
+    </div>
+
   </div>
+</section>
 
-  <div style="text-align:center;">
-    <a href="https://www.instagram.com/vision_edu_society" target="_blank" class="gallery-btn">
-      VIEW FULL GALLERY
-    </a>
-  </div>
+<!-- ABOUT -->
+<section class="section">
+  <h2>About School</h2>
+  <p>Modern education with discipline and innovation.</p>
+</section>
 
-</div>
-
-<!-- FULL WIDTH IMAGE STRIP -->
-<div class="image-strip">
-  <div class="image-track">
-    <!-- IMAGES -->
+<!-- SLIDER -->
+<div class="slider">
+  <div class="track">
     <img src="1.jpg.jpeg">
     <img src="2.jpg.jpeg">
     <img src="3.jpg.jpeg">
@@ -65,87 +64,97 @@
     <img src="10.jpg.jpeg">
     <img src="11.jpg.jpeg">
     <img src="12.jpg.jpeg">
-
-    <!-- DUPLICATE FOR LOOP -->
-    <img src="1.jpg.jpeg">
-    <img src="2.jpg.jpeg">
-    <img src="3.jpg.jpeg">
-    <img src="4.jpg.jpeg">
-    <img src="5.jpg.jpeg">
-    <img src="6.jpg.jpeg">
   </div>
 </div>
 
-<div class="footer-text">
-  © 2026 Vision School Management System
-</div>
-
-<!-- JS -->
 <script>
-const track = document.querySelector(".image-track");
-const strip = document.querySelector(".image-strip");
-
-let scrollAmount = 0;
-let speed = 0.5; // auto scroll speed
-
-// AUTO SCROLL LOOP
-function autoScroll() {
-  scrollAmount += speed;
-  if (scrollAmount >= track.scrollWidth / 2) {
-    scrollAmount = 0;
-  }
-  track.style.transform = `translateX(-${scrollAmount}px)`;
-  requestAnimationFrame(autoScroll);
+// ================= NAVIGATION =================
+function go(role) {
+  window.location.href = "login.html?role=" + role;
 }
-autoScroll();
 
-// DRAG FUNCTION (Desktop + Mobile)
-let isDown = false;
-let startX;
-let scrollLeft;
+// ================= GALLERY =================
+function openGallery() {
+  window.open("https://www.instagram.com/vision_edu_society/", "_blank");
+}
 
-strip.addEventListener("mousedown", (e) => {
-  isDown = true;
-  startX = e.pageX - strip.offsetLeft;
-  scrollLeft = scrollAmount;
-  strip.style.cursor = "grabbing";
+// ================= QUOTES ROTATION =================
+const quotes = [
+  "Education is the most powerful weapon which you can use to change the world.",
+  "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+  "Dream big and dare to fail.",
+  "Learning never exhausts the mind.",
+  "Discipline is the bridge between goals and achievement.",
+  "A child without education is like a bird without wings."
+];
+
+let qIndex = 0;
+
+function changeQuote() {
+  const quoteEl = document.getElementById("quote");
+
+  if (!quoteEl) return;
+
+  quoteEl.style.opacity = 0;
+
+  setTimeout(() => {
+    qIndex = (qIndex + 1) % quotes.length;
+    quoteEl.textContent = "“" + quotes[qIndex] + "”";
+    quoteEl.style.opacity = 1;
+  }, 500);
+}
+
+setInterval(changeQuote, 4000);
+
+// ================= SCROLL REVEAL =================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+    }
+  });
 });
 
-strip.addEventListener("mouseup", () => {
-  isDown = false;
-  strip.style.cursor = "grab";
+document.querySelectorAll(".section").forEach(el => {
+  observer.observe(el);
 });
 
-strip.addEventListener("mouseleave", () => {
-  isDown = false;
-  strip.style.cursor = "grab";
+// ================= SLIDER =================
+window.addEventListener("load", () => {
+  const track = document.querySelector(".track");
+  if (!track) return;
+
+  let x = 0;
+
+  function move() {
+    x += 0.7;
+
+    if (x >= track.scrollWidth / 2) {
+      x = 0;
+    }
+
+    track.style.transform = `translateX(-${x}px)`;
+    requestAnimationFrame(move);
+  }
+
+  move();
 });
 
-strip.addEventListener("mousemove", (e) => {
-  if (!isDown) return;
-  e.preventDefault();
-  const x = e.pageX - strip.offsetLeft;
-  const walk = (x - startX) * 1.5;
-  scrollAmount = scrollLeft - walk;
-});
+// ================= HERO ANIMATION =================
+window.onload = () => {
+  const box = document.querySelector(".hero-box");
 
-// Touch events for mobile
-strip.addEventListener("touchstart", (e) => {
-  isDown = true;
-  startX = e.touches[0].pageX - strip.offsetLeft;
-  scrollLeft = scrollAmount;
-});
+  if (box) {
+    box.style.opacity = 0;
+    box.style.transform = "translateY(30px)";
+    box.style.transition = "1.5s";
 
-strip.addEventListener("touchmove", (e) => {
-  if (!isDown) return;
-  const x = e.touches[0].pageX - strip.offsetLeft;
-  const walk = (x - startX) * 1.5;
-  scrollAmount = scrollLeft - walk;
-});
-
-strip.addEventListener("touchend", () => {
-  isDown = false;
-});
+    setTimeout(() => {
+      box.style.opacity = 1;
+      box.style.transform = "translateY(0)";
+    }, 300);
+  }
+};
 </script>
 
 </body>

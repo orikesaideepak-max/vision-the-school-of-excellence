@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Students - Vision School</title>
+
+<link rel="stylesheet" href="students.css">
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+window.supabase = createClient(
+  "https://gocoupvzzsgouwdkdmzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
+);
+</script>
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- ================= SIMPLE HEADER ONLY ================= -->
+<header class="topbar">
+  <h2>👨‍🎓 Students List</h2>
+  <button onclick="logout()">Logout</button>
+</header>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main">
+
+  <section class="section">
+    <h3>All Students</h3>
+
+    <input id="search" placeholder="Search student..." oninput="filterStudents()" />
+
+    <div id="studentsList">Loading...</div>
+  </section>
+
+</main>
+
+</div>
+
+<script type="module">
+
+const supabase = window.supabase;
+
+let allStudents = [];
+
+/* LOAD STUDENTS */
+async function loadStudents() {
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("full_name, class, gender")
+    .eq("role", "student");
+
+  const box = document.getElementById("studentsList");
+
+  if (error || !data) {
+    box.innerHTML = "Error loading students";
+    return;
+  }
+
+  allStudents = data;
+
+  render(data);
+}
+
+/* RENDER FUNCTION */
+function render(list) {
+  const box = document.getElementById("studentsList");
+  box.innerHTML = "";
+
+  if (list.length === 0) {
+    box.innerHTML = "<p>No students found</p>";
+    return;
+  }
+
+  list.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "student-item";
+
+    div.innerHTML = `
+      <div>
+        <b>${s.full_name}</b>
+        <p>Class: ${s.class}</p>
+      </div>
+      <div>${s.gender}</div>
+    `;
+
+    box.appendChild(div);
+  });
+}
+
+/* SEARCH */
+window.filterStudents = function () {
+  const val = document.getElementById("search").value.toLowerCase();
+
+  const filtered = allStudents.filter(s =>
+    s.full_name.toLowerCase().includes(val) ||
+    s.class.toLowerCase().includes(val)
+  );
+
+  render(filtered);
+};
+
+/* INIT */
+loadStudents();
+
+/* LOGOUT */
+window.logout = async () => {
+  await supabase.auth.signOut();
+  location.href = "./login.html";
+};
+
+</script>
+
+</body>
+</html>
