@@ -1,284 +1,232 @@
-/* ===== GLOBAL RESET ===== */
+/* ================= BASE ================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Poppins, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-  background: #f4f6fb;
-  color: #333;
-  overflow-x: hidden;
+  background: #f4f6f9;
+  color: #222;
 }
 
-/* ===== DASHBOARD LAYOUT ===== */
+/* ================= LAYOUT ================= */
 .dashboard {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
+/* ================= SIDEBAR ================= */
 .sidebar {
   width: 260px;
-  background: #ffffff;
-  padding: 18px;
-  border-right: 1px solid #eee;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  background: #1f2937;
+  color: #fff;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
 }
 
-.logo-box {
+.sidebar .logo-box {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
-.logo-box img {
-  width: 65px;
+.sidebar img {
+  width: 60px;
   border-radius: 50%;
-  border: 3px solid #d4af37;
 }
 
-.logo-box h2 {
-  color: #d4af37;
-  margin-top: 8px;
-  font-size: 18px;
+.sidebar h2 {
+  margin-top: 10px;
 }
 
 .sidebar ul {
   list-style: none;
+  margin-top: 20px;
 }
 
-.sidebar li {
-  padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 10px;
+.sidebar ul li,
+.sidebar ul a {
+  display: block;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
   cursor: pointer;
-  transition: 0.3s;
-  font-size: 15px;
+  border-radius: 6px;
 }
 
-.sidebar li:hover {
-  background: #f1f5f9;
-  transform: translateX(4px);
+.sidebar ul li:hover,
+.sidebar ul a:hover {
+  background: #374151;
 }
 
-/* ===== MAIN AREA ===== */
+/* ================= MAIN ================= */
 .main {
-  flex: 1;
+  margin-left: 260px;
   padding: 20px;
-  overflow-x: hidden;
+  width: calc(100% - 260px);
 }
 
-/* ===== TOPBAR ===== */
+/* ================= TOPBAR ================= */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .topbar h1 {
-  color: #d4af37;
   font-size: 22px;
 }
 
-/* ===== BUTTONS ===== */
-button {
-  padding: 10px 14px;
+.topbar button {
+  padding: 8px 14px;
   border: none;
-  border-radius: 8px;
-  background: #d4af37;
-  color: #fff;
+  background: #ef4444;
+  color: white;
+  border-radius: 6px;
   cursor: pointer;
-  transition: 0.3s;
-  font-size: 14px;
 }
 
-button:hover {
-  background: #b8962e;
-  transform: scale(1.05);
-}
-
-/* ===== SECTION ===== */
+/* ================= SECTIONS ================= */
 .section {
   display: none;
-  animation: fade 0.3s ease;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .section.active {
   display: block;
 }
 
-@keyframes fade {
-  from {opacity: 0; transform: translateY(10px);}
-  to {opacity: 1; transform: translateY(0);}
+/* ================= BUTTONS ================= */
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
 }
 
-/* ===== CLASS BUTTONS ===== */
-#classesContainer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0;
+button:hover {
+  opacity: 0.9;
 }
 
-#classesContainer button {
-  flex: 1 1 120px;
-  background: #fff;
-  border: 1px solid #ddd;
-  color: #333;
-}
-
-#classesContainer button:hover {
-  background: #d4af37;
-  color: #fff;
-}
-
-/* ===== STUDENTS ===== */
+/* ================= STUDENTS ================= */
 .students {
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .student-list {
-  background: #fff;
-  padding: 12px;
-  border-radius: 12px;
   flex: 1;
-  min-width: 260px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .student-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px dashed #eee;
+  padding: 8px;
+  background: white;
+  margin-bottom: 8px;
+  border-radius: 6px;
 }
 
 .student-name {
   cursor: pointer;
-  color: #d4af37;
-  font-weight: 500;
+  color: #2563eb;
 }
 
-/* ===== ATTENDANCE BUTTONS ===== */
-.present,
-.absent,
-.late {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  margin-left: 4px;
-  color: white;
-  cursor: pointer;
-}
-
+/* attendance buttons */
 .present { background: #22c55e; }
 .absent { background: #ef4444; }
 .late { background: #f59e0b; }
 
-.activeBtn {
-  outline: 2px solid #111;
-}
-
-/* ===== TABLE ===== */
-table {
+/* ================= FORMS ================= */
+input, textarea, select {
   width: 100%;
-  background: #fff;
-  border-collapse: collapse;
-  border-radius: 10px;
-  overflow: hidden;
+  padding: 8px;
+  margin: 6px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
-th {
-  background: #d4af37;
-  color: white;
-}
-
-th, td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-}
-
-/* ===== POPUP ===== */
+/* ================= POPUP ================= */
 #studentPopup {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-  max-height: 80vh;
-  overflow-y: auto;
-  z-index: 999;
+  border-radius: 10px;
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 200px;
-  }
-}
-
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {
+
   .dashboard {
     flex-direction: column;
   }
 
+  /* sidebar becomes top menu */
   .sidebar {
+    position: relative;
     width: 100%;
-    display: flex;
-    overflow-x: auto;
+    height: auto;
   }
 
-  .sidebar ul {
-    display: flex;
+  .main {
+    margin-left: 0;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 10px;
-  }
-
-  .sidebar li {
-    white-space: nowrap;
-    flex: 0 0 auto;
   }
 
   .students {
     flex-direction: column;
   }
 
-  #classesContainer button {
-    flex: 1 1 45%;
+  .student-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .sidebar ul li,
+  .sidebar ul a {
+    font-size: 14px;
+    padding: 8px;
   }
 }
 
+/* ================= SMALL PHONE ================= */
 @media (max-width: 480px) {
   .topbar h1 {
     font-size: 18px;
   }
 
-  button {
-    font-size: 13px;
-    padding: 8px 10px;
+  .sidebar h2 {
+    font-size: 18px;
   }
 
-  .student-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-
-  #classesContainer button {
-    flex: 1 1 100%;
+  .section {
+    padding: 10px;
   }
 }
