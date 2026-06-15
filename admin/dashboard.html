@@ -42,69 +42,107 @@ protectAdminPage();
 
 // ===== CREATE / UPDATE USER =====
 window.createUser = async function(){
-    const full_name=document.getElementById("full_name").value.trim();
-    const email=document.getElementById("email").value.trim();
-    const role=document.getElementById("role").value;
-    const password=document.getElementById("password").value.trim();
-    const errorBox=document.getElementById("error");
+    const full_name = document.getElementById("full_name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const role = document.getElementById("role").value;
+    const password = document.getElementById("password").value.trim();
+    const errorBox = document.getElementById("error");
 
-    errorBox.innerText="";
+    errorBox.innerText = "";
+
     if(!full_name || !email || !role){
-        errorBox.innerText="Full Name, Email, Role required";
+        errorBox.innerText = "Full Name, Email, Role required";
         return;
     }
 
-    const { data:existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
         .from("profiles")
         .select("*")
-        .eq("email",email)
-        .single();
+        .eq("email", email)
+        .maybeSingle();
+
+    console.log("EXISTING:", existing);
+    console.log("EXISTING ERROR:", existingError);
 
     let userId;
 
     if(existing){
-        userId=existing.user_id;
-        await supabase.from("profiles")
-        .update({full_name,role})
-        .eq("user_id",userId);
+
+        userId = existing.user_id;
+
+        const { data, error } = await supabase
+            .from("profiles")
+            .update({
+                full_name,
+                role
+            })
+            .eq("user_id", userId)
+            .select();
+
+        console.log("UPDATE DATA:", data);
+        console.log("UPDATE ERROR:", error);
+
+        if(error){
+            errorBox.innerText = error.message;
+            return;
+        }
+
         alert("Profile Updated");
-    }else{
+
+    } else {
+
         if(!password){
-            errorBox.innerText="Password required";
+            errorBox.innerText = "Password required";
             return;
         }
 
         const { data, error } = await supabase.auth.signUp({
-            email,password,
-            options:{data:{full_name,role}}
+            email,
+            password,
+            options:{
+                data:{
+                    full_name,
+                    role
+                }
+            }
         });
+
+        console.log("SIGNUP DATA:", data);
+        console.log("SIGNUP ERROR:", error);
 
         if(error){
-            errorBox.innerText=error.message;
+            errorBox.innerText = error.message;
             return;
         }
-
-        userId=data.user.id;
-
-        await supabase.from("profiles").insert({
-            user_id:userId, full_name, email, role
-        });
 
         alert("User Created");
     }
 
-    document.getElementById("full_name").value="";
-    document.getElementById("email").value="";
-    document.getElementById("password").value="";
-    document.getElementById("role").value="";
+    document.getElementById("full_name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("role").value = "";
 
     fetchAllUsers();
 };
 
 // ===== DELETE USER =====
 window.deleteUser = async function(id){
+
     if(!confirm("Delete user?")) return;
-    await supabase.from("profiles").delete().eq("user_id",id);
+
+    const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("user_id", id);
+
+    console.log("DELETE ERROR:", error);
+
+    if(error){
+        alert(error.message);
+        return;
+    }
+
     fetchAllUsers();
 };
 
@@ -182,6 +220,9 @@ window.logout = async function(){
 
 <li onclick="window.location.href='classes.html'">🏫 Classes</li>
 <li onclick="window.location.href='subjects.html'">📚 Subjects</li>
+<li onclick="window.location.href='marks.html'">📝 Marks Entry</li>
+<li onclick="window.location.href='promote.html'">   🎓 Promote Students
+</li>
 <li onclick="window.location.href='fees.html'">💰 Fees</li>
 <li onclick="logout()">🚪 Logout</li>
 </ul>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Marks Management</title>
+<link rel="stylesheet" href="marks.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📊 Admin Marks Management</h2>
+
+<div class="controls">
+
+<select id="classSelect">
+<option value="">Select Class</option>
+<option>Nursery</option>
+<option>LKG</option>
+<option>UKG</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+</select>
+
+<select id="examSelect">
+<option value="">Select Exam</option>
+<option>FA1</option>
+<option>FA2</option>
+<option>SA1</option>
+<option>SA2</option>
+</select>
+
+<button onclick="loadMarks()">
+Load Marks
+</button>
+
+</div>
+
+<div id="status"></div>
+
+<table id="marksTable" style="display:none;">
+
+<thead>
+<tr>
+<th>Roll No</th>
+<th>Student Name</th>
+<th>Marks</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody id="studentBody">
+</tbody>
+
+</table>
+
+<div class="actions">
+
+<button onclick="saveChanges()">
+💾 Save Changes
+</button>
+
+<button onclick="viewHistory()">
+📜 History
+</button>
+
+<button onclick="deleteMarks()">
+🗑 Delete Marks
+</button>
+
+</div>
+
+<div id="historyContainer"></div>
+
+</div>
+
+<script type="module">
+
+import { createClient }
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL =
+"https://gocoupvzzsgouwdkdmzu.supabase.co";
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
+
+const supabase =
+createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+window.loadMarks = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+if(!selectedClass || !selectedExam){
+
+alert("Please Select Class and Exam");
+return;
+
+}
+
+document.getElementById("studentBody").innerHTML="";
+document.getElementById("historyContainer").innerHTML="";
+document.getElementById("status").innerHTML="";
+
+const {data,error} = await supabase
+.from("marks")
+.select("*")
+.eq("class",selectedClass)
+.eq("exam",selectedExam)
+.order("student_name");
+
+if(error){
+
+document.getElementById("status").innerHTML=
+error.message;
+
+console.error(error);
+return;
+
+}
+
+document.getElementById("marksTable").style.display=
+"table";
+
+if(data.length===0){
+
+document.getElementById("studentBody").innerHTML=
+`
+<tr>
+<td colspan="4">
+No Marks Found
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+data.forEach((student,index)=>{
+
+document.getElementById("studentBody")
+.innerHTML += `
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${student.student_name}</td>
+
+<td>
+<input
+type="number"
+min="0"
+max="100"
+value="${student.marks}"
+id="mark_${student.id}">
+</td>
+
+<td>
+${new Date(student.created_at)
+.toLocaleDateString()}
+</td>
+
+</tr>
+
+`;
+
+});
+
+};
+
+window.saveChanges = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+const {data,error} = await supabase
+.from("marks")
+.select("*")
+.eq("class",selectedClass)
+.eq("exam",selectedExam);
+
+if(error){
+
+document.getElementById("status").innerHTML=
+error.message;
+
+return;
+
+}
+
+for(const row of data){
+
+const value =
+document.getElementById(`mark_${row.id}`).value;
+
+const {error:updateError} =
+await supabase
+.from("marks")
+.update({
+marks:Number(value)
+})
+.eq("id",row.id);
+
+if(updateError){
+
+console.error(updateError);
+
+}
+
+}
+
+document.getElementById("status").innerHTML=
+"✅ Marks Updated Successfully";
+
+};
+
+window.deleteMarks = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+if(!selectedClass || !selectedExam){
+
+alert("Please Select Class and Exam");
+return;
+
+}
+
+const ok = confirm(
+`Delete all ${selectedExam} marks of Class ${selectedClass}?`
+);
+
+if(!ok) return;
+
+const {error} = await supabase
+.from("marks")
+.delete()
+.eq("class",selectedClass)
+.eq("exam",selectedExam);
+
+if(error){
+
+document.getElementById("status").innerHTML=
+error.message;
+
+}else{
+
+document.getElementById("studentBody").innerHTML="";
+document.getElementById("historyContainer").innerHTML="";
+
+document.getElementById("status").innerHTML=
+"🗑 Marks Deleted Successfully";
+
+}
+
+};
+
+window.viewHistory = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+if(!selectedClass || !selectedExam){
+
+alert("Please Select Class and Exam");
+return;
+
+}
+
+const {data,error} = await supabase
+.from("marks")
+.select("*")
+.eq("class",selectedClass)
+.eq("exam",selectedExam)
+.order("student_name");
+
+if(error){
+
+document.getElementById("status").innerHTML=
+error.message;
+
+return;
+
+}
+
+if(data.length===0){
+
+document.getElementById("historyContainer")
+.innerHTML=
+"<h3>No History Found</h3>";
+
+return;
+
+}
+
+let html = `
+
+<h3>
+📜 Marks History
+</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>Student</th>
+<th>Marks</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody>
+
+`;
+
+data.forEach(item=>{
+
+html += `
+
+<tr>
+
+<td>${item.student_name}</td>
+
+<td>${item.marks}</td>
+
+<td>
+${new Date(item.created_at)
+.toLocaleDateString()}
+</td>
+
+</tr>
+
+`;
+
+});
+
+html += `
+</tbody>
+</table>
+`;
+
+document.getElementById("historyContainer")
+.innerHTML = html;
+
+};
+
+</script>
+
+</body>
+</html>

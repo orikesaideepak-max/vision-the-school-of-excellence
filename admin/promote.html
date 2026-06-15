@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promote Students</title>
+<link rel="stylesheet" href="promote.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>🎓 Promote Students</h1>
+
+<p class="subtitle">
+Promote all students to their next class for the new academic year.
+</p>
+
+<div class="promotion-flow">
+<div>Nursery ➜ LKG</div>
+<div>LKG ➜ UKG</div>
+<div>UKG ➜ 1</div>
+<div>1 ➜ 2</div>
+<div>2 ➜ 3</div>
+<div>3 ➜ 4</div>
+<div>4 ➜ 5</div>
+<div>5 ➜ 6</div>
+<div>6 ➜ 7</div>
+<div>7 ➜ 8</div>
+<div>8 ➜ 9</div>
+<div>9 ➜ 10</div>
+</div>
+
+<button id="promoteBtn">
+🎓 Promote All Students
+</button>
+
+<div id="status"></div>
+
+<h2 class="student-title">
+📋 Current Students
+</h2>
+
+<div class="student-count" id="studentCount">
+Loading...
+</div>
+
+<table id="studentsTable">
+
+<thead>
+<tr>
+<th>Class</th>
+<th>Student Name</th>
+</tr>
+</thead>
+
+<tbody id="studentBody">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { createClient }
+from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL =
+"https://gocoupvzzsgouwdkdmzu.supabase.co";
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
+
+const supabase =
+createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+document
+.getElementById("promoteBtn")
+.addEventListener(
+"click",
+promoteStudents
+);
+
+loadStudents();
+
+async function loadStudents(){
+
+const { data,error } = await supabase
+.from("profiles")
+.select("full_name,class")
+.eq("role","student")
+.order("class")
+.order("full_name");
+
+if(error){
+
+console.error(error);
+
+document.getElementById("studentBody")
+.innerHTML =
+`
+<tr>
+<td colspan="2">
+Failed To Load Students
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+document.getElementById("studentCount")
+.innerHTML =
+`Total Students : ${data.length}`;
+
+const body =
+document.getElementById("studentBody");
+
+body.innerHTML = "";
+
+if(data.length === 0){
+
+body.innerHTML =
+`
+<tr>
+<td colspan="2">
+No Students Found
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+data.forEach(student=>{
+
+body.innerHTML += `
+<tr>
+<td>${student.class}</td>
+<td>${student.full_name}</td>
+</tr>
+`;
+
+});
+
+}
+
+async function promoteStudents(){
+
+const ok = confirm(
+"⚠️ Promote ALL students to the next class?\n\nThis should only be done once per academic year."
+);
+
+if(!ok) return;
+
+const btn =
+document.getElementById("promoteBtn");
+
+btn.disabled = true;
+btn.innerText = "Processing...";
+
+try{
+
+const { error } =
+await supabase
+.rpc("promote_all_students");
+
+if(error) throw error;
+
+document.getElementById("status")
+.innerHTML =
+`
+<div class="success">
+🎉 Students Promoted Successfully
+</div>
+`;
+
+await loadStudents();
+
+}catch(err){
+
+document.getElementById("status")
+.innerHTML =
+`
+<div class="error">
+❌ ${err.message}
+</div>
+`;
+
+}
+
+btn.disabled = false;
+
+btn.innerText =
+"🎓 Promote All Students";
+
+}
+
+</script>
+
+</body>
+</html>

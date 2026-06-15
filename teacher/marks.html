@@ -1,0 +1,384 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="marks.css">
+<title>School Marks Entry System</title>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>School Marks Entry System</h2>
+
+<div class="controls">
+
+<select id="classSelect">
+<option value="">Select Class</option>
+<option>Nursery</option>
+<option>LKG</option>
+<option>UKG</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+</select>
+
+<select id="examSelect">
+<option>FA1</option>
+<option>FA2</option>
+<option>SA1</option>
+<option>SA2</option>
+</select>
+
+<button onclick="loadStudents()">Load Students</button>
+
+</div>
+
+<div id="message"></div>
+<div id="status"></div>
+
+<table id="marksTable" style="display:none;">
+<thead>
+<tr>
+<th>Roll No</th>
+<th>Student Name</th>
+<th>Marks</th>
+</tr>
+</thead>
+
+<tbody id="studentBody"></tbody>
+</table>
+
+<div class="actions">
+
+<button id="saveBtn" onclick="saveMarks()" style="display:none;">
+💾 Save / Update Marks
+</button>
+
+<button id="historyBtn" onclick="viewHistory()" style="display:none;">
+📜 History
+</button>
+
+<button id="deleteBtn" onclick="deleteMarks()" style="display:none;">
+🗑 Delete Marks
+</button>
+
+</div>
+
+<div id="historyContainer"></div>
+
+</div>
+
+<script type="module">
+
+import { createClient }
+from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+const SUPABASE_URL =
+"https://gocoupvzzsgouwdkdmzu.supabase.co";
+
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
+
+const supabase =
+createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let loadedStudents = [];
+
+window.loadStudents = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+if(!selectedClass){
+
+alert("Please Select Class");
+return;
+
+}
+
+document.getElementById("studentBody").innerHTML="";
+document.getElementById("message").innerHTML="";
+document.getElementById("status").innerHTML="";
+document.getElementById("historyContainer").innerHTML="";
+
+const {data,error} = await supabase
+.from("profiles")
+.select("*")
+.eq("role","student")
+.eq("class",selectedClass)
+.order("full_name");
+
+if(error){
+
+document.getElementById("message").innerHTML=
+"Error Loading Students";
+
+console.error(error);
+return;
+
+}
+
+if(!data || data.length===0){
+
+document.getElementById("message").innerHTML=
+"No Students Found";
+
+return;
+
+}
+
+loadedStudents = data;
+
+document.getElementById("marksTable").style.display="table";
+document.getElementById("saveBtn").style.display="inline-block";
+document.getElementById("historyBtn").style.display="inline-block";
+document.getElementById("deleteBtn").style.display="inline-block";
+
+data.forEach((student,index)=>{
+
+document.getElementById("studentBody").innerHTML += `
+<tr>
+<td>${index+1}</td>
+<td>${student.full_name}</td>
+<td>
+<input
+type="number"
+min="0"
+max="100"
+placeholder="Marks"
+id="mark_${student.id}">
+</td>
+</tr>
+`;
+
+});
+
+await loadExistingMarks(
+selectedClass,
+selectedExam
+);
+
+};
+
+async function loadExistingMarks(className,examName){
+
+const {data,error} = await supabase
+.from("marks")
+.select("*")
+.eq("class",className)
+.eq("exam",examName);
+
+if(error){
+
+console.error(error);
+return;
+
+}
+
+data.forEach(mark=>{
+
+const input =
+document.getElementById(`mark_${mark.student_id}`);
+
+if(input){
+
+input.value = mark.marks;
+
+}
+
+});
+
+}
+
+window.saveMarks = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+const rows = [];
+
+loadedStudents.forEach(student=>{
+
+const mark =
+document.getElementById(`mark_${student.id}`).value;
+
+if(mark !== ""){
+
+rows.push({
+
+student_id: student.id,
+student_name: student.full_name,
+class: selectedClass,
+exam: selectedExam,
+marks: Number(mark)
+
+});
+
+}
+
+});
+
+if(rows.length === 0){
+
+document.getElementById("status").innerHTML =
+"Please Enter Marks";
+
+return;
+
+}
+
+const { error } = await supabase
+.from("marks")
+.upsert(rows,{
+onConflict:"student_id,class,exam"
+});
+
+if(error){
+
+console.error(error);
+
+document.getElementById("status").innerHTML =
+error.message;
+
+}else{
+
+document.getElementById("status").innerHTML =
+"Marks Saved Successfully ✅";
+
+}
+
+};
+
+window.deleteMarks = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+const confirmDelete = confirm(
+`Delete all ${selectedExam} marks for Class ${selectedClass}?`
+);
+
+if(!confirmDelete) return;
+
+const { error } = await supabase
+.from("marks")
+.delete()
+.eq("class",selectedClass)
+.eq("exam",selectedExam);
+
+if(error){
+
+console.error(error);
+
+document.getElementById("status").innerHTML =
+error.message;
+
+}else{
+
+document.querySelectorAll(
+'input[type="number"]'
+).forEach(input=>{
+
+input.value="";
+
+});
+
+document.getElementById("status").innerHTML =
+"Marks Deleted Successfully 🗑";
+
+}
+
+};
+
+window.viewHistory = async function(){
+
+const selectedClass =
+document.getElementById("classSelect").value;
+
+const selectedExam =
+document.getElementById("examSelect").value;
+
+const {data,error} = await supabase
+.from("marks")
+.select("*")
+.eq("class",selectedClass)
+.eq("exam",selectedExam)
+.order("student_name");
+
+if(error){
+
+document.getElementById("status").innerHTML =
+error.message;
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+document.getElementById("historyContainer").innerHTML =
+"<h3>No History Found</h3>";
+
+return;
+
+}
+
+let html = `
+<h3>Marks History</h3>
+
+<table>
+<thead>
+<tr>
+<th>Student Name</th>
+<th>Marks</th>
+</tr>
+</thead>
+<tbody>
+`;
+
+data.forEach(item=>{
+
+html += `
+<tr>
+<td>${item.student_name}</td>
+<td>${item.marks}</td>
+</tr>
+`;
+
+});
+
+html += `
+</tbody>
+</table>
+`;
+
+document.getElementById("historyContainer").innerHTML =
+html;
+
+};
+
+</script>
+
+</body>
+</html>
+```

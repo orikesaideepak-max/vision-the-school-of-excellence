@@ -1,0 +1,340 @@
+
+/* =========================
+   SCHOOL ERP - MARKS ENTRY
+   ========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+    padding:20px;
+}
+
+/* Container */
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    background:#ffffff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:
+    0 20px 40px rgba(0,0,0,.15);
+}
+
+/* Heading */
+
+h2{
+    text-align:center;
+    color:#0f172a;
+    font-size:32px;
+    margin-bottom:25px;
+    font-weight:700;
+}
+
+h2::after{
+    content:"";
+    display:block;
+    width:100px;
+    height:4px;
+    margin:10px auto;
+    border-radius:20px;
+    background:#2563eb;
+}
+
+/* Controls */
+
+.controls{
+    display:flex;
+    gap:15px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+/* Inputs */
+
+select,
+input[type="number"]{
+    padding:12px 15px;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    font-size:15px;
+    background:white;
+    transition:.3s;
+}
+
+select:focus,
+input[type="number"]:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* Buttons */
+
+button{
+    border:none;
+    cursor:pointer;
+    padding:12px 20px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    transition:.3s;
+}
+
+/* Load */
+
+.controls button{
+    background:#2563eb;
+    color:white;
+}
+
+.controls button:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+/* Action Buttons */
+
+.actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:25px;
+}
+
+#saveBtn{
+    background:#16a34a;
+    color:white;
+}
+
+#saveBtn:hover{
+    background:#15803d;
+}
+
+#updateBtn{
+    background:#f59e0b;
+    color:white;
+}
+
+#updateBtn:hover{
+    background:#d97706;
+}
+
+#historyBtn{
+    background:#2563eb;
+    color:white;
+}
+
+#historyBtn:hover{
+    background:#1d4ed8;
+}
+
+#deleteBtn{
+    background:#dc2626;
+    color:white;
+}
+
+#deleteBtn:hover{
+    background:#b91c1c;
+}
+
+/* Table */
+
+#marksTable,
+#historyContainer table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:25px;
+    overflow:hidden;
+    border-radius:16px;
+}
+
+thead{
+    background:linear-gradient(135deg,#1d4ed8,#2563eb);
+    color:white;
+}
+
+th{
+    padding:15px;
+    text-align:center;
+    font-weight:600;
+}
+
+td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #e5e7eb;
+}
+
+tbody tr:nth-child(even){
+    background:#f8fafc;
+}
+
+tbody tr:hover{
+    background:#dbeafe;
+}
+
+/* Status Messages */
+
+#status{
+    margin-top:20px;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+    padding:14px;
+    border-radius:12px;
+    font-weight:600;
+    text-align:center;
+}
+
+.error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:14px;
+    border-radius:12px;
+    font-weight:600;
+    text-align:center;
+}
+
+.no-data{
+    background:#fef2f2;
+    color:#dc2626;
+    padding:14px;
+    border-radius:12px;
+    font-weight:600;
+    text-align:center;
+}
+
+/* History Section */
+
+#historyContainer{
+    margin-top:30px;
+}
+
+#historyContainer h3{
+    margin-bottom:15px;
+    color:#0f172a;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    body{
+        padding:10px;
+    }
+
+    .container{
+        padding:18px;
+        border-radius:18px;
+    }
+
+    h2{
+        font-size:24px;
+    }
+
+    .controls{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .controls select,
+    .controls button{
+        width:100%;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+    .actions button{
+        width:100%;
+    }
+
+    /* Mobile Card Table */
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr{
+        display:block;
+    }
+
+    thead{
+        display:none;
+    }
+
+    tbody tr{
+        background:white;
+        margin-bottom:15px;
+        border-radius:16px;
+        padding:10px;
+        box-shadow:
+        0 4px 12px rgba(0,0,0,.08);
+    }
+
+    td{
+        border:none;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:10px;
+    }
+
+    td:nth-child(1)::before{
+        content:"Roll No";
+        font-weight:600;
+        color:#2563eb;
+    }
+
+    td:nth-child(2)::before{
+        content:"Student";
+        font-weight:600;
+        color:#2563eb;
+    }
+
+    td:nth-child(3)::before{
+        content:"Marks";
+        font-weight:600;
+        color:#2563eb;
+    }
+
+    input[type="number"]{
+        width:100px;
+    }
+}
+
+/* Smooth Appearance */
+
+.container{
+    animation:fadeIn .5s ease;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+

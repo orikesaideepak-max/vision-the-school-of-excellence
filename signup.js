@@ -1,49 +1,54 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
 const SUPABASE_URL = "https://gocoupvzzsgouwdkdmzu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"; // use anon key only
 
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
 
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-async function signup() {
-  const full_name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const errorBox = document.getElementById("error");
+window.signup = async function () {
 
-  errorBox.innerText = "";
+    const full_name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const errorBox = document.getElementById("error");
 
-  if (!full_name || !email || !password) {
-    errorBox.innerText = "All fields are required";
-    return;
-  }
+    errorBox.innerText = "";
 
-  // 1️⃣ Create Auth user
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  });
+    if (!full_name || !email || !password) {
+        errorBox.innerText = "All fields are required";
+        return;
+    }
 
-  if (error) {
-    errorBox.innerText = error.message;
-    return;
-  }
+    try {
 
-  const user = data.user;
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    full_name: full_name,
+                    role: "student"
+                }
+            }
+        });
 
-  // 2️⃣ Insert into profiles table
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .insert({
-      user_id: user.id,
-      full_name: full_name,
-      email: email,
-      role: "student" // 🔒 default role
-    });
+        console.log("Signup Data:", data);
+        console.log("Signup Error:", error);
 
-  if (profileError) {
-    errorBox.innerText = "Profile creation failed";
-    return;
-  }
+        if (error) {
+            errorBox.innerText = error.message;
+            return;
+        }
 
-  alert("Signup successful! Please login.");
-  window.location.href = "login.html";
-}
+        alert("Signup successful! Please login.");
+        window.location.href = "login.html";
+
+    } catch (err) {
+        console.error("Unexpected Error:", err);
+        errorBox.innerText = err.message;
+    }
+};
