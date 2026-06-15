@@ -1,4 +1,4 @@
-/* ===== GLOBAL ===== */
+/* ===== GLOBAL RESET ===== */
 * {
   margin: 0;
   padding: 0;
@@ -7,12 +7,12 @@
 }
 
 body {
-  background: #f9fafc;
+  background: #f4f6fb;
   color: #333;
   overflow-x: hidden;
 }
 
-/* ===== LAYOUT ===== */
+/* ===== DASHBOARD LAYOUT ===== */
 .dashboard {
   display: flex;
   min-height: 100vh;
@@ -22,33 +22,26 @@ body {
 .sidebar {
   width: 260px;
   background: #ffffff;
-  padding: 20px;
+  padding: 18px;
   border-right: 1px solid #eee;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  flex-shrink: 0;
 }
 
 .logo-box {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .logo-box img {
-  width: 70px;
+  width: 65px;
   border-radius: 50%;
   border: 3px solid #d4af37;
-  transition: 0.4s;
-}
-
-.logo-box img:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
 }
 
 .logo-box h2 {
   color: #d4af37;
-  margin-top: 10px;
-  font-size: 20px;
+  margin-top: 8px;
+  font-size: 18px;
 }
 
 .sidebar ul {
@@ -57,23 +50,23 @@ body {
 
 .sidebar li {
   padding: 12px;
-  border-radius: 10px;
   margin-bottom: 8px;
+  border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .sidebar li:hover {
   background: #f1f5f9;
-  transform: translateX(5px);
+  transform: translateX(4px);
 }
 
-/* ===== MAIN ===== */
+/* ===== MAIN AREA ===== */
 .main {
   flex: 1;
-  padding: 25px;
-  overflow-y: auto;
+  padding: 20px;
+  overflow-x: hidden;
 }
 
 /* ===== TOPBAR ===== */
@@ -81,36 +74,37 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .topbar h1 {
   color: #d4af37;
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 22px;
 }
 
-/* ===== BUTTON ===== */
+/* ===== BUTTONS ===== */
 button {
-  padding: 10px 18px;
+  padding: 10px 14px;
   border: none;
   border-radius: 8px;
   background: #d4af37;
   color: #fff;
   cursor: pointer;
   transition: 0.3s;
+  font-size: 14px;
 }
 
 button:hover {
-  transform: scale(1.05);
   background: #b8962e;
+  transform: scale(1.05);
 }
 
 /* ===== SECTION ===== */
 .section {
   display: none;
-  animation: fade 0.4s ease;
+  animation: fade 0.3s ease;
 }
 
 .section.active {
@@ -118,14 +112,8 @@ button:hover {
 }
 
 @keyframes fade {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
 }
 
 /* ===== CLASS BUTTONS ===== */
@@ -133,15 +121,14 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 #classesContainer button {
+  flex: 1 1 120px;
   background: #fff;
   border: 1px solid #ddd;
   color: #333;
-  flex: 1 0 30%;
-  min-width: 80px;
 }
 
 #classesContainer button:hover {
@@ -152,17 +139,17 @@ button:hover {
 /* ===== STUDENTS ===== */
 .students {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
 .student-list {
   background: #fff;
-  padding: 15px;
+  padding: 12px;
   border-radius: 12px;
-  width: 48%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  min-width: 200px;
+  flex: 1;
+  min-width: 260px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
 .student-item {
@@ -170,22 +157,13 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px dashed #ddd;
+  border-bottom: 1px dashed #eee;
 }
 
 .student-name {
   cursor: pointer;
   color: #d4af37;
   font-weight: 500;
-}
-
-.student-name:hover {
-  text-decoration: underline;
-}
-
-.student-percentage {
-  font-size: 12px;
-  color: #777;
 }
 
 /* ===== ATTENDANCE BUTTONS ===== */
@@ -196,33 +174,24 @@ button:hover {
   height: 30px;
   border-radius: 50%;
   border: none;
+  margin-left: 4px;
   color: white;
-  margin-left: 5px;
   cursor: pointer;
 }
 
-.present {
-  background: #22c55e;
-}
-
-.absent {
-  background: #ef4444;
-}
-
-.late {
-  background: #f59e0b;
-}
+.present { background: #22c55e; }
+.absent { background: #ef4444; }
+.late { background: #f59e0b; }
 
 .activeBtn {
-  outline: 2px solid black;
+  outline: 2px solid #111;
 }
 
 /* ===== TABLE ===== */
 table {
   width: 100%;
-  background: white;
+  background: #fff;
   border-collapse: collapse;
-  margin-top: 10px;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -232,8 +201,7 @@ th {
   color: white;
 }
 
-th,
-td {
+th, td {
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #eee;
@@ -247,24 +215,20 @@ td {
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
-  padding: 25px;
+  padding: 20px;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
   max-height: 80vh;
+  overflow-y: auto;
+  z-index: 999;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .sidebar {
     width: 200px;
-  }
-  #classesContainer button {
-    flex: 1 0 40%;
-    font-size: 14px;
   }
 }
 
@@ -274,56 +238,38 @@ td {
   }
 
   .sidebar {
+    width: 100%;
     display: flex;
     overflow-x: auto;
-    width: 100%;
-    padding: 10px 5px;
-    gap: 10px;
   }
 
   .sidebar ul {
     display: flex;
     gap: 10px;
-    flex-wrap: nowrap;
   }
 
   .sidebar li {
     white-space: nowrap;
     flex: 0 0 auto;
-    padding: 8px 12px;
-    font-size: 14px;
   }
 
-  .main {
-    padding: 15px;
-  }
-
-  .student-list {
-    width: 100%;
+  .students {
+    flex-direction: column;
   }
 
   #classesContainer button {
-    flex: 1 0 45%;
-  }
-
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
+    flex: 1 1 45%;
   }
 }
 
 @media (max-width: 480px) {
-  #classesContainer button {
-    flex: 1 0 100%;
-  }
-
   .topbar h1 {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   button {
-    padding: 8px 12px;
-    font-size: 14px;
+    font-size: 13px;
+    padding: 8px 10px;
   }
 
   .student-item {
@@ -332,10 +278,7 @@ td {
     gap: 5px;
   }
 
-  .present,
-  .absent,
-  .late {
-    width: 25px;
-    height: 25px;
+  #classesContainer button {
+    flex: 1 1 100%;
   }
 }
