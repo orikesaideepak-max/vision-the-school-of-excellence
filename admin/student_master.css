@@ -1,0 +1,916 @@
+/* =====================================================
+   Vision School ERP - Student Master
+   Premium Glass UI
+   Part 1/3
+===================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+:root{
+--primary:#2563eb;
+--primary-dark:#1d4ed8;
+--secondary:#0f172a;
+--card:#ffffff;
+--success:#16a34a;
+--warning:#f59e0b;
+--danger:#ef4444;
+--purple:#7c3aed;
+--text:#1e293b;
+--text-light:#64748b;
+--border:#e2e8f0;
+--bg:#eef4fb;
+--shadow:0 10px 35px rgba(0,0,0,.08);
+--radius:18px;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Poppins",sans-serif;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+background:
+linear-gradient(180deg,#eff6ff,#f8fbff);
+color:var(--text);
+min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+background:
+linear-gradient(135deg,#1d4ed8,#2563eb,#3b82f6);
+padding:30px;
+text-align:center;
+color:#fff;
+box-shadow:0 20px 50px rgba(37,99,235,.25);
+position:sticky;
+top:0;
+z-index:50;
+}
+
+.header h1{
+font-size:34px;
+font-weight:700;
+letter-spacing:.5px;
+margin-bottom:6px;
+}
+
+.header p{
+opacity:.95;
+font-size:15px;
+}
+
+.top-actions{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.top-actions button{
+border:none;
+padding:12px 22px;
+border-radius:12px;
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(10px);
+color:#fff;
+font-weight:600;
+cursor:pointer;
+transition:.35s;
+box-shadow:0 8px 25px rgba(0,0,0,.15);
+}
+
+.top-actions button:hover{
+transform:translateY(-4px);
+background:#fff;
+color:var(--primary);
+}
+
+/* ================= STATS ================= */
+
+.stats{
+padding:25px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.stats div{
+background:#fff;
+border-radius:18px;
+padding:24px;
+box-shadow:var(--shadow);
+border:1px solid #edf2f7;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+transition:.35s;
+position:relative;
+overflow:hidden;
+}
+
+.stats div::before{
+content:"";
+position:absolute;
+left:0;
+top:0;
+width:6px;
+height:100%;
+background:linear-gradient(var(--primary),#60a5fa);
+}
+
+.stats div:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 45px rgba(37,99,235,.18);
+}
+
+.stats span{
+display:block;
+margin-top:12px;
+font-size:30px;
+font-weight:700;
+color:var(--primary);
+}
+
+/* ================= FILTERS ================= */
+
+.filters{
+background:#fff;
+margin:0 25px 25px;
+padding:22px;
+border-radius:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+box-shadow:var(--shadow);
+}
+
+.filters input,
+.filters select{
+height:48px;
+border:1px solid var(--border);
+border-radius:12px;
+padding:0 16px;
+font-size:14px;
+background:#fff;
+transition:.3s;
+outline:none;
+}
+
+.filters input::placeholder{
+color:#94a3b8;
+}
+
+.filters input:focus,
+.filters select:focus{
+border-color:var(--primary);
+box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+.filters button{
+height:48px;
+border:none;
+border-radius:12px;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.filters button:first-of-type{
+background:var(--primary);
+color:#fff;
+}
+
+.filters button:first-of-type:hover{
+background:var(--primary-dark);
+transform:translateY(-3px);
+}
+
+.filters button:last-of-type{
+background:#e2e8f0;
+color:#334155;
+}
+
+.filters button:last-of-type:hover{
+background:#cbd5e1;
+}
+
+/* ================= TABLE ================= */
+
+.table-container{
+margin:0 25px 25px;
+background:#fff;
+border-radius:20px;
+overflow:auto;
+box-shadow:var(--shadow);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:1900px;
+}
+
+thead{
+position:sticky;
+top:0;
+z-index:5;
+}
+
+thead tr{
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+}
+
+thead th{
+padding:16px;
+color:#fff;
+font-size:13px;
+font-weight:600;
+letter-spacing:.3px;
+white-space:nowrap;
+}
+
+tbody td{
+padding:14px;
+font-size:13px;
+text-align:center;
+border-bottom:1px solid #edf2f7;
+white-space:nowrap;
+}
+
+tbody tr:nth-child(even){
+background:#f8fbff;
+}
+
+tbody tr:hover{
+background:#e8f1ff;
+}
+/* =====================================================
+   Vision School ERP - Student Master
+   Premium Glass UI
+   Part 2/3
+===================================================== */
+
+/* ================= TABLE PHOTO ================= */
+
+td img{
+width:48px;
+height:48px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #dbeafe;
+background:#f1f5f9;
+transition:.3s;
+}
+
+td img:hover{
+transform:scale(1.08);
+border-color:var(--primary);
+}
+
+/* Empty photo placeholder */
+
+td img[src=""],
+td img:not([src]),
+#view_photo[src=""],
+#view_photo:not([src]),
+#edit_photo_preview[src=""],
+#edit_photo_preview:not([src]){
+background:#e2e8f0;
+border:2px dashed #94a3b8;
+object-fit:contain;
+padding:12px;
+}
+
+/* ================= ACTION BUTTONS ================= */
+
+.action{
+border:none;
+padding:8px 16px;
+border-radius:10px;
+cursor:pointer;
+font-size:13px;
+font-weight:600;
+transition:.3s;
+margin:2px;
+}
+
+.view{
+background:#dbeafe;
+color:#1d4ed8;
+}
+
+.view:hover{
+background:#2563eb;
+color:#fff;
+transform:translateY(-2px);
+}
+
+.edit{
+background:#fef3c7;
+color:#b45309;
+}
+
+.edit:hover{
+background:#f59e0b;
+color:#fff;
+transform:translateY(-2px);
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(15,23,42,.55);
+backdrop-filter:blur(8px);
+justify-content:center;
+align-items:center;
+z-index:999;
+padding:20px;
+animation:fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+}
+to{
+opacity:1;
+}
+}
+
+.modal-content{
+background:#fff;
+border-radius:22px;
+width:520px;
+max-width:100%;
+max-height:90vh;
+overflow-y:auto;
+padding:30px;
+box-shadow:0 25px 60px rgba(0,0,0,.18);
+animation:popup .25s ease;
+}
+
+@keyframes popup{
+from{
+transform:translateY(30px) scale(.96);
+opacity:0;
+}
+to{
+transform:translateY(0) scale(1);
+opacity:1;
+}
+}
+
+.modal-content h2{
+text-align:center;
+color:var(--primary);
+margin-bottom:22px;
+font-size:24px;
+}
+
+/* ================= EDIT FORM ================= */
+
+.modal-content input{
+width:100%;
+height:46px;
+border:1px solid var(--border);
+border-radius:12px;
+padding:0 14px;
+margin-bottom:14px;
+font-size:14px;
+transition:.25s;
+background:#fff;
+}
+
+.modal-content input:focus{
+outline:none;
+border-color:var(--primary);
+box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+/* file input */
+
+#edit_photo_file{
+padding:10px;
+height:auto;
+cursor:pointer;
+}
+
+/* preview */
+
+#edit_photo_preview{
+display:block;
+margin:auto;
+width:120px;
+height:120px;
+border-radius:16px;
+object-fit:cover;
+background:#f8fafc;
+border:2px dashed #cbd5e1;
+margin-bottom:20px;
+}
+
+/* Empty preview */
+
+#edit_photo_preview[src=""],
+#edit_photo_preview:not([src]){
+display:flex;
+align-items:center;
+justify-content:center;
+background:#f8fafc;
+}
+
+/* ================= BUTTONS ================= */
+
+.modal-actions{
+display:flex;
+gap:15px;
+margin-top:10px;
+}
+
+.modal-actions button{
+flex:1;
+height:48px;
+border:none;
+border-radius:12px;
+font-size:15px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.modal-actions button:first-child{
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:#fff;
+}
+
+.modal-actions button:first-child:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 25px rgba(37,99,235,.28);
+}
+
+.modal-actions button:last-child{
+background:#ef4444;
+color:#fff;
+}
+
+.modal-actions button:last-child:hover{
+background:#dc2626;
+transform:translateY(-3px);
+}
+
+/* ================= VIEW MODAL ================= */
+
+.view-box{
+width:900px;
+max-width:100%;
+}
+
+.view-grid{
+display:grid;
+grid-template-columns:220px 1fr;
+gap:30px;
+align-items:flex-start;
+}
+
+.view-photo{
+width:180px;
+height:180px;
+border-radius:18px;
+object-fit:cover;
+background:#f1f5f9;
+border:3px solid #dbeafe;
+margin:auto;
+display:block;
+}
+
+/* Empty view photo */
+
+.view-photo[src=""],
+.view-photo:not([src]){
+background:#e2e8f0;
+border:2px dashed #94a3b8;
+}
+
+.view-info{
+display:grid;
+grid-template-columns:repeat(2,minmax(220px,1fr));
+gap:14px;
+}
+
+.view-info p{
+background:#f8fbff;
+padding:14px;
+border-radius:12px;
+border:1px solid #e2e8f0;
+font-size:14px;
+color:#334155;
+}
+
+.view-info b{
+display:block;
+font-size:12px;
+margin-bottom:4px;
+color:var(--primary);
+font-weight:600;
+}
+/* =====================================================
+   Vision School ERP - Student Master
+   Premium Glass UI
+   Part 3/3
+===================================================== */
+
+/* ================= STATUS BADGES ================= */
+
+.status-active,
+.status-inactive{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:6px 14px;
+border-radius:999px;
+font-size:12px;
+font-weight:600;
+letter-spacing:.3px;
+}
+
+.status-active{
+background:#dcfce7;
+color:#15803d;
+border:1px solid #86efac;
+}
+
+.status-inactive{
+background:#fee2e2;
+color:#dc2626;
+border:1px solid #fca5a5;
+}
+
+/* ================= TABLE EFFECTS ================= */
+
+tbody tr{
+transition:all .25s ease;
+}
+
+tbody tr:hover{
+transform:scale(1.003);
+box-shadow:inset 4px 0 0 var(--primary);
+}
+
+thead th:first-child{
+border-top-left-radius:18px;
+}
+
+thead th:last-child{
+border-top-right-radius:18px;
+}
+
+/* ================= BUTTON EFFECTS ================= */
+
+button{
+font-family:inherit;
+}
+
+button:active{
+transform:scale(.97);
+}
+
+/* ================= INPUT EFFECTS ================= */
+
+input,
+select{
+font-family:inherit;
+}
+
+input:disabled,
+select:disabled{
+background:#f1f5f9;
+cursor:not-allowed;
+opacity:.7;
+}
+
+/* ================= FILE INPUT ================= */
+
+input[type="file"]{
+background:#fff;
+}
+
+input[type="file"]::-webkit-file-upload-button{
+background:var(--primary);
+color:#fff;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+margin-right:12px;
+font-weight:500;
+transition:.3s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover{
+background:var(--primary-dark);
+}
+
+/* ================= EMPTY PHOTO PLACEHOLDER ================= */
+
+/* Shows only a light background until a real image URL exists */
+
+td img[src=""],
+#view_photo[src=""],
+#edit_photo_preview[src=""]{
+background:#f1f5f9;
+background-image:none;
+}
+
+td img:not([src]),
+#view_photo:not([src]),
+#edit_photo_preview:not([src]){
+background:#f1f5f9;
+}
+
+/* ================= MODAL SCROLLBAR ================= */
+
+.modal-content::-webkit-scrollbar{
+width:8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb{
+background:#94a3b8;
+border-radius:20px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover{
+background:var(--primary);
+}
+
+/* ================= PAGE SCROLLBAR ================= */
+
+::-webkit-scrollbar{
+width:10px;
+height:10px;
+}
+
+::-webkit-scrollbar-track{
+background:#edf2f7;
+}
+
+::-webkit-scrollbar-thumb{
+background:linear-gradient(#60a5fa,#2563eb);
+border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+background:linear-gradient(#2563eb,#1d4ed8);
+}
+
+/* Firefox */
+
+*{
+scrollbar-width:thin;
+scrollbar-color:#3b82f6 #edf2f7;
+}
+
+/* ================= CARD ANIMATION ================= */
+
+.stats div,
+.filters,
+.table-container{
+animation:fadeUp .5s ease;
+}
+
+@keyframes fadeUp{
+
+0%{
+opacity:0;
+transform:translateY(18px);
+}
+
+100%{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* ================= TABLE FADE ================= */
+
+tbody tr{
+animation:rowFade .35s ease;
+}
+
+@keyframes rowFade{
+
+from{
+opacity:0;
+transform:translateY(8px);
+}
+
+to{
+opacity:1;
+transform:none;
+}
+
+}
+
+/* ================= SELECTION ================= */
+
+::selection{
+background:#2563eb;
+color:#fff;
+}
+
+/* ================= LINKS ================= */
+
+a{
+color:var(--primary);
+text-decoration:none;
+}
+
+a:hover{
+text-decoration:underline;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1200px){
+
+.view-grid{
+grid-template-columns:1fr;
+text-align:center;
+}
+
+.view-photo{
+margin:auto;
+}
+
+.view-info{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:992px){
+
+.header h1{
+font-size:28px;
+}
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.filters{
+grid-template-columns:repeat(2,1fr);
+}
+
+.modal-content{
+width:95%;
+}
+
+}
+
+@media(max-width:768px){
+
+.header{
+padding:20px;
+}
+
+.header h1{
+font-size:24px;
+}
+
+.header p{
+font-size:14px;
+}
+
+.top-actions{
+flex-direction:column;
+align-items:center;
+}
+
+.top-actions button{
+width:220px;
+}
+
+.stats{
+grid-template-columns:1fr;
+padding:18px;
+}
+
+.filters{
+margin:18px;
+padding:18px;
+grid-template-columns:1fr;
+}
+
+.table-container{
+margin:18px;
+}
+
+thead th,
+tbody td{
+font-size:12px;
+padding:10px;
+}
+
+.modal-content{
+padding:20px;
+}
+
+.modal-actions{
+flex-direction:column;
+}
+
+.modal-actions button{
+width:100%;
+}
+
+.view-photo{
+width:140px;
+height:140px;
+}
+
+}
+
+@media(max-width:480px){
+
+.header h1{
+font-size:21px;
+}
+
+.header p{
+font-size:13px;
+}
+
+.stats span{
+font-size:24px;
+}
+
+.filters input,
+.filters select,
+.filters button{
+height:44px;
+font-size:13px;
+}
+
+.modal-content h2{
+font-size:20px;
+}
+
+}
+
+/* ================= UTILITIES ================= */
+
+.text-center{
+text-align:center;
+}
+
+.text-right{
+text-align:right;
+}
+
+.mt-10{
+margin-top:10px;
+}
+
+.mt-20{
+margin-top:20px;
+}
+
+.mb-10{
+margin-bottom:10px;
+}
+
+.mb-20{
+margin-bottom:20px;
+}
+
+.hidden{
+display:none !important;
+}
+
+.shadow{
+box-shadow:var(--shadow);
+}
+
+.rounded{
+border-radius:var(--radius);
+}
+
+/* ================= END ================= */

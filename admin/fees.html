@@ -6,1260 +6,365 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Vision School – Fee Management</title>
+<title>Vision School ERP - Fee Management</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fee_management.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:#eef2f7;
-    color:#222;
-    overflow-x:hidden;
-}
-
-/* =========================================================
-HEADER
-========================================================= */
-
-header{
-
-    width:100%;
-
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-
-    color:white;
-
-    padding:20px;
-
-    text-align:center;
-
-    font-size:32px;
-
-    font-weight:700;
-
-    letter-spacing:1px;
-
-    box-shadow:0 4px 15px rgba(0,0,0,0.2);
-
-    position:sticky;
-
-    top:0;
-
-    z-index:1000;
-}
-
-.container{
-    width:100%;
-    padding:20px;
-}
-
-/* =========================================================
-SEARCH
-========================================================= */
-
-.search-wrapper{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:15px;
-
-    margin-bottom:25px;
-
-    justify-content:center;
-}
-
-.search-bar{
-
-    padding:14px 16px;
-
-    width:280px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:white;
-
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
-
-    font-size:14px;
-
-    outline:none;
-
-    transition:0.3s;
-}
-
-.search-bar:focus{
-
-    transform:translateY(-2px);
-
-    border:2px solid #2563eb;
-}
-
-/* =========================================================
-TABLE
-========================================================= */
-
-.table-wrapper{
-
-    width:100%;
-
-    overflow-x:auto;
-
-    background:white;
-
-    border-radius:22px;
-
-    box-shadow:0 4px 20px rgba(0,0,0,0.08);
-
-    padding:10px;
-}
-
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    min-width:1200px;
-}
-
-thead{
-
-    background:linear-gradient(135deg,#1e3a8a,#2563eb);
-
-    color:white;
-}
-
-th{
-
-    padding:16px;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    text-align:center;
-
-    white-space:nowrap;
-}
-
-td{
-
-    padding:14px;
-
-    border-bottom:1px solid #e5e7eb;
-
-    text-align:center;
-
-    font-size:14px;
-
-    white-space:nowrap;
-}
-
-tr{
-
-    transition:0.3s;
-}
-
-tr:hover{
-
-    background:#f8fafc;
-
-    transform:scale(1.002);
-}
-
-/* =========================================================
-INPUTS
-========================================================= */
-
-td input{
-
-    width:90px;
-
-    padding:8px;
-
-    border:1px solid #cbd5e1;
-
-    border-radius:8px;
-
-    outline:none;
-
-    text-align:center;
-
-    transition:0.3s;
-}
-
-td input:focus{
-
-    border:2px solid #2563eb;
-
-    transform:scale(1.03);
-}
-
-/* =========================================================
-BUTTONS
-========================================================= */
-
-button{
-
-    border:none;
-
-    padding:9px 14px;
-
-    border-radius:10px;
-
-    color:white;
-
-    font-weight:500;
-
-    cursor:pointer;
-
-    transition:0.3s;
-
-    margin:3px;
-
-    font-size:13px;
-}
-
-button:hover{
-
-    transform:translateY(-2px);
-
-    opacity:0.92;
-}
-
-.save-btn{
-    background:#2563eb;
-}
-
-.pay-btn{
-    background:#16a34a;
-}
-
-.history-btn{
-    background:#7c3aed;
-}
-
-.wa-btn{
-    background:#22c55e;
-}
-
-/* =========================================================
-AMOUNTS
-========================================================= */
-
-.total-amount{
-    color:#2563eb;
-    font-weight:700;
-    font-size:15px;
-}
-
-.paid-amount{
-    color:#16a34a;
-    font-weight:700;
-    font-size:15px;
-}
-
-.due-amount{
-    color:#dc2626;
-    font-weight:700;
-    font-size:15px;
-}
-
-/* =========================================================
-CHARTS
-========================================================= */
-
-.chart-section{
-    margin-top:50px;
-}
-
-.chart-title{
-
-    text-align:center;
-
-    font-size:34px;
-
-    margin-bottom:35px;
-
-    color:#0f172a;
-
-    font-weight:700;
-}
-
-#chartsContainer{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(360px,1fr));
-
-    gap:30px;
-}
-
-.chart-card{
-
-    background:white;
-
-    border-radius:24px;
-
-    padding:25px;
-
-    box-shadow:0 8px 25px rgba(0,0,0,0.08);
-
-    transition:0.3s;
-}
-
-.chart-card:hover{
-
-    transform:translateY(-5px);
-}
-
-.chart-card h2{
-
-    text-align:center;
-
-    margin-bottom:20px;
-
-    color:#0f172a;
-
-    font-size:28px;
-}
-
-/* =========================================================
-SUMMARY
-========================================================= */
-
-.fee-summary{
-
-    display:grid;
-
-    gap:12px;
-
-    margin-bottom:20px;
-}
-
-.summary-box{
-
-    padding:16px;
-
-    border-radius:14px;
-
-    color:white;
-
-    font-weight:600;
-
-    text-align:center;
-
-    font-size:15px;
-
-    box-shadow:0 3px 8px rgba(0,0,0,0.08);
-}
-
-.total-box{
-    background:#2563eb;
-}
-
-.paid-box{
-    background:#16a34a;
-}
-
-.due-box{
-    background:#dc2626;
-}
-
-/* =========================================================
-STUDENT LIST
-========================================================= */
-
-.student-list{
-
-    margin-top:25px;
-
-    background:#f8fafc;
-
-    padding:18px;
-
-    border-radius:15px;
-}
-
-.student-list h3{
-
-    margin-bottom:15px;
-
-    text-align:center;
-
-    color:#0f172a;
-}
-
-.student-name{
-
-    background:white;
-
-    padding:10px;
-
-    border-radius:10px;
-
-    margin-bottom:8px;
-
-    border-left:5px solid #2563eb;
-
-    box-shadow:0 2px 6px rgba(0,0,0,0.05);
-
-    font-size:14px;
-}
-
-/* =========================================================
-MOBILE VIEW
-========================================================= */
-
-@media(max-width:768px){
-
-    header{
-
-        font-size:22px;
-
-        padding:16px;
-    }
-
-    .container{
-        padding:12px;
-    }
-
-    .search-wrapper{
-
-        flex-direction:column;
-
-        align-items:center;
-    }
-
-    .search-bar{
-
-        width:100%;
-    }
-
-    .chart-title{
-
-        font-size:24px;
-    }
-
-    #chartsContainer{
-
-        grid-template-columns:1fr;
-    }
-
-    .chart-card{
-
-        padding:18px;
-    }
-
-    .chart-card h2{
-
-        font-size:22px;
-    }
-
-    table{
-
-        min-width:1000px;
-    }
-
-    th,td{
-
-        font-size:12px;
-
-        padding:10px;
-    }
-
-    td input{
-
-        width:75px;
-
-        padding:6px;
-    }
-
-    button{
-
-        padding:7px 10px;
-
-        font-size:11px;
-    }
-}
-
-/* =========================================================
-SMALL MOBILE
-========================================================= */
-
-@media(max-width:480px){
-
-    header{
-
-        font-size:19px;
-    }
-
-    .chart-title{
-
-        font-size:20px;
-    }
-
-    .summary-box{
-
-        font-size:13px;
-    }
-
-    .student-name{
-
-        font-size:13px;
-    }
-}
-
-</style>
-
-<script type="module">
-
-import { createClient }
-from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-// =====================================================
-// SUPABASE
-// =====================================================
-
-const supabase = createClient(
-    "https://gocoupvzzsgouwdkdmzu.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
-);
-
-// =====================================================
-// VARIABLES
-// =====================================================
-
-let students = [];
-let fees = [];
-let payments = [];
-let filteredStudents = [];
-
-let nameFilter = "";
-let classFilter = "";
-
-const classOrder = [
-
-    "nursery",
-    "lkg",
-    "ukg",
-
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-
-    "1st",
-    "2nd",
-    "3rd",
-    "4th",
-    "5th",
-    "6th",
-    "7th",
-    "8th",
-    "9th",
-    "10th"
-];
-
-// =====================================================
-// LOAD DATA
-// =====================================================
-
-async function loadData(){
-
-    const { data:sData } = await supabase
-    .from("profiles")
-    .select("id,full_name,mobile,class")
-    .eq("role","student");
-
-    const { data:fData } = await supabase
-    .from("fees")
-    .select("*");
-
-    const { data:pData } = await supabase
-    .from("fee_payments")
-    .select("*");
-
-    students = sData || [];
-    fees = fData || [];
-    payments = pData || [];
-
-    filteredStudents = [...students];
-
-    applyFilters();
-}
-
-// =====================================================
-// SEARCH
-// =====================================================
-
-window.searchStudentsByName = function(){
-
-    nameFilter =
-    document.getElementById("searchName")
-    .value
-    .toLowerCase();
-
-    applyFilters();
-}
-
-window.searchStudentsByClass = function(){
-
-    classFilter =
-    document.getElementById("searchClass")
-    .value
-    .toLowerCase();
-
-    applyFilters();
-}
-
-// =====================================================
-// APPLY FILTERS
-// =====================================================
-
-function applyFilters(){
-
-    filteredStudents = students.filter(s => {
-
-        const matchName =
-        s.full_name.toLowerCase().includes(nameFilter)
-        ||
-        (s.mobile && s.mobile.includes(nameFilter));
-
-        const matchClass =
-        !classFilter
-        ||
-        (
-            s.class &&
-            s.class.toString().toLowerCase()
-            .includes(classFilter)
-        );
-
-        return matchName && matchClass;
-    });
-
-    renderClassCharts();
-
-    renderTable();
-}
-
-// =====================================================
-// TABLE
-// =====================================================
-
-function renderTable(){
-
-    const table =
-    document.getElementById("students");
-
-    table.innerHTML = "";
-
-    let sortedStudents = [...filteredStudents];
-
-    sortedStudents.sort((a,b)=>{
-
-        let aIndex =
-        classOrder.indexOf(
-            a.class?.toString().toLowerCase()
-        );
-
-        let bIndex =
-        classOrder.indexOf(
-            b.class?.toString().toLowerCase()
-        );
-
-        return aIndex - bIndex;
-    });
-
-    sortedStudents.forEach(s => {
-
-        let feeRow =
-        fees.find(f => f.student_id === s.id);
-
-        let total = feeRow?.total_fee || 0;
-        let paid = feeRow?.paid_fee || 0;
-        let due = Math.max(0, feeRow?.due_fee || 0);
-
-        table.innerHTML += `
-
-        <tr>
-
-            <td>${s.full_name}</td>
-
-            <td>${s.mobile || "-"}</td>
-
-            <td>${s.class || "-"}</td>
-
-            <td class="total-amount">
-                ₹${total}
-            </td>
-
-            <td>
-
-                <input
-                type="number"
-                id="total_${s.id}"
-                value="${total}">
-
-                <button
-                class="save-btn"
-                onclick="updateTotal('${s.id}')">
-
-                Save
-
-                </button>
-
-            </td>
-
-            <td class="paid-amount">
-                ₹${paid}
-            </td>
-
-            <td class="due-amount">
-                ₹${due}
-            </td>
-
-            <td>
-
-                <input
-                type="text"
-                id="receipt_${s.id}"
-                placeholder="Receipt">
-
-            </td>
-
-            <td>
-
-                <input
-                type="number"
-                id="pay_${s.id}"
-                placeholder="Pay">
-
-                <button
-                class="pay-btn"
-                onclick="payFee('${s.id}','${s.full_name}')">
-
-                Pay
-
-                </button>
-
-            </td>
-
-            <td>
-
-                <button
-                class="history-btn"
-                onclick="viewHistory('${s.id}')">
-
-                History
-
-                </button>
-
-                <button
-                class="wa-btn"
-                onclick="sendWhatsApp('${s.full_name}','${s.mobile}',${due})">
-
-                WA
-
-                </button>
-
-            </td>
-
-        </tr>
-        `;
-    });
-}
-
-// =====================================================
-// ENSURE FEE ROW
-// =====================================================
-
-async function ensureFeeRow(studentId){
-
-    let feeRow =
-    fees.find(f => f.student_id === studentId);
-
-    if(!feeRow){
-
-        const { data } = await supabase
-        .from("fees")
-        .upsert([
-            {
-                student_id:studentId,
-                total_fee:0,
-                paid_fee:0,
-                due_fee:0
-            }
-        ],{
-            onConflict:['student_id']
-        })
-        .select();
-
-        fees.push(data[0]);
-
-        return data[0];
-    }
-
-    return feeRow;
-}
-
-// =====================================================
-// UPDATE TOTAL
-// =====================================================
-
-window.updateTotal = async function(studentId){
-
-    let total = Number(
-        document.getElementById(
-            "total_"+studentId
-        ).value
-    );
-
-    if(isNaN(total) || total < 0){
-
-        alert("Enter valid total fee");
-        return;
-    }
-
-    let feeRow =
-    await ensureFeeRow(studentId);
-
-    let due =
-    total - feeRow.paid_fee;
-
-    if(due < 0){
-        due = 0;
-    }
-
-    await supabase
-    .from("fees")
-    .upsert([
-        {
-            student_id:studentId,
-            total_fee:total,
-            due_fee:due
-        }
-    ],{
-        onConflict:['student_id']
-    });
-
-    alert("Fee Updated ✅");
-
-    loadData();
-}
-
-// =====================================================
-// PAY FEE
-// =====================================================
-
-window.payFee = async function(studentId,name){
-
-    let amt = Number(
-        document.getElementById(
-            "pay_"+studentId
-        ).value
-    );
-
-    let receipt =
-    document.getElementById(
-        "receipt_"+studentId
-    ).value;
-
-    if(!receipt){
-
-        alert("Enter receipt number");
-        return;
-    }
-
-    if(isNaN(amt) || amt <= 0){
-
-        alert("Enter valid amount");
-        return;
-    }
-
-    let feeRow =
-    await ensureFeeRow(studentId);
-
-    let newPaid =
-    feeRow.paid_fee + amt;
-
-    let newDue =
-    feeRow.total_fee - newPaid;
-
-    if(newDue < 0){
-        newDue = 0;
-    }
-
-    await supabase
-    .from("fee_payments")
-    .insert([
-        {
-            student_id:studentId,
-            student_name:name,
-            amount_paid:amt,
-            receipt_no:receipt,
-            payment_method:"Cash"
-        }
-    ]);
-
-    await supabase
-    .from("fees")
-    .upsert([
-        {
-            student_id:studentId,
-            paid_fee:newPaid,
-            due_fee:newDue
-        }
-    ],{
-        onConflict:['student_id']
-    });
-
-    alert("Payment Saved ✅");
-
-    loadData();
-}
-
-// =====================================================
-// HISTORY
-// =====================================================
-
-window.viewHistory = function(studentId){
-
-    let history =
-    payments.filter(
-        p => p.student_id === studentId
-    );
-
-    let msg = "Payment History\n\n";
-
-    history.forEach(p => {
-
-        msg += `
-Receipt : ${p.receipt_no || "-"}
-
-Amount : ₹${p.amount_paid}
-
-Date : ${new Date(
-    p.payment_date
-).toLocaleString()}
-
-`;
-    });
-
-    alert(msg);
-}
-
-// =====================================================
-// WHATSAPP
-// =====================================================
-
-window.sendWhatsApp = function(name,phone,due){
-
-    if(!phone){
-
-        alert("No phone number");
-        return;
-    }
-
-    let msg = `
-Vision School Fee Reminder
-
-Student : ${name}
-
-Remaining Fee : ₹${due}
-
-Please clear the dues.
-`;
-
-    window.open(
-        `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`
-    );
-}
-
-// =====================================================
-// PIE CHARTS
-// =====================================================
-
-function renderClassCharts(){
-
-    const chartsContainer =
-    document.getElementById(
-        "chartsContainer"
-    );
-
-    chartsContainer.innerHTML = "";
-
-    let classes = [...new Set(
-
-        filteredStudents
-        .map(s => s.class)
-        .filter(Boolean)
-
-    )];
-
-    classes.sort((a,b)=>{
-
-        let aIndex =
-        classOrder.indexOf(
-            a.toString().toLowerCase()
-        );
-
-        let bIndex =
-        classOrder.indexOf(
-            b.toString().toLowerCase()
-        );
-
-        return aIndex - bIndex;
-    });
-
-    classes.forEach(cls => {
-
-        let classStudents =
-        filteredStudents.filter(
-            s => s.class === cls
-        );
-
-        let totalClassFee = 0;
-        let totalPaid = 0;
-        let totalDue = 0;
-
-        classStudents.forEach(student => {
-
-            let feeRow =
-            fees.find(
-                f => f.student_id === student.id
-            );
-
-            totalClassFee +=
-            feeRow?.total_fee || 0;
-
-            totalPaid +=
-            feeRow?.paid_fee || 0;
-
-            totalDue +=
-            Math.max(
-                0,
-                feeRow?.due_fee || 0
-            );
-        });
-
-        let studentsHTML = "";
-
-        classStudents.forEach(st => {
-
-            studentsHTML += `
-                <div class="student-name">
-                    ${st.full_name}
-                </div>
-            `;
-        });
-
-        const card =
-        document.createElement("div");
-
-        card.className = "chart-card";
-
-        card.innerHTML = `
-
-            <h2>${cls}</h2>
-
-            <div class="fee-summary">
-
-                <div class="summary-box total-box">
-
-                    Total Fee
-
-                    <br><br>
-
-                    ₹${totalClassFee}
-
-                </div>
-
-                <div class="summary-box paid-box">
-
-                    Paid Fee
-
-                    <br><br>
-
-                    ₹${totalPaid}
-
-                </div>
-
-                <div class="summary-box due-box">
-
-                    Due Fee
-
-                    <br><br>
-
-                    ₹${totalDue}
-
-                </div>
-
-            </div>
-
-            <canvas id="chart_${cls}"></canvas>
-
-            <div class="student-list">
-
-                <h3>Students</h3>
-
-                ${studentsHTML}
-
-            </div>
-        `;
-
-        chartsContainer.appendChild(card);
-
-        const ctx =
-        document.getElementById(
-            `chart_${cls}`
-        );
-
-        new Chart(ctx, {
-
-            type:"pie",
-
-            data:{
-
-                labels:[
-                    "Paid Fee",
-                    "Due Fee"
-                ],
-
-                datasets:[{
-
-                    data:[
-                        totalPaid,
-                        totalDue
-                    ],
-
-                    backgroundColor:[
-                        "#16a34a",
-                        "#dc2626"
-                    ],
-
-                    borderWidth:2
-                }]
-            },
-
-            options:{
-
-                responsive:true,
-
-                maintainAspectRatio:true,
-
-                plugins:{
-
-                    legend:{
-                        position:"bottom"
-                    }
-                }
-            }
-        });
-    });
-}
-
-// =====================================================
-// START
-// =====================================================
-
-window.onload = loadData;
-
-</script>
-
 </head>
+
 
 <body>
 
-<header>
 
-Vision School – Fee Management Panel
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+<h1>
+🏫 Vision School ERP
+</h1>
+
+<p>
+Student Fee Management
+</p>
+
 
 </header>
 
+
+
 <div class="container">
 
-<div class="search-wrapper">
 
-<input
-type="text"
-id="searchName"
-class="search-bar"
-placeholder="Search By Name / Phone"
-oninput="searchStudentsByName()">
 
-<input
-type="text"
-id="searchClass"
-class="search-bar"
-placeholder="Search By Class"
-oninput="searchStudentsByClass()">
+<!-- ================= DASHBOARD ================= -->
 
+
+<section class="dashboard">
+
+
+<div class="card">
+<h3>Total Students</h3>
+<h2 id="totalStudents">
+0
+</h2>
 </div>
 
-<div class="table-wrapper">
+
+<div class="card">
+<h3>Total Collection</h3>
+<h2 id="totalCollection">
+₹0
+</h2>
+</div>
+
+
+<div class="card">
+<h3>Total Pending</h3>
+<h2 id="totalPending">
+₹0
+</h2>
+</div>
+
+
+<div class="card">
+<h3>Total Fee</h3>
+<h2 id="totalFee">
+₹0
+</h2>
+</div>
+
+
+</section>
+
+
+
+
+
+
+<!-- ================= SEARCH ================= -->
+
+
+<section class="search-section">
+
+
+<input 
+type="text"
+id="searchName"
+placeholder="Search Student Name / Mobile"
+>
+
+
+<input 
+type="text"
+id="searchClass"
+placeholder="Search Class"
+>
+
+
+<button onclick="applySearch()">
+🔍 Search
+</button>
+
+
+<button onclick="loadFeeData()">
+🔄 Refresh
+</button>
+
+
+</section>
+
+
+
+
+
+
+
+<!-- ================= TABLE ================= -->
+
+
+<section class="table-container">
+
 
 <table>
 
+
 <thead>
+
 
 <tr>
 
-<th>Name</th>
-<th>Phone</th>
-<th>Class</th>
-<th>Total</th>
-<th>Update Total</th>
-<th>Paid</th>
-<th>Due</th>
-<th>Receipt</th>
-<th>Pay</th>
-<th>Actions</th>
+<th>
+Student
+</th>
+
+
+<th>
+Mobile
+</th>
+
+
+<th>
+Class
+</th>
+
+
+<th>
+Total Fee
+</th>
+
+
+<th>
+Paid
+</th>
+
+
+<th>
+Pending
+</th>
+
+
+<th>
+Update Fee
+</th>
+
+
+<th>
+Payment
+</th>
+
+
+<th>
+Contact
+</th>
+
+
+<th>
+History
+</th>
+
 
 </tr>
 
+
 </thead>
 
-<tbody id="students"></tbody>
+
+
+<tbody id="feeTable">
+
+
+</tbody>
+
+
 
 </table>
 
+
+</section>
+
+
+
+
+
+
+
+<!-- ================= CHART ================= -->
+
+
+<section class="chart-section">
+
+
+<h2>
+📊 Fee Analytics
+</h2>
+
+
+<canvas id="feeChart">
+
+</canvas>
+
+
+</section>
+
+
+
+
+
 </div>
 
-<div class="chart-section">
 
-<h1 class="chart-title">
 
-Class Wise Fee Analytics
 
-</h1>
 
-<div id="chartsContainer"></div>
+
+
+<!-- ================= PAYMENT MODAL ================= -->
+
+
+<div id="paymentModal" class="modal">
+
+
+<div class="modal-box">
+
+
+<h2>
+💰 Add Payment
+</h2>
+
+
+
+<input 
+type="hidden"
+id="paymentStudentId"
+>
+
+
+
+<label>
+Student Name
+</label>
+
+<input 
+id="paymentStudentName"
+readonly
+>
+
+
+
+<label>
+Amount Paid
+</label>
+
+
+<input 
+type="number"
+id="paymentAmount"
+placeholder="Enter Amount"
+>
+
+
+
+<label>
+Receipt Number
+</label>
+
+
+<input 
+id="receiptNumber"
+placeholder="Receipt No"
+>
+
+
+
+
+<button onclick="savePayment()">
+Save Payment
+</button>
+
+
+
+<button onclick="closePaymentModal()">
+Cancel
+</button>
+
+
 
 </div>
 
+
 </div>
+
+
+
+
+
+
+
+
+<!-- ================= HISTORY MODAL ================= -->
+
+
+<div id="historyModal" class="modal">
+
+
+<div class="modal-box history-box">
+
+
+<h2>
+📜 Payment History
+</h2>
+
+
+<div id="historyContent">
+
+</div>
+
+
+
+<button onclick="closeHistoryModal()">
+
+Close
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script type="module" src="fee_management.js"></script>
+
+
 
 </body>
+
 </html>

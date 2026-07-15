@@ -1,470 +1,529 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vision School – Student Master</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Vision School ERP | Student Master</title>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Poppins;background:#f4f6fb}
-header{
-background:linear-gradient(135deg,#1e2a78,#283593);
-color:#fff;
-padding:18px 25px;
-font-size:20px;
-font-weight:600;
-}
-.container{padding:25px}
-.top-bar{
-display:flex;
-justify-content:space-between;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:15px;
-}
-.search-bar{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-.search-bar input{
-padding:10px;
-border:1px solid #ccc;
-border-radius:6px;
-}
-button{
-padding:8px 14px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-.edit{
-background:#5c6bc0;
-color:white;
-}
-.view{
-background:#3498db;
-color:white;
-}
-.export{
-background:#16a085;
-color:white;
-}
-.table-wrapper{
-background:white;
-border-radius:10px;
-overflow:auto;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-table{
-width:100%;
-border-collapse:collapse;
-}
-th,td{
-padding:12px;
-border-bottom:1px solid #eee;
-font-size:13px;
-}
-th{
-background:#eef1ff;
-}
-tr:hover{
-background:#f9fbff;
-}
-.status-ok{
-background:#e6f9ed;
-color:#0f9d58;
-padding:4px 10px;
-border-radius:6px;
-font-size:12px;
-}
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.45);
-}
-.modal-box{
-background:white;
-width:450px;
-max-width:95%;
-margin:50px auto;
-padding:20px;
-border-radius:10px;
-}
-.field{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border:1px solid #ccc;
-border-radius:6px;
-}
-.preview{
-width:80px;
-height:80px;
-border-radius:50%;
-object-fit:cover;
-margin-bottom:10px;
-}
-.modal-actions{
-display:flex;
-justify-content:flex-end;
-gap:10px;
-}
-</style>
+<link rel="stylesheet" href="student_master.css">
 
 </head>
 
 <body>
 
-<header>🏫 Vision School – Student Master</header>
+<!-- ======================================================
+HEADER
+======================================================= -->
 
-<div class="container">
+<header class="header">
 
-<div class="top-bar">
+<h1>🎓 Vision School ERP</h1>
 
-<div class="search-bar">
-<input id="searchName" placeholder="Search Name" oninput="applyFilters()">
-<input id="searchClass" placeholder="Search Class" oninput="applyFilters()">
-</div>
+<p>
+Student Master Management System
+</p>
 
-<button class="export" onclick="exportStudents()">
-Export Students
+<div class="top-actions">
+
+<button onclick="loadStudents()">
+🔄 Refresh Students
+</button>
+
+<button onclick="exportCSV()">
+📤 Export CSV
 </button>
 
 </div>
 
-<div class="table-wrapper">
+</header>
+
+<!-- ======================================================
+STATISTICS
+======================================================= -->
+
+<section class="stats">
+
+<div class="stat-card">
+
+<h3>Total Students</h3>
+
+<span id="totalCount">
+0
+</span>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Active Students</h3>
+
+<span id="activeCount">
+0
+</span>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Male Students</h3>
+
+<span id="maleCount">
+0
+</span>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Female Students</h3>
+
+<span id="femaleCount">
+0
+</span>
+
+</div>
+
+</section>
+
+<!-- ======================================================
+SEARCH FILTERS
+======================================================= -->
+
+<form
+class="filters"
+onsubmit="event.preventDefault();applyFilters();">
+
+<input
+type="text"
+id="nameSearch"
+placeholder="🔍 Student Name">
+
+<input
+type="text"
+id="rollSearch"
+placeholder="🎫 Roll Number">
+
+<input
+type="text"
+id="mobileSearch"
+placeholder="📞 Mobile Number">
+
+<input
+type="text"
+id="usernameSearch"
+placeholder="👤 Username">
+
+<input
+type="text"
+id="classSearch"
+placeholder="🏫 Class">
+
+<input
+type="text"
+id="sectionSearch"
+placeholder="📚 Section">
+
+<select id="genderFilter">
+
+<option value="">
+All Genders
+</option>
+
+<option value="Male">
+Male
+</option>
+
+<option value="Female">
+Female
+</option>
+
+</select>
+
+<select id="statusFilter">
+
+<option value="">
+All Status
+</option>
+
+<option value="Active">
+Active
+</option>
+
+<option value="Inactive">
+Inactive
+</option>
+
+</select>
+
+<button
+type="submit"
+class="primary-btn">
+
+🔍 Search
+
+</button>
+
+<button
+type="button"
+class="secondary-btn"
+onclick="resetFilters()">
+
+♻ Reset
+
+</button>
+
+</form>
+
+<!-- ======================================================
+TABLE
+======================================================= -->
+
+<div class="table-container">
 
 <table>
 
-<thead>
+<thead class="table-head">
+
 <tr>
+
 <th>Photo</th>
-<th>Name</th>
-<th>Email</th>
-<th>Mobile</th>
-<th>Class</th>
-<th>Gender</th>
+
+<th>ID</th>
+
+<th>Roll No</th>
+
+<th>Full Name</th>
+
 <th>Username</th>
+
+<th>Email</th>
+
+<th>Mobile</th>
+
+<th>Class</th>
+
+<th>Section</th>
+
+<th>Gender</th>
+
+<th>DOB</th>
+
+<th>Father</th>
+
+<th>Mother</th>
+
+<th>Blood</th>
+
+<th>Admission</th>
+
+<th>Address</th>
+
 <th>Status</th>
+
+<th>Last Login</th>
+
+<th>Created At</th>
+
 <th>Actions</th>
+
 </tr>
+
 </thead>
 
-<tbody id="studentsBody"></tbody>
+<tbody
+id="studentTable"
+class="table-body">
+
+<!-- Student rows will come here -->
+
+</tbody>
 
 </table>
 
-</div>
+<div
+id="loading"
+class="loading hidden">
 
-</div>
-
-<div class="modal" id="editModal">
-
-<div class="modal-box">
-
-<h3>Edit Student</h3>
-
-<input type="hidden" id="studentId">
-
-<img id="photoPreview"
-class="preview"
-src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-
-<input type="file"
-id="photoFile"
-class="field"
-accept="image/*">
-
-<input id="mobile"
-class="field"
-placeholder="Mobile">
-
-<input id="applied_class"
-class="field"
-placeholder="Class">
-
-<div class="modal-actions">
-<button onclick="closeModal()">Cancel</button>
-<button class="edit" onclick="saveStudent()">Save</button>
-</div>
+Loading students...
 
 </div>
 
 </div>
+<!-- ======================================================
+EDIT STUDENT MODAL
+====================================================== -->
 
-<script type="module">
+<div id="editModal" class="modal">
 
-import { createClient }
-from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    <div class="modal-content">
 
-const supabase = createClient(
-"https://gocoupvzzsgouwdkdmzu.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw"
-);
+        <h2>✏️ Edit Student Profile</h2>
 
-const studentsBody =
-document.getElementById("studentsBody");
+        <!-- Hidden Student ID -->
+        <input
+            type="hidden"
+            id="edit_id">
 
-let studentsCache = [];
+        <!-- ================= PHOTO ================= -->
 
-async function loadStudents(){
+        <div class="photo-section">
+
+            <img
+                id="edit_photo_preview"
+                class="view-photo"
+                src=""
+                alt="Student Photo Preview">
+
+            <input
+                type="file"
+                id="edit_photo_file"
+                class="photo-upload"
+                accept="image/*">
 
-const { data,error } = await supabase
-.from("profiles")
-.select("*")
-.eq("role","student")
-.order("class")
-.order("full_name");
+        </div>
 
-if(error){
-alert(error.message);
-return;
-}
+        <!-- ================= BASIC DETAILS ================= -->
 
-studentsCache = data || [];
-renderTable(studentsCache);
+        <input
+            id="edit_roll"
+            type="text"
+            placeholder="Roll Number">
 
-}
+        <input
+            id="edit_name"
+            type="text"
+            placeholder="Full Name">
 
-function renderTable(data){
+        <input
+            id="edit_username"
+            type="text"
+            placeholder="Username">
 
-studentsBody.innerHTML = "";
+        <input
+            id="edit_email"
+            type="email"
+            placeholder="Email Address">
 
-data.forEach(student=>{
+        <input
+            id="edit_mobile"
+            type="text"
+            placeholder="Mobile Number">
 
-studentsBody.innerHTML += `
-<tr>
+        <!-- ================= ACADEMIC DETAILS ================= -->
 
-<td>
-<img
-src="${student.profile_photo_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}"
-width="40"
-style="border-radius:50%">
-</td>
+        <input
+            id="edit_class"
+            type="text"
+            placeholder="Class">
 
-<td>${student.full_name || '-'}</td>
+        <input
+            id="edit_section"
+            type="text"
+            placeholder="Section">
 
-<td>${student.email || '-'}</td>
+        <input
+            id="edit_gender"
+            type="text"
+            placeholder="Gender">
 
-<td>${student.mobile || '-'}</td>
+        <input
+            id="edit_dob"
+            type="date">
 
-<td>${student.class || '-'}</td>
+        <!-- ================= FAMILY DETAILS ================= -->
 
-<td>${student.gender || '-'}</td>
+        <input
+            id="edit_father"
+            type="text"
+            placeholder="Father Name">
 
-<td>${student.username || '-'}</td>
+        <input
+            id="edit_mother"
+            type="text"
+            placeholder="Mother Name">
 
-<td>
-<span class="status-ok">
-Active
-</span>
-</td>
+        <input
+            id="edit_blood"
+            type="text"
+            placeholder="Blood Group">
 
-<td>
+        <!-- ================= OTHER DETAILS ================= -->
 
-<button class="edit"
-onclick="editStudent('${student.id}')">
-Edit
-</button>
+        <input
+            id="edit_admission"
+            type="date">
 
-<button class="view"
-onclick="viewStudent('${student.id}')">
-View
-</button>
+        <input
+            id="edit_address"
+            type="text"
+            placeholder="Address">
 
-</td>
+        <input
+            id="edit_status"
+            type="text"
+            placeholder="Status">
 
-</tr>
-`;
+        <input
+            id="edit_lastlogin"
+            type="text"
+            placeholder="Last Login">
 
-});
+        <input
+            id="edit_created"
+            type="text"
+            placeholder="Created At"
+            readonly>
 
-}
+        <!-- ================= ACTION BUTTONS ================= -->
 
-window.editStudent = async(id)=>{
+        <div class="modal-actions">
 
-const { data,error } = await supabase
-.from("profiles")
-.select("*")
-.eq("id",id)
-.single();
+            <button
+                type="button"
+                onclick="updateProfile()">
 
-if(error){
-alert(error.message);
-return;
-}
+                💾 Save Changes
 
-document.getElementById("studentId").value = id;
+            </button>
 
-document.getElementById("mobile").value =
-data.mobile || "";
+            <button
+                type="button"
+                onclick="closeModal()">
 
-document.getElementById("applied_class").value =
-data.class || "";
+                Cancel
 
-document.getElementById("photoPreview").src =
-data.profile_photo_url ||
-"https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            </button>
 
-document.getElementById("editModal").style.display =
-"block";
+        </div>
 
-}
+    </div>
 
-window.saveStudent = async()=>{
+</div>
+<!-- ======================================================
+VIEW STUDENT MODAL
+====================================================== -->
 
-const id =
-document.getElementById("studentId").value;
+<div id="viewModal" class="modal">
 
-const photoFile =
-document.getElementById("photoFile").files[0];
+    <div class="modal-content view-box">
 
-let profile_photo_url =
-document.getElementById("photoPreview").src;
+        <h2>👤 Student Profile</h2>
 
-if(photoFile){
+        <div class="view-grid">
 
-const fileExt =
-photoFile.name.split(".").pop();
+            <!-- Student Photo -->
 
-const fileName =
-`students/${id}.${fileExt}`;
+            <div class="view-image">
 
-const { error:uploadError } =
-await supabase.storage
-.from("student-photos")
-.upload(fileName,photoFile,{upsert:true});
+                <img
+                    id="view_photo"
+                    class="view-photo"
+                    src=""
+                    alt="Student Photo">
 
-if(uploadError){
-alert(uploadError.message);
-return;
-}
+            </div>
 
-const { data } =
-supabase.storage
-.from("student-photos")
-.getPublicUrl(fileName);
+            <!-- Student Information -->
 
-profile_photo_url =
-data.publicUrl;
+            <div class="view-info">
 
-}
+                <p><b>Student ID</b><span id="v_id"></span></p>
 
-const { error } =
-await supabase
-.from("profiles")
-.update({
+                <p><b>Roll Number</b><span id="v_roll"></span></p>
 
-mobile:
-document.getElementById("mobile").value,
+                <p><b>Full Name</b><span id="v_name"></span></p>
 
-class:
-document.getElementById("applied_class").value,
+                <p><b>Username</b><span id="v_username"></span></p>
 
-profile_photo_url
+                <p><b>Email</b><span id="v_email"></span></p>
 
-})
-.eq("id",id);
+                <p><b>Mobile</b><span id="v_mobile"></span></p>
 
-if(error){
+                <p><b>Class</b><span id="v_class"></span></p>
 
-alert(error.message);
-return;
+                <p><b>Section</b><span id="v_section"></span></p>
 
-}
+                <p><b>Gender</b><span id="v_gender"></span></p>
 
-closeModal();
-loadStudents();
+                <p><b>Date of Birth</b><span id="v_dob"></span></p>
 
-}
+                <p><b>Father Name</b><span id="v_father"></span></p>
 
-window.closeModal = ()=>{
+                <p><b>Mother Name</b><span id="v_mother"></span></p>
 
-document.getElementById("editModal").style.display =
-"none";
+                <p><b>Blood Group</b><span id="v_blood"></span></p>
 
-}
+                <p><b>Admission Date</b><span id="v_admission"></span></p>
 
-window.viewStudent = (id)=>{
+                <p><b>Address</b><span id="v_address"></span></p>
 
-alert("Student ID : " + id);
+                <p><b>Status</b><span id="v_status"></span></p>
 
-}
+                <p><b>Last Login</b><span id="v_lastlogin"></span></p>
 
-window.exportStudents = ()=>{
+                <p><b>Created At</b><span id="v_created"></span></p>
 
-let csv =
-"Name,Email,Mobile,Class,Gender,Username\n";
+            </div>
 
-studentsCache.forEach(student=>{
+        </div>
 
-csv +=
-`${student.full_name || ''},
-${student.email || ''},
-${student.mobile || ''},
-${student.class || ''},
-${student.gender || ''},
-${student.username || ''}\n`;
+        <div class="modal-actions">
 
-});
+            <button
+                type="button"
+                onclick="closeViewModal()">
 
-const blob =
-new Blob([csv]);
+                Close
 
-const link =
-document.createElement("a");
+            </button>
 
-link.href =
-URL.createObjectURL(blob);
+        </div>
 
-link.download =
-"students.csv";
+    </div>
 
-link.click();
+</div>
 
-}
+<!-- ======================================================
+EMPTY TABLE MESSAGE
+====================================================== -->
 
-window.applyFilters = ()=>{
+<div
+    id="emptyMessage"
+    class="hidden text-center mt-20">
 
-const nameFilter =
-document.getElementById("searchName")
-.value.toLowerCase();
+    <h3>No Students Found</h3>
 
-const classFilter =
-document.getElementById("searchClass")
-.value.toLowerCase();
+    <p>
+        No student records match the selected filters.
+    </p>
 
-const filtered =
-studentsCache.filter(student=>{
+</div>
 
-const matchName =
-(student.full_name || "")
-.toLowerCase()
-.includes(nameFilter);
+<!-- ======================================================
+FOOTER
+====================================================== -->
 
-const matchClass =
-!classFilter ||
-(student.class || "")
-.toLowerCase()
-.includes(classFilter);
+<footer class="footer">
 
-return matchName && matchClass;
+    <p>
 
-});
+        © 2026 Vision School ERP
+        • Student Master Module
 
-renderTable(filtered);
+    </p>
 
-}
+</footer>
 
-loadStudents();
+<!-- ======================================================
+JAVASCRIPT
+====================================================== -->
 
-</script>
+<script type="module" src="student_master.js"></script>
 
 </body>
+
 </html>

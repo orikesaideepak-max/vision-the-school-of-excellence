@@ -1,0 +1,2004 @@
+/* ==========================================
+   VISION SCHOOL ERP DASHBOARD
+   dashboard.css PART 1
+==========================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#eef3fb;
+    color:#222;
+    overflow-x:hidden;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+ul{
+    list-style:none;
+}
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+/*==========================
+CONTAINER
+==========================*/
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/*==========================
+SIDEBAR
+==========================*/
+
+.sidebar{
+    width:280px;
+    background:linear-gradient(180deg,#0b3c91,#052c73);
+    color:white;
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    overflow-y:auto;
+    box-shadow:4px 0 20px rgba(0,0,0,.15);
+    z-index:1000;
+}
+
+.sidebar::-webkit-scrollbar{
+    width:6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:#ffffff55;
+    border-radius:20px;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:25px;
+    border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.logo img{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:white;
+    padding:5px;
+}
+
+.logo h2{
+    font-size:24px;
+    font-weight:700;
+}
+
+.logo span{
+    font-size:13px;
+    opacity:.8;
+}
+
+/*==========================
+MENU
+==========================*/
+
+.menu{
+    padding:20px 15px;
+}
+
+.menu li{
+    margin-bottom:8px;
+}
+
+.menu li a{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:14px 18px;
+    border-radius:12px;
+    transition:.35s;
+    font-size:15px;
+    font-weight:500;
+}
+
+.menu li a i{
+    width:22px;
+    text-align:center;
+    font-size:18px;
+}
+
+.menu li:hover a{
+    background:rgba(255,255,255,.15);
+    transform:translateX(6px);
+}
+
+.menu li.active a{
+    background:white;
+    color:#0b3c91;
+    font-weight:600;
+}
+
+/*==========================
+MAIN
+==========================*/
+
+.main{
+    margin-left:280px;
+    width:calc(100% - 280px);
+    padding:30px;
+}
+
+/*==========================
+TOPBAR
+==========================*/
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:white;
+    padding:20px 30px;
+    border-radius:18px;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+    margin-bottom:30px;
+}
+
+.topbar .left h1{
+    font-size:30px;
+    color:#0b3c91;
+}
+
+.topbar .left p{
+    margin-top:5px;
+    color:#777;
+}
+
+.topbar .right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+/*==========================
+SEARCH
+==========================*/
+
+.search{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#f3f6fc;
+    padding:12px 18px;
+    border-radius:40px;
+}
+
+.search input{
+    border:none;
+    outline:none;
+    background:none;
+    width:220px;
+    font-size:15px;
+}
+
+.search i{
+    color:#888;
+}
+
+/*==========================
+ICONS
+==========================*/
+
+.icon{
+    width:48px;
+    height:48px;
+    border:none;
+    border-radius:50%;
+    background:#edf4ff;
+    cursor:pointer;
+    transition:.3s;
+    font-size:18px;
+}
+
+.icon:hover{
+    background:#0b3c91;
+    color:white;
+    transform:rotate(12deg);
+}
+
+/*==========================
+PROFILE
+==========================*/
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.profile img{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:3px solid #0b3c91;
+}
+
+.profile h4{
+    font-size:16px;
+}
+
+.profile span{
+    color:#777;
+    font-size:13px;
+}
+
+/*==========================
+SECTION TITLE
+==========================*/
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:35px 0 20px;
+}
+
+.section-title h2{
+    color:#0b3c91;
+    font-size:26px;
+    font-weight:700;
+}
+
+.section-title span{
+    color:#888;
+}
+
+/*==========================
+STATISTICS
+==========================*/
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.card{
+    border-radius:22px;
+    color:white;
+    padding:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    transition:.35s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card h3{
+    font-size:16px;
+    font-weight:500;
+}
+
+.card h1{
+    font-size:38px;
+    margin:12px 0;
+}
+
+.card span{
+    font-size:14px;
+    opacity:.9;
+}
+
+.card i{
+    font-size:55px;
+    opacity:.35;
+}
+
+.blue{
+    background:linear-gradient(135deg,#3b82f6,#1d4ed8);
+}
+
+.green{
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+}
+
+.orange{
+    background:linear-gradient(135deg,#f97316,#fb923c);
+}
+
+.red{
+    background:linear-gradient(135deg,#dc2626,#ef4444);
+}
+
+/*==========================
+QUICK ACCESS
+==========================*/
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:20px;
+}
+
+.quick-card{
+    background:white;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.35s;
+    cursor:pointer;
+}
+
+.quick-card:hover{
+    transform:translateY(-8px);
+}
+
+.quick-card i{
+    font-size:42px;
+    color:#0b3c91;
+    margin-bottom:18px;
+}
+
+.quick-card h3{
+    margin-bottom:10px;
+    font-size:20px;
+}
+
+.quick-card p{
+    color:#777;
+}
+/*==========================================
+DASHBOARD.CSS PART 2
+MODULES • TABLES • NOTICE BOARD
+ANALYTICS • FINANCE • PERFORMANCE
+===========================================*/
+
+/*==========================
+MODULE GRID
+==========================*/
+
+.module-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:25px;
+}
+
+.module-card{
+    background:#fff;
+    border-radius:22px;
+    padding:25px;
+    display:flex;
+    align-items:flex-start;
+    gap:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.module-card:hover{
+    transform:translateY(-8px);
+}
+
+.module-icon{
+    width:70px;
+    height:70px;
+    border-radius:18px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+    font-size:28px;
+}
+
+.blue-bg{background:#2563eb;}
+.green-bg{background:#22c55e;}
+.orange-bg{background:#f97316;}
+.red-bg{background:#ef4444;}
+.purple-bg{background:#8b5cf6;}
+.teal-bg{background:#14b8a6;}
+.yellow-bg{background:#eab308;}
+.cyan-bg{background:#06b6d4;}
+.brown-bg{background:#8b5e3c;}
+.pink-bg{background:#ec4899;}
+.navy-bg{background:#1e3a8a;}
+.violet-bg{background:#7c3aed;}
+
+.module-content{
+    flex:1;
+}
+
+.module-content h3{
+    margin-bottom:12px;
+    color:#0b3c91;
+}
+
+.module-content p{
+    color:#666;
+    line-height:1.6;
+    margin-bottom:18px;
+}
+
+.module-content button{
+    border:none;
+    background:#0b3c91;
+    color:#fff;
+    padding:12px 22px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.module-content button:hover{
+    background:#052c73;
+}
+
+/*==========================
+RECENT ACTIVITY
+==========================*/
+
+.dashboard-row{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+    margin-top:40px;
+}
+
+.recent-activity,
+.notice-board{
+    background:#fff;
+    border-radius:22px;
+    padding:25px;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+/*==========================
+TABLE
+==========================*/
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#0b3c91;
+    color:#fff;
+}
+
+thead th{
+    padding:16px;
+    text-align:left;
+    font-weight:600;
+}
+
+tbody td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+}
+
+tbody tr:hover{
+    background:#f5f8ff;
+}
+
+.success{
+    background:#22c55e;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:25px;
+    font-size:13px;
+}
+
+.processing{
+    background:#2563eb;
+    color:#fff;
+    padding:6px 14px;
+    border-radius:25px;
+    font-size:13px;
+}
+
+/*==========================
+NOTICE BOARD
+==========================*/
+
+.notice{
+    background:#f7f9fd;
+    padding:18px;
+    border-radius:14px;
+    margin-bottom:18px;
+    border-left:5px solid #2563eb;
+}
+
+.notice h4{
+    margin-bottom:8px;
+    color:#0b3c91;
+}
+
+.notice p{
+    color:#666;
+    line-height:1.6;
+}
+
+/*==========================
+ANALYTICS
+==========================*/
+
+.analytics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.analytics-card{
+    background:#fff;
+    border-radius:22px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.analytics-card:hover{
+    transform:translateY(-6px);
+}
+
+.analytics-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.analytics-header h3{
+    color:#0b3c91;
+}
+
+.analytics-header i{
+    font-size:28px;
+    color:#2563eb;
+}
+
+.progress-circle{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    border:10px solid #2563eb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:20px auto;
+}
+
+.progress-circle h1{
+    color:#0b3c91;
+}
+
+.analytics-footer{
+    display:flex;
+    justify-content:space-between;
+    color:#666;
+}
+
+.mini-bar{
+    width:100%;
+    height:10px;
+    background:#eee;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:18px;
+}
+
+.bar-fill{
+    height:100%;
+    border-radius:20px;
+}
+
+.fee-fill{
+    width:82%;
+    background:#22c55e;
+}
+
+.admission-fill{
+    width:72%;
+    background:#2563eb;
+}
+
+.exam-fill{
+    width:87%;
+    background:#f97316;
+}
+
+/*==========================
+SCHEDULE
+==========================*/
+
+.schedule-wrapper{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+    margin-top:35px;
+}
+
+.today-schedule,
+.upcoming-events{
+    background:#fff;
+    border-radius:22px;
+    padding:25px;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+.event-card{
+    background:#f5f8ff;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:18px;
+    border-left:5px solid #2563eb;
+}
+
+.event-card h4{
+    color:#0b3c91;
+    margin-bottom:8px;
+}
+
+.event-card span{
+    display:block;
+    margin-bottom:8px;
+    color:#777;
+}
+
+/*==========================
+FINANCE
+==========================*/
+
+.finance-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.finance-card{
+    background:#fff;
+    border-radius:20px;
+    text-align:center;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.finance-card:hover{
+    transform:translateY(-8px);
+}
+
+.finance-card i{
+    font-size:45px;
+    color:#22c55e;
+    margin-bottom:20px;
+}
+
+.finance-card h3{
+    color:#555;
+    margin-bottom:12px;
+}
+
+.finance-card h1{
+    color:#0b3c91;
+}
+
+/*==========================
+PERFORMANCE
+==========================*/
+
+.performance-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.performance-card{
+    background:#fff;
+    border-radius:20px;
+    text-align:center;
+    padding:35px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.performance-card:hover{
+    transform:translateY(-8px);
+}
+
+.performance-card h3{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.performance-card h1{
+    color:#0b3c91;
+    font-size:42px;
+}
+/*==========================================
+DASHBOARD.CSS PART 3
+DEPARTMENTS • STAFF • FACILITIES
+PARENT PORTAL • WEBSITE • SYSTEM
+CALENDAR • BIRTHDAYS • LIBRARY
+HOSTEL • TRANSPORT • PRINCIPAL
+===========================================*/
+
+/*==========================
+DEPARTMENTS
+==========================*/
+
+.department-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+.department-card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.department-card:hover{
+    transform:translateY(-8px);
+}
+
+.department-card i{
+    font-size:48px;
+    color:#2563eb;
+    margin-bottom:18px;
+}
+
+.department-card h3{
+    color:#0b3c91;
+    margin-bottom:15px;
+}
+
+.department-card p{
+    color:#666;
+    margin-bottom:8px;
+}
+
+.department-card button{
+    margin-top:20px;
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    padding:12px 25px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.department-card button:hover{
+    background:#0b3c91;
+}
+
+/*==========================
+STAFF
+==========================*/
+
+.staff-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.staff-card{
+    background:#fff;
+    border-radius:20px;
+    text-align:center;
+    padding:35px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.staff-card:hover{
+    transform:translateY(-8px);
+}
+
+.staff-card h3{
+    color:#666;
+    margin-bottom:15px;
+}
+
+.staff-card h1{
+    color:#2563eb;
+    font-size:42px;
+}
+
+.staff-card p{
+    color:#888;
+    margin-top:10px;
+}
+
+/*==========================
+FACILITIES
+==========================*/
+
+.facility-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:22px;
+}
+
+.facility-card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.facility-card:hover{
+    transform:translateY(-8px);
+}
+
+.facility-card i{
+    font-size:48px;
+    color:#0b3c91;
+    margin-bottom:18px;
+}
+
+.facility-card h3{
+    margin-bottom:12px;
+    color:#222;
+}
+
+.facility-card p{
+    color:#666;
+}
+
+/*==========================
+PARENT PORTAL
+==========================*/
+
+.portal-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.portal-card{
+    background:white;
+    border-radius:20px;
+    text-align:center;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.portal-card:hover{
+    transform:translateY(-8px);
+}
+
+.portal-card i{
+    font-size:45px;
+    color:#16a34a;
+    margin-bottom:18px;
+}
+
+.portal-card h3{
+    margin-bottom:12px;
+    color:#0b3c91;
+}
+
+.portal-card p{
+    color:#666;
+}
+
+/*==========================
+WEBSITE
+==========================*/
+
+.website-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+.website-card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.website-card button{
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/*==========================
+SYSTEM
+==========================*/
+
+.utility-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.utility-card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.utility-card:hover{
+    transform:translateY(-8px);
+}
+
+.utility-card i{
+    font-size:45px;
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+.utility-card h3{
+    color:#333;
+}
+
+/*==========================
+CALENDAR
+==========================*/
+
+.calendar-section{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+    margin-top:35px;
+}
+
+.calendar-panel,
+.holiday-panel{
+    background:white;
+    border-radius:22px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.calendar-table{
+    width:100%;
+    margin-top:20px;
+}
+
+.calendar-table th,
+.calendar-table td{
+    text-align:center;
+    padding:14px;
+}
+
+.calendar-table th{
+    background:#2563eb;
+    color:#fff;
+}
+
+.today{
+    background:#2563eb;
+    color:white;
+    border-radius:8px;
+}
+
+.holiday{
+    background:#ef4444;
+    color:white;
+    border-radius:8px;
+}
+
+.holiday-card{
+    background:#f5f8ff;
+    border-left:5px solid #2563eb;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:18px;
+}
+
+/*==========================
+BIRTHDAY
+==========================*/
+
+.birthday-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.birthday-card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.birthday-card img{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    margin:auto;
+    margin-bottom:15px;
+}
+
+.birthday-card h3{
+    color:#0b3c91;
+}
+
+/*==========================
+LIBRARY
+==========================*/
+
+.library-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.library-card{
+    background:white;
+    border-radius:20px;
+    text-align:center;
+    padding:35px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.library-card h1{
+    color:#2563eb;
+    font-size:40px;
+}
+
+.library-card p{
+    color:#666;
+}
+
+/*==========================
+HOSTEL
+==========================*/
+
+.hostel-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.hostel-card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.hostel-card h1{
+    color:#16a34a;
+    font-size:42px;
+}
+
+/*==========================
+TRANSPORT
+==========================*/
+
+.transport-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.transport-card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.transport-card:hover{
+    transform:translateY(-8px);
+}
+
+.transport-card i{
+    font-size:42px;
+    color:#f97316;
+    margin-bottom:15px;
+}
+
+.transport-card h1{
+    color:#0b3c91;
+}
+
+/*==========================
+PRINCIPAL
+==========================*/
+
+.principal-card{
+    background:white;
+    border-radius:22px;
+    padding:30px;
+    display:flex;
+    align-items:center;
+    gap:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.principal-card img{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    border:5px solid #2563eb;
+}
+
+.principal-card h3{
+    color:#0b3c91;
+    margin-bottom:12px;
+}
+
+.principal-card p{
+    line-height:1.8;
+    color:#666;
+}
+/*==========================================
+DASHBOARD.CSS PART 4
+ACHIEVEMENTS • TOPPERS • STATUS
+QUICK LINKS • FOOTER • UTILITIES
+===========================================*/
+
+/*==========================
+SCHOOL ACHIEVEMENTS
+==========================*/
+
+.achievement-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+}
+
+.achievement-card{
+    background:#fff;
+    border-radius:22px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.35s;
+    cursor:pointer;
+}
+
+.achievement-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 18px 40px rgba(0,0,0,.15);
+}
+
+.achievement-card i{
+    font-size:50px;
+    color:#f59e0b;
+    margin-bottom:18px;
+}
+
+.achievement-card h3{
+    color:#444;
+    margin-bottom:10px;
+}
+
+.achievement-card h1{
+    color:#0b3c91;
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.achievement-card p{
+    color:#777;
+}
+
+/*==========================
+TOPPER TABLE
+==========================*/
+
+.topper-table{
+    width:100%;
+    background:white;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.topper-table th{
+    background:#0b3c91;
+    color:white;
+    padding:18px;
+    font-size:15px;
+}
+
+.topper-table td{
+    padding:18px;
+    border-bottom:1px solid #ececec;
+}
+
+.topper-table tr:hover{
+    background:#f5f9ff;
+}
+
+/*==========================
+SYSTEM STATUS
+==========================*/
+
+.status-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+.status-card{
+    background:#fff;
+    border-radius:20px;
+    padding:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.status-card h3{
+    color:#444;
+}
+
+.online{
+    background:#22c55e;
+    color:#fff;
+    padding:8px 18px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+}
+
+/*==========================
+QUICK LINKS
+==========================*/
+
+.link-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+}
+
+.link-card{
+    background:#fff;
+    padding:28px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    font-weight:600;
+    color:#0b3c91;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.35s;
+}
+
+.link-card:hover{
+    background:#0b3c91;
+    color:#fff;
+    transform:translateY(-8px);
+}
+
+.link-card i{
+    font-size:26px;
+}
+
+/*==========================
+FOOTER
+==========================*/
+
+.dashboard-footer{
+    margin-top:50px;
+    background:#0b3c91;
+    color:#fff;
+    border-radius:22px;
+    padding:35px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.footer-left h3{
+    margin-bottom:10px;
+    font-size:24px;
+}
+
+.footer-left p{
+    opacity:.85;
+}
+
+.footer-center{
+    font-size:15px;
+}
+
+.footer-right{
+    display:flex;
+    gap:15px;
+}
+
+.footer-right a{
+    width:45px;
+    height:45px;
+    background:rgba(255,255,255,.15);
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:.3s;
+}
+
+.footer-right a:hover{
+    background:#fff;
+    color:#0b3c91;
+}
+
+/*==========================
+COMMON BUTTON
+==========================*/
+
+button{
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+}
+
+/*==========================
+CUSTOM SCROLLBAR
+==========================*/
+
+::-webkit-scrollbar{
+    width:10px;
+    height:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#edf2f7;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#0b3c91;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#052c73;
+}
+
+/*==========================
+ANIMATION
+==========================*/
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+.card,
+.quick-card,
+.module-card,
+.analytics-card,
+.department-card,
+.staff-card,
+.facility-card,
+.portal-card,
+.website-card,
+.utility-card,
+.library-card,
+.transport-card,
+.hostel-card,
+.achievement-card,
+.status-card,
+.link-card,
+.dashboard-footer{
+    animation:fadeUp .8s ease;
+}
+
+/*==========================
+UTILITY
+==========================*/
+
+.text-center{
+    text-align:center;
+}
+
+.mt-20{
+    margin-top:20px;
+}
+
+.mt-30{
+    margin-top:30px;
+}
+
+.mt-40{
+    margin-top:40px;
+}
+
+.mb-20{
+    margin-bottom:20px;
+}
+
+.mb-30{
+    margin-bottom:30px;
+}
+
+.shadow{
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+.rounded{
+    border-radius:20px;
+}
+
+.bg-white{
+    background:#fff;
+}
+
+.text-primary{
+    color:#0b3c91;
+}
+
+.text-success{
+    color:#22c55e;
+}
+
+.text-danger{
+    color:#ef4444;
+}
+
+.text-warning{
+    color:#f59e0b;
+}
+/*==========================================
+DASHBOARD.CSS PART 5
+RESPONSIVE DESIGN
+===========================================*/
+
+/*==========================
+LARGE LAPTOPS
+==========================*/
+
+@media(max-width:1400px){
+
+.stats,
+.analytics-grid,
+.finance-grid,
+.performance-grid,
+.staff-grid,
+.birthday-grid,
+.library-grid,
+.transport-grid,
+.achievement-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.website-grid,
+.utility-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/*==========================
+LAPTOP
+==========================*/
+
+@media(max-width:1200px){
+
+.sidebar{
+
+    width:250px;
+
+}
+
+.main{
+
+    margin-left:250px;
+    width:calc(100% - 250px);
+
+}
+
+.topbar{
+
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+
+}
+
+.topbar .right{
+
+    width:100%;
+    justify-content:space-between;
+    flex-wrap:wrap;
+
+}
+
+.search{
+
+    width:100%;
+
+}
+
+.search input{
+
+    width:100%;
+
+}
+
+.stats,
+.analytics-grid,
+.finance-grid,
+.performance-grid,
+.staff-grid,
+.library-grid,
+.transport-grid,
+.achievement-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.dashboard-row,
+.schedule-wrapper,
+.calendar-section{
+
+    grid-template-columns:1fr;
+
+}
+
+.portal-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.website-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.utility-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/*==========================
+TABLET
+==========================*/
+
+@media(max-width:992px){
+
+.sidebar{
+
+    position:relative;
+    width:100%;
+    height:auto;
+
+}
+
+.main{
+
+    margin-left:0;
+    width:100%;
+
+}
+
+.container{
+
+    flex-direction:column;
+
+}
+
+.logo{
+
+    justify-content:center;
+
+}
+
+.menu{
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+
+}
+
+.stats,
+.analytics-grid,
+.finance-grid,
+.performance-grid,
+.staff-grid,
+.department-grid,
+.facility-grid,
+.portal-grid,
+.website-grid,
+.utility-grid,
+.library-grid,
+.transport-grid,
+.achievement-grid,
+.birthday-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.module-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.hostel-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.quick-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.dashboard-footer{
+
+    flex-direction:column;
+    text-align:center;
+
+}
+
+.principal-card{
+
+    flex-direction:column;
+    text-align:center;
+
+}
+
+}
+
+/*==========================
+MOBILE
+==========================*/
+
+@media(max-width:768px){
+
+body{
+
+    font-size:14px;
+
+}
+
+.main{
+
+    padding:15px;
+
+}
+
+.logo{
+
+    padding:18px;
+
+}
+
+.logo img{
+
+    width:50px;
+    height:50px;
+
+}
+
+.logo h2{
+
+    font-size:20px;
+
+}
+
+.topbar{
+
+    padding:20px;
+
+}
+
+.topbar .left h1{
+
+    font-size:24px;
+
+}
+
+.search{
+
+    padding:10px 15px;
+
+}
+
+.search input{
+
+    font-size:14px;
+
+}
+
+.card{
+
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+
+}
+
+.card i{
+
+    font-size:42px;
+
+}
+
+.card h1{
+
+    font-size:30px;
+
+}
+
+.quick-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.quick-card{
+
+    padding:25px;
+
+}
+
+.quick-card i{
+
+    font-size:35px;
+
+}
+
+.module-card{
+
+    flex-direction:column;
+
+}
+
+.module-icon{
+
+    width:65px;
+    height:65px;
+
+}
+
+table{
+
+    display:block;
+    overflow-x:auto;
+
+}
+
+.calendar-table{
+
+    display:block;
+    overflow-x:auto;
+
+}
+
+.dashboard-footer{
+
+    padding:25px;
+
+}
+
+.footer-right{
+
+    justify-content:center;
+
+}
+
+}
+
+/*==========================
+SMALL MOBILE
+==========================*/
+
+@media(max-width:500px){
+
+.profile{
+
+    flex-direction:column;
+    text-align:center;
+
+}
+
+.profile img{
+
+    width:60px;
+    height:60px;
+
+}
+
+.icon{
+
+    width:42px;
+    height:42px;
+
+}
+
+.section-title{
+
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+
+}
+
+.section-title h2{
+
+    font-size:22px;
+
+}
+
+.card,
+.analytics-card,
+.department-card,
+.staff-card,
+.facility-card,
+.portal-card,
+.website-card,
+.utility-card,
+.library-card,
+.transport-card,
+.hostel-card,
+.achievement-card{
+
+    padding:22px;
+
+}
+
+.dashboard-footer{
+
+    border-radius:15px;
+
+}
+
+.footer-left h3{
+
+    font-size:20px;
+
+}
+
+.footer-center{
+
+    font-size:13px;
+
+}
+
+}
+
+/*==========================
+PRINT
+==========================*/
+
+@media print{
+
+.sidebar,
+.topbar,
+.dashboard-footer,
+button{
+
+    display:none;
+
+}
+
+.main{
+
+    margin:0;
+    width:100%;
+    padding:0;
+
+}
+
+body{
+
+    background:white;
+
+}
+
+.card,
+.module-card,
+.department-card,
+.staff-card,
+.analytics-card{
+
+    box-shadow:none;
+    border:1px solid #ccc;
+
+}
+
+}
+
+/*==========================
+SMOOTH SCROLL
+==========================*/
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+/*==========================
+SELECTION
+==========================*/
+
+::selection{
+
+    background:#0b3c91;
+    color:white;
+
+}
+
+/*==========================
+FOCUS
+==========================*/
+
+input:focus,
+button:focus{
+
+    outline:2px solid #2563eb;
+    outline-offset:2px;
+
+}
+
+/*==========================
+END OF dashboard.css
+===========================================*/

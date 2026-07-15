@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision School ERP Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard1.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <img src="logo.png" alt="Vision School">
+
+            <div>
+
+                <h2>VISION</h2>
+
+                <span>School ERP</span>
+
+            </div>
+
+        </div>
+
+        <ul class="menu">
+
+            <li class="active">
+                <a href="#">
+                    <i class="fa-solid fa-house"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    Students
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    Teachers
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Admissions
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-book-open"></i>
+                    Academics
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    Attendance
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-file-lines"></i>
+                    Examinations
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-chart-column"></i>
+                    Results
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    Fee Management
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-bus"></i>
+                    Transport
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-book"></i>
+                    Library
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-bed"></i>
+                    Hostel
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-users"></i>
+                    HR Management
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-clock"></i>
+                    Timetable
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-envelope"></i>
+                    Circulars
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-bell"></i>
+                    Notifications
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <!-- Header -->
+
+        <header class="topbar">
+
+            <div class="left">
+
+                <h1>Vision School Dashboard</h1>
+
+                <p>Welcome Back Administrator</p>
+
+            </div>
+
+            <div class="right">
+
+                <div class="search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input type="text" id="searchInput" placeholder="Search anything">
+
+                </div>
+
+                <button class="icon">
+
+                    <i class="fa-solid fa-bell"></i>
+
+                </button>
+
+                <button class="icon">
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                </button>
+
+                <div class="profile">
+
+                    <img id="profilePhoto" src="admin.png" alt="">
+
+                    <div>
+
+                        <h4 id="adminName">Administrator</h4>
+
+                        <span>Super Admin</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- Statistics -->
+
+        <section class="stats">
+
+            <div class="card blue">
+
+                <div>
+
+                    <h3>Total Students</h3>
+
+                    <h1 id="studentCount">2580</h1>
+
+                    <span>+15 Today</span>
+
+                </div>
+
+                <i class="fa-solid fa-user-graduate"></i>
+
+            </div>
+
+            <div class="card green">
+
+                <div>
+
+                    <h3>Total Teachers</h3>
+
+                    <h1 id="teacherCount">164</h1>
+
+                    <span>12 Departments</span>
+
+                </div>
+
+                <i class="fa-solid fa-chalkboard-user"></i>
+
+            </div>
+
+            <div class="card orange">
+
+                <div>
+
+                    <h3>Attendance</h3>
+
+                    <h1>96%</h1>
+
+                    <span>Present Today</span>
+
+                </div>
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+            </div>
+
+            <div class="card red">
+
+                <div>
+
+                    <h3>Fee Collection</h3>
+
+                    <h1>₹24.5L</h1>
+
+                    <span>This Month</span>
+
+                </div>
+
+                <i class="fa-solid fa-money-bill-wave"></i>
+
+            </div>
+
+        </section>
+
+        <!-- Quick Access -->
+
+        <section class="quick">
+
+            <div class="section-title">
+
+                <h2>Quick Access</h2>
+
+            </div>
+
+            <div class="quick-grid">
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <h3>New Admission</h3>
+                    <p>Register New Student</p>
+                </div>
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-book"></i>
+                    <h3>Library</h3>
+                    <p>Manage Books</p>
+                </div>
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <h3>Fees</h3>
+                    <p>Collect Payments</p>
+                </div>
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <h3>Results</h3>
+                    <p>Publish Results</p>
+                </div>
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <h3>Timetable</h3>
+                    <p>Manage Classes</p>
+                </div>
+
+                <div class="quick-card">
+                    <i class="fa-solid fa-bus"></i>
+                    <h3>Transport</h3>
+                    <p>Vehicle Management</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Academic Modules -->
+
+        <section class="modules">
+
+            <div class="section-title">
+
+                <h2>Academic Management</h2>
+
+            </div>
+
+            <div class="module-grid">
+                <div class="module-grid">
+
+    <div class="module-card">
+
+        <div class="module-icon blue-bg">
+            <i class="fa-solid fa-user-graduate"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Student Management</h3>
+
+            <p>Manage student profiles, promotion, TC, certificates and records.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon green-bg">
+            <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Teacher Management</h3>
+
+            <p>Add teachers, assign classes, monitor workload and schedules.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon orange-bg">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Attendance</h3>
+
+            <p>Daily attendance with reports, leave management and analytics.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon red-bg">
+            <i class="fa-solid fa-file-pen"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Examination</h3>
+
+            <p>Create exams, assign marks, grading system and publish reports.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon purple-bg">
+            <i class="fa-solid fa-chart-column"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Result Processing</h3>
+
+            <p>Generate progress cards, rank lists and printable report cards.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon teal-bg">
+            <i class="fa-solid fa-money-check-dollar"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Fee Management</h3>
+
+            <p>Collect fees, pending dues, online payment reports and receipts.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon yellow-bg">
+            <i class="fa-solid fa-book-open-reader"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Library</h3>
+
+            <p>Issue books, return books, maintain inventory and fines.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon cyan-bg">
+            <i class="fa-solid fa-bus"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Transport</h3>
+
+            <p>Vehicle routes, GPS, driver details and student allocation.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon brown-bg">
+            <i class="fa-solid fa-bed"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Hostel</h3>
+
+            <p>Room allocation, hostel fees, wardens and attendance.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon pink-bg">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Human Resources</h3>
+
+            <p>Employee payroll, leave, recruitment and service records.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon navy-bg">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Timetable</h3>
+
+            <p>Create class timetable, teacher timetable and substitutions.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+    <div class="module-card">
+
+        <div class="module-icon violet-bg">
+            <i class="fa-solid fa-building-columns"></i>
+        </div>
+
+        <div class="module-content">
+
+            <h3>Administration</h3>
+
+            <p>School setup, academic years, permissions and administration.</p>
+
+            <button>Open Module</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- Recent Activity -->
+
+<section class="dashboard-row">
+
+    <div class="recent-activity">
+
+        <div class="section-title">
+
+            <h2>Recent Activities</h2>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Time</th>
+
+                    <th>Activity</th>
+
+                    <th>User</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>09:15 AM</td>
+                    <td>New Student Admission</td>
+                    <td>Admin</td>
+                    <td><span class="success">Completed</span></td>
+                </tr>
+
+                <tr>
+                    <td>09:40 AM</td>
+                    <td>Fee Payment Received</td>
+                    <td>Accountant</td>
+                    <td><span class="success">Completed</span></td>
+                </tr>
+
+                <tr>
+                    <td>10:05 AM</td>
+                    <td>Attendance Updated</td>
+                    <td>Class Teacher</td>
+                    <td><span class="processing">Updated</span></td>
+                </tr>
+
+                <tr>
+                    <td>10:45 AM</td>
+                    <td>Exam Schedule Published</td>
+                    <td>Principal</td>
+                    <td><span class="success">Published</span></td>
+                </tr>
+
+                <tr>
+                    <td>11:20 AM</td>
+                    <td>Transport Route Updated</td>
+                    <td>Transport Admin</td>
+                    <td><span class="processing">Modified</span></td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="notice-board">
+
+        <div class="section-title">
+
+            <h2>Notice Board</h2>
+
+        </div>
+
+        <div class="notice">
+
+            <h4>📢 Parent Meeting</h4>
+
+            <p>Parent Teacher Meeting on Saturday at 10:00 AM.</p>
+
+        </div>
+
+        <div class="notice">
+
+            <h4>🏆 Sports Day</h4>
+
+            <p>Annual Sports Day registrations are now open.</p>
+
+        </div>
+
+        <div class="notice">
+
+            <h4>📝 Examination</h4>
+
+            <p>Mid-term examinations begin from next Monday.</p>
+
+        </div>
+
+        <div class="notice">
+
+            <h4>🎉 Holiday</h4>
+
+            <p>School will remain closed on Independence Day.</p>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= DASHBOARD ANALYTICS ================= -->
+
+<section class="analytics-section">
+
+    <div class="section-title">
+
+        <h2>Dashboard Analytics</h2>
+
+        <span>Academic Year 2026 - 2027</span>
+
+    </div>
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+
+            <div class="analytics-header">
+
+                <h3>Today's Attendance</h3>
+
+                <i class="fa-solid fa-user-check"></i>
+
+            </div>
+
+            <div class="progress-circle">
+
+                <h1>96%</h1>
+
+            </div>
+
+            <div class="analytics-footer">
+
+                <span>Present : 2385</span>
+
+                <span>Absent : 101</span>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-card">
+
+            <div class="analytics-header">
+
+                <h3>Fee Collection</h3>
+
+                <i class="fa-solid fa-money-bill-wave"></i>
+
+            </div>
+
+            <h1>₹24,56,800</h1>
+
+            <p>Collected This Month</p>
+
+            <div class="mini-bar">
+
+                <div class="bar-fill fee-fill"></div>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-card">
+
+            <div class="analytics-header">
+
+                <h3>Admissions</h3>
+
+                <i class="fa-solid fa-user-plus"></i>
+
+            </div>
+
+            <h1>148</h1>
+
+            <p>New Admissions</p>
+
+            <div class="mini-bar">
+
+                <div class="bar-fill admission-fill"></div>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-card">
+
+            <div class="analytics-header">
+
+                <h3>Exam Completion</h3>
+
+                <i class="fa-solid fa-file-lines"></i>
+
+            </div>
+
+            <h1>87%</h1>
+
+            <p>Completed Successfully</p>
+
+            <div class="mini-bar">
+
+                <div class="bar-fill exam-fill"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= TODAY'S SCHEDULE ================= -->
+
+<section class="schedule-wrapper">
+
+    <div class="today-schedule">
+
+        <div class="section-title">
+
+            <h2>Today's Schedule</h2>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Time</th>
+
+                    <th>Class</th>
+
+                    <th>Teacher</th>
+
+                    <th>Room</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>09:00 AM</td>
+
+                    <td>X - A Mathematics</td>
+
+                    <td>Mr. Kumar</td>
+
+                    <td>201</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>10:00 AM</td>
+
+                    <td>IX - B Science</td>
+
+                    <td>Mrs. Priya</td>
+
+                    <td>305</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>11:00 AM</td>
+
+                    <td>VIII - English</td>
+
+                    <td>Mr. David</td>
+
+                    <td>103</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>12:00 PM</td>
+
+                    <td>VII - Social</td>
+
+                    <td>Mrs. Kavya</td>
+
+                    <td>210</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>02:00 PM</td>
+
+                    <td>VI - Computer</td>
+
+                    <td>Mr. Arun</td>
+
+                    <td>Computer Lab</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="upcoming-events">
+
+        <div class="section-title">
+
+            <h2>Upcoming Events</h2>
+
+        </div>
+
+        <div class="event-card">
+
+            <h4>🎓 Graduation Day</h4>
+
+            <span>15 July 2026</span>
+
+            <p>Main Auditorium</p>
+
+        </div>
+
+        <div class="event-card">
+
+            <h4>🏆 Sports Meet</h4>
+
+            <span>22 July 2026</span>
+
+            <p>School Ground</p>
+
+        </div>
+
+        <div class="event-card">
+
+            <h4>🧪 Science Exhibition</h4>
+
+            <span>01 August 2026</span>
+
+            <p>Block B</p>
+
+        </div>
+
+        <div class="event-card">
+
+            <h4>🎵 Cultural Fest</h4>
+
+            <span>10 August 2026</span>
+
+            <p>Open Stage</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= FINANCE OVERVIEW ================= -->
+
+<section class="finance-overview">
+
+    <div class="section-title">
+
+        <h2>Finance Overview</h2>
+
+    </div>
+
+    <div class="finance-grid">
+
+        <div class="finance-card">
+
+            <i class="fa-solid fa-wallet"></i>
+
+            <h3>Total Income</h3>
+
+            <h1>₹1.82 Cr</h1>
+
+        </div>
+
+        <div class="finance-card">
+
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+
+            <h3>Pending Fees</h3>
+
+            <h1>₹18.5 L</h1>
+
+        </div>
+
+        <div class="finance-card">
+
+            <i class="fa-solid fa-credit-card"></i>
+
+            <h3>Online Payments</h3>
+
+            <h1>₹76 L</h1>
+
+        </div>
+
+        <div class="finance-card">
+
+            <i class="fa-solid fa-receipt"></i>
+
+            <h3>Receipts Issued</h3>
+
+            <h1>4,825</h1>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= STUDENT PERFORMANCE ================= -->
+
+<section class="performance-section">
+
+    <div class="section-title">
+
+        <h2>Student Performance</h2>
+
+    </div>
+
+    <div class="performance-grid">
+
+        <div class="performance-card">
+
+            <h3>A Grade</h3>
+
+            <h1>856</h1>
+
+        </div>
+
+        <div class="performance-card">
+
+            <h3>B Grade</h3>
+
+            <h1>973</h1>
+
+        </div>
+
+        <div class="performance-card">
+
+            <h3>C Grade</h3>
+
+            <h1>502</h1>
+
+        </div>
+
+        <div class="performance-card">
+
+            <h3>Need Improvement</h3>
+
+            <h1>155</h1>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- Continue from here in Part 2 -->
+ <!-- ================= ACADEMIC DEPARTMENTS ================= -->
+
+<section class="departments-section">
+
+    <div class="section-title">
+
+        <h2>Academic Departments</h2>
+
+        <span>Departments Available in Vision School</span>
+
+    </div>
+
+    <div class="department-grid">
+
+        <div class="department-card">
+            <i class="fa-solid fa-calculator"></i>
+            <h3>Mathematics</h3>
+            <p>Faculty : 18</p>
+            <p>Students : 624</p>
+            <button>View Department</button>
+        </div>
+
+        <div class="department-card">
+            <i class="fa-solid fa-flask"></i>
+            <h3>Science</h3>
+            <p>Faculty : 22</p>
+            <p>Students : 702</p>
+            <button>View Department</button>
+        </div>
+
+        <div class="department-card">
+            <i class="fa-solid fa-book"></i>
+            <h3>Languages</h3>
+            <p>Faculty : 16</p>
+            <p>Students : 598</p>
+            <button>View Department</button>
+        </div>
+
+        <div class="department-card">
+            <i class="fa-solid fa-globe"></i>
+            <h3>Social Studies</h3>
+            <p>Faculty : 14</p>
+            <p>Students : 530</p>
+            <button>View Department</button>
+        </div>
+
+        <div class="department-card">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h3>Computer Science</h3>
+            <p>Faculty : 12</p>
+            <p>Students : 450</p>
+            <button>View Department</button>
+        </div>
+
+        <div class="department-card">
+            <i class="fa-solid fa-palette"></i>
+            <h3>Arts & Drawing</h3>
+            <p>Faculty : 10</p>
+            <p>Students : 332</p>
+            <button>View Department</button>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= STAFF OVERVIEW ================= -->
+
+<section class="staff-section">
+
+    <div class="section-title">
+
+        <h2>Staff Overview</h2>
+
+    </div>
+
+    <div class="staff-grid">
+
+        <div class="staff-card">
+
+            <h3>Teaching Staff</h3>
+
+            <h1>164</h1>
+
+            <p>Active Faculty Members</p>
+
+        </div>
+
+        <div class="staff-card">
+
+            <h3>Non Teaching</h3>
+
+            <h1>52</h1>
+
+            <p>Office & Support Staff</p>
+
+        </div>
+
+        <div class="staff-card">
+
+            <h3>Drivers</h3>
+
+            <h1>14</h1>
+
+            <p>School Transport</p>
+
+        </div>
+
+        <div class="staff-card">
+
+            <h3>Security</h3>
+
+            <h1>18</h1>
+
+            <p>Campus Security</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= SCHOOL FACILITIES ================= -->
+
+<section class="facilities">
+
+    <div class="section-title">
+
+        <h2>Campus Facilities</h2>
+
+    </div>
+
+    <div class="facility-grid">
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-building-columns"></i>
+
+            <h3>Library</h3>
+
+            <p>35,000+ Books</p>
+
+        </div>
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-computer"></i>
+
+            <h3>Computer Labs</h3>
+
+            <p>4 Modern Labs</p>
+
+        </div>
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-microscope"></i>
+
+            <h3>Science Labs</h3>
+
+            <p>Physics • Chemistry • Biology</p>
+
+        </div>
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-futbol"></i>
+
+            <h3>Sports Complex</h3>
+
+            <p>Indoor & Outdoor</p>
+
+        </div>
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-bus"></i>
+
+            <h3>Transport</h3>
+
+            <p>45 School Buses</p>
+
+        </div>
+
+        <div class="facility-card">
+
+            <i class="fa-solid fa-bed"></i>
+
+            <h3>Hostel</h3>
+
+            <p>Boys & Girls Hostel</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= PARENT PORTAL ================= -->
+
+<section class="portal-section">
+
+    <div class="section-title">
+
+        <h2>Parent Portal</h2>
+
+    </div>
+
+    <div class="portal-grid">
+
+        <div class="portal-card">
+
+            <i class="fa-solid fa-mobile-screen-button"></i>
+
+            <h3>Mobile App</h3>
+
+            <p>Attendance, Homework, Circulars</p>
+
+        </div>
+
+        <div class="portal-card">
+
+            <i class="fa-solid fa-credit-card"></i>
+
+            <h3>Online Fee Payment</h3>
+
+            <p>Secure Payment Gateway</p>
+
+        </div>
+
+        <div class="portal-card">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <h3>Student Progress</h3>
+
+            <p>Performance Reports</p>
+
+        </div>
+
+        <div class="portal-card">
+
+            <i class="fa-solid fa-comments"></i>
+
+            <h3>Communication</h3>
+
+            <p>Teacher & Parent Interaction</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= WEBSITE MANAGEMENT ================= -->
+
+<section class="website-management">
+
+    <div class="section-title">
+
+        <h2>Website & Public Portal</h2>
+
+    </div>
+
+    <div class="website-grid">
+
+        <div class="website-card">
+            <h3>Latest News</h3>
+            <button>Manage</button>
+        </div>
+
+        <div class="website-card">
+            <h3>Gallery</h3>
+            <button>Manage</button>
+        </div>
+
+        <div class="website-card">
+            <h3>Events</h3>
+            <button>Manage</button>
+        </div>
+
+        <div class="website-card">
+            <h3>Achievements</h3>
+            <button>Manage</button>
+        </div>
+
+        <div class="website-card">
+            <h3>Downloads</h3>
+            <button>Manage</button>
+        </div>
+
+        <div class="website-card">
+            <h3>Contact Information</h3>
+            <button>Edit</button>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= SYSTEM UTILITIES ================= -->
+
+<section class="system-section">
+
+    <div class="section-title">
+
+        <h2>System Utilities</h2>
+
+    </div>
+
+    <div class="utility-grid">
+
+        <div class="utility-card">
+            <i class="fa-solid fa-users-gear"></i>
+            <h3>User Management</h3>
+        </div>
+
+        <div class="utility-card">
+            <i class="fa-solid fa-lock"></i>
+            <h3>Role Permissions</h3>
+        </div>
+
+        <div class="utility-card">
+            <i class="fa-solid fa-database"></i>
+            <h3>Database Backup</h3>
+        </div>
+
+        <div class="utility-card">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <h3>Cloud Sync</h3>
+        </div>
+
+        <div class="utility-card">
+            <i class="fa-solid fa-sliders"></i>
+            <h3>ERP Settings</h3>
+        </div>
+
+        <div class="utility-card">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Security Center</h3>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CONTINUE PART 3 ================= -->
+ <!-- ================= CALENDAR & HOLIDAYS ================= -->
+
+<section class="calendar-section">
+
+    <div class="calendar-panel">
+
+        <div class="section-title">
+
+            <h2>Academic Calendar</h2>
+
+        </div>
+
+        <div class="calendar-box">
+
+            <h3>July 2026</h3>
+
+            <table class="calendar-table">
+
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                </tr>
+
+                <tr>
+                    <td>6</td>
+                    <td>7</td>
+                    <td>8</td>
+                    <td class="today">9</td>
+                    <td>10</td>
+                    <td>11</td>
+                    <td>12</td>
+                </tr>
+
+                <tr>
+                    <td>13</td>
+                    <td>14</td>
+                    <td class="holiday">15</td>
+                    <td>16</td>
+                    <td>17</td>
+                    <td>18</td>
+                    <td>19</td>
+                </tr>
+
+                <tr>
+                    <td>20</td>
+                    <td>21</td>
+                    <td>22</td>
+                    <td>23</td>
+                    <td>24</td>
+                    <td>25</td>
+                    <td>26</td>
+                </tr>
+
+                <tr>
+                    <td>27</td>
+                    <td>28</td>
+                    <td>29</td>
+                    <td>30</td>
+                    <td>31</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="holiday-panel">
+
+        <div class="section-title">
+
+            <h2>Upcoming Holidays</h2>
+
+        </div>
+
+        <div class="holiday-card">
+
+            <h3>Independence Day</h3>
+
+            <p>15 August 2026</p>
+
+        </div>
+
+        <div class="holiday-card">
+
+            <h3>Ganesh Chaturthi</h3>
+
+            <p>27 August 2026</p>
+
+        </div>
+
+        <div class="holiday-card">
+
+            <h3>Dasara Vacation</h3>
+
+            <p>10 Oct - 20 Oct</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= BIRTHDAYS ================= -->
+
+<section class="birthday-section">
+
+    <div class="section-title">
+
+        <h2>Today's Birthdays</h2>
+
+    </div>
+
+    <div class="birthday-grid">
+
+        <div class="birthday-card">
+
+            <img src="student.png">
+
+            <h3>Rahul Sharma</h3>
+
+            <p>Class X-A</p>
+
+        </div>
+
+        <div class="birthday-card">
+
+            <img src="student.png">
+
+            <h3>Sneha Reddy</h3>
+
+            <p>Class VIII-B</p>
+
+        </div>
+
+        <div class="birthday-card">
+
+            <img src="teacher.png">
+
+            <h3>Mrs. Kavya</h3>
+
+            <p>Science Teacher</p>
+
+        </div>
+
+        <div class="birthday-card">
+
+            <img src="teacher.png">
+
+            <h3>Mr. Rajesh</h3>
+
+            <p>Mathematics</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= LIBRARY STATUS ================= -->
+
+<section class="library-status">
+
+    <div class="section-title">
+
+        <h2>Library Overview</h2>
+
+    </div>
+
+    <div class="library-grid">
+
+        <div class="library-card">
+
+            <h1>35,284</h1>
+
+            <p>Total Books</p>
+
+        </div>
+
+        <div class="library-card">
+
+            <h1>1,846</h1>
+
+            <p>Books Issued</p>
+
+        </div>
+
+        <div class="library-card">
+
+            <h1>324</h1>
+
+            <p>Returned Today</p>
+
+        </div>
+
+        <div class="library-card">
+
+            <h1>54</h1>
+
+            <p>Pending Returns</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= HOSTEL STATUS ================= -->
+
+<section class="hostel-section">
+
+    <div class="section-title">
+
+        <h2>Hostel Status</h2>
+
+    </div>
+
+    <div class="hostel-grid">
+
+        <div class="hostel-card">
+
+            <h3>Boys Hostel</h3>
+
+            <h1>420</h1>
+
+            <p>Occupied Rooms</p>
+
+        </div>
+
+        <div class="hostel-card">
+
+            <h3>Girls Hostel</h3>
+
+            <h1>385</h1>
+
+            <p>Occupied Rooms</p>
+
+        </div>
+
+        <div class="hostel-card">
+
+            <h3>Vacant Rooms</h3>
+
+            <h1>38</h1>
+
+            <p>Available</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= BUS TRACKING ================= -->
+
+<section class="transport-status">
+
+    <div class="section-title">
+
+        <h2>School Transport</h2>
+
+    </div>
+
+    <div class="transport-grid">
+
+        <div class="transport-card">
+
+            <i class="fa-solid fa-bus"></i>
+
+            <h3>Total Buses</h3>
+
+            <h1>45</h1>
+
+        </div>
+
+        <div class="transport-card">
+
+            <i class="fa-solid fa-location-dot"></i>
+
+            <h3>Routes</h3>
+
+            <h1>28</h1>
+
+        </div>
+
+        <div class="transport-card">
+
+            <i class="fa-solid fa-user-group"></i>
+
+            <h3>Students Using Transport</h3>
+
+            <h1>1,246</h1>
+
+        </div>
+
+        <div class="transport-card">
+
+            <i class="fa-solid fa-gas-pump"></i>
+
+            <h3>Fuel Cost</h3>
+
+            <h1>₹3.8L</h1>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= PRINCIPAL MESSAGE ================= -->
+
+<section class="principal-section">
+
+    <div class="section-title">
+
+        <h2>Principal's Message</h2>
+
+    </div>
+
+    <div class="principal-card">
+
+        <img src="principal.png">
+
+        <div>
+
+            <h3>Dr. S. Kumar</h3>
+
+            <p>
+                Welcome to Vision School ERP Dashboard.
+                Continue providing quality education,
+                maintain discipline,
+                encourage innovation,
+                and support every student's academic excellence.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CONTINUE PART 4 ================= -->
+ <!-- ================= SCHOOL ACHIEVEMENTS ================= -->
+
+<section class="achievement-section">
+
+    <div class="section-title">
+        <h2>School Achievements</h2>
+    </div>
+
+    <div class="achievement-grid">
+
+        <div class="achievement-card">
+            <i class="fa-solid fa-trophy"></i>
+            <h3>State Rank</h3>
+            <h1>#1</h1>
+            <p>Academic Excellence</p>
+        </div>
+
+        <div class="achievement-card">
+            <i class="fa-solid fa-medal"></i>
+            <h3>Sports Awards</h3>
+            <h1>58</h1>
+            <p>This Academic Year</p>
+        </div>
+
+        <div class="achievement-card">
+            <i class="fa-solid fa-award"></i>
+            <h3>Olympiad Winners</h3>
+            <h1>126</h1>
+            <p>National Level</p>
+        </div>
+
+        <div class="achievement-card">
+            <i class="fa-solid fa-star"></i>
+            <h3>Pass Percentage</h3>
+            <h1>99.2%</h1>
+            <p>Board Examinations</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= TOP PERFORMERS ================= -->
+
+<section class="topper-section">
+
+    <div class="section-title">
+        <h2>Top Performing Students</h2>
+    </div>
+
+    <table class="topper-table">
+
+        <thead>
+
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Percentage</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>1</td>
+                <td>Ananya Sharma</td>
+                <td>X-A</td>
+                <td>99.4%</td>
+            </tr>
+
+            <tr>
+                <td>2</td>
+                <td>Sai Krishna</td>
+                <td>X-B</td>
+                <td>98.9%</td>
+            </tr>
+
+            <tr>
+                <td>3</td>
+                <td>Harshitha</td>
+                <td>IX-A</td>
+                <td>98.6%</td>
+            </tr>
+
+            <tr>
+                <td>4</td>
+                <td>Rahul</td>
+                <td>IX-B</td>
+                <td>98.2%</td>
+            </tr>
+
+            <tr>
+                <td>5</td>
+                <td>Likitha</td>
+                <td>VIII-A</td>
+                <td>97.9%</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<!-- ================= SYSTEM STATUS ================= -->
+
+<section class="status-section">
+
+    <div class="section-title">
+        <h2>System Status</h2>
+    </div>
+
+    <div class="status-grid">
+
+        <div class="status-card">
+
+            <h3>Database</h3>
+
+            <span class="online">Online</span>
+
+        </div>
+
+        <div class="status-card">
+
+            <h3>Server</h3>
+
+            <span class="online">Running</span>
+
+        </div>
+
+        <div class="status-card">
+
+            <h3>Cloud Backup</h3>
+
+            <span class="online">Completed</span>
+
+        </div>
+
+        <div class="status-card">
+
+            <h3>Email Service</h3>
+
+            <span class="online">Connected</span>
+
+        </div>
+
+        <div class="status-card">
+
+            <h3>SMS Gateway</h3>
+
+            <span class="online">Active</span>
+
+        </div>
+
+        <div class="status-card">
+
+            <h3>Website</h3>
+
+            <span class="online">Live</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= QUICK LINKS ================= -->
+
+<section class="quick-links">
+
+    <div class="section-title">
+
+        <h2>Quick Links</h2>
+
+    </div>
+
+    <div class="link-grid">
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-user-plus"></i>
+            New Admission
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-money-bill"></i>
+            Collect Fees
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-file-lines"></i>
+            Examination
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-book"></i>
+            Library
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-bus"></i>
+            Transport
+        </a>
+
+        <a href="#" class="link-card">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+    </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="dashboard-footer">
+
+    <div class="footer-left">
+
+        <h3>Vision School ERP</h3>
+
+        <p>
+            Empowering Education Through Technology
+        </p>
+
+    </div>
+
+    <div class="footer-center">
+
+        <p>
+
+            © 2026 Vision School.
+
+            All Rights Reserved.
+
+        </p>
+
+    </div>
+
+    <div class="footer-right">
+
+        <a href="#">
+            <i class="fa-brands fa-facebook"></i>
+        </a>
+
+        <a href="#">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <a href="#">
+            <i class="fa-brands fa-x-twitter"></i>
+        </a>
+
+        <a href="#">
+            <i class="fa-brands fa-linkedin"></i>
+        </a>
+
+    </div>
+
+</footer>
+
+</main>
+
+</div>
+<script type="module" src="dashboard1.js"></script>
+</body>
+
+</html>
