@@ -1,296 +1,1291 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vision School Admin Dashboard</title>
+
+<title>Vision School ERP | Admin Dashboard</title>
+
 <link rel="stylesheet" href="dashboard.css">
 
-<!-- Supabase -->
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-const SUPABASE_URL = "https://gocoupvzzsgouwdkdmzu.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY291cHZ6enNnb3V3ZGtkbXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMDc2MTAsImV4cCI6MjA4NTU4MzYxMH0.XGxBzWLg9etqOo9NVAX5mrli2u-0dwEYGsVgwx4tXaw";
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-// ===== PROTECT ADMIN PAGE =====
-async function protectAdminPage(){
-    const { data:{user}, error } = await supabase.auth.getUser();
-    if(!user || error){
-        alert("Login required");
-        window.location.href="/login.html";
-        return;
-    }
+<script type="module" src="dashboard.js"></script>
 
-    const { data:profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("user_id",user.id)
-        .single();
-
-    if(!profile || profile.role!=="admin"){
-        alert("Access denied");
-        window.location.href="/login.html";
-        return;
-    }
-
-    fetchAllUsers();
-}
-protectAdminPage();
-
-// ===== CREATE / UPDATE USER =====
-window.createUser = async function(){
-    const full_name = document.getElementById("full_name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const role = document.getElementById("role").value;
-    const password = document.getElementById("password").value.trim();
-    const errorBox = document.getElementById("error");
-
-    errorBox.innerText = "";
-
-    if(!full_name || !email || !role){
-        errorBox.innerText = "Full Name, Email, Role required";
-        return;
-    }
-
-    const { data: existing, error: existingError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("email", email)
-        .maybeSingle();
-
-    console.log("EXISTING:", existing);
-    console.log("EXISTING ERROR:", existingError);
-
-    let userId;
-
-    if(existing){
-
-        userId = existing.user_id;
-
-        const { data, error } = await supabase
-            .from("profiles")
-            .update({
-                full_name,
-                role
-            })
-            .eq("user_id", userId)
-            .select();
-
-        console.log("UPDATE DATA:", data);
-        console.log("UPDATE ERROR:", error);
-
-        if(error){
-            errorBox.innerText = error.message;
-            return;
-        }
-
-        alert("Profile Updated");
-
-    } else {
-
-        if(!password){
-            errorBox.innerText = "Password required";
-            return;
-        }
-
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options:{
-                data:{
-                    full_name,
-                    role
-                }
-            }
-        });
-
-        console.log("SIGNUP DATA:", data);
-        console.log("SIGNUP ERROR:", error);
-
-        if(error){
-            errorBox.innerText = error.message;
-            return;
-        }
-
-        alert("User Created");
-    }
-
-    document.getElementById("full_name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-    document.getElementById("role").value = "";
-
-    fetchAllUsers();
-};
-
-// ===== DELETE USER =====
-window.deleteUser = async function(id){
-
-    if(!confirm("Delete user?")) return;
-
-    const { error } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("user_id", id);
-
-    console.log("DELETE ERROR:", error);
-
-    if(error){
-        alert(error.message);
-        return;
-    }
-
-    fetchAllUsers();
-};
-
-// ===== EDIT USER =====
-window.editUser = function(id,name,role,email){
-    document.getElementById("full_name").value=name;
-    document.getElementById("email").value=email;
-    document.getElementById("role").value=role;
-};
-
-// ===== FETCH USERS =====
-async function fetchAllUsers(){
-    const { data:users } = await supabase
-        .from("profiles")
-        .select("user_id,full_name,email,role");
-
-    const students=document.getElementById("students_list");
-    const teachers=document.getElementById("teachers_list");
-    const admins=document.getElementById("admins_list");
-
-    students.innerHTML="";
-    teachers.innerHTML="";
-    admins.innerHTML="";
-
-    let sc=0,tc=0,ac=0;
-
-    users.forEach(u=>{
-        const li=document.createElement("li");
-        li.innerHTML=`
-            <span>${u.full_name} (${u.email})</span>
-            <div class="action-buttons">
-              <button onclick="editUser('${u.user_id}','${u.full_name}','${u.role}','${u.email}')">Edit</button>
-              <button onclick="deleteUser('${u.user_id}')">Delete</button>
-            </div>
-        `;
-
-        if(u.role==="student"){ students.appendChild(li); sc++; }
-        else if(u.role==="teacher"){ teachers.appendChild(li); tc++; }
-        else{ admins.appendChild(li); ac++; }
-    });
-
-    document.getElementById("student-count").innerText=sc;
-    document.getElementById("teacher-count").innerText=tc;
-    document.getElementById("admin-count").innerText=ac;
-}
-
-// ===== LOGOUT =====
-window.logout = async function(){
-    await supabase.auth.signOut();
-    window.location.href="/login.html";
-};
-</script>
 </head>
 
 <body>
 
-<div class="dashboard">
+<!-- =====================================================
+LOADER
+===================================================== -->
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-<div class="logo-box">
-<img src="hii.jpg">
-<h2>VISION</h2>
-<p>School Admin</p>
+<div id="loader" class="loader">
+
+    <div class="spinner"></div>
+
+    <h2>VISION SCHOOL ERP</h2>
+
+    <p>Loading Dashboard...</p>
+
 </div>
+
+<!-- =====================================================
+MAIN WRAPPER
+===================================================== -->
+
+<div class="wrapper">
+
+<!-- =====================================================
+SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+<div class="logo-area">
+
+<img
+src="../hi.jpg"
+class="logo"
+alt="Vision School">
+
+<h2>VISION</h2>
+
+<p>School Admin</p>
+
+</div>
+
+<nav>
 
 <ul>
-<li onclick="window.location.href='dashboard.html'">📊 Dashboard</li>
-<li onclick="window.location.href='official-dashboard.html'">
-    🏛️ Official Dashboard
-</li>
-<li onclick="window.location.href='admin-all-students.html'">👨‍🎓 Students</li>
-<li onclick="window.location.href='teachers.html'">👨‍🏫 Teachers</li>
 
-<!-- NEW BUTTONS -->
-<li onclick="window.location.href='students-analytics.html'">📈 Students Analytics</li>
-<li onclick="window.location.href='attendance.html'">📅 Attendance</li>
+<li class="active">
 
-<li onclick="window.location.href='classes.html'">🏫 Classes</li>
-<li onclick="window.location.href='subjects.html'">📚 Subjects</li>
-<li onclick="window.location.href='marks.html'">📝 Marks Entry</li>
-<li onclick="window.location.href='promote.html'">   🎓 Promote Students
+<span>📊</span>
+
+Dashboard
+
 </li>
-<li onclick="window.location.href='fees.html'">💰 Fees</li>
-<li onclick="logout()">🚪 Logout</li>
+
+<li onclick="location.href='official-dashboard.html'">
+
+<span>🏛️</span>
+
+Official Dashboard
+
+</li>
+
+<li onclick="location.href='student_master.html'">
+
+<span>👨‍🎓</span>
+
+Students
+
+</li>
+
+<li onclick="location.href='teachers.html'">
+
+<span>👨‍🏫</span>
+
+Teachers
+
+</li>
+
+<li onclick="location.href='students-analytics.html'">
+
+<span>📈</span>
+
+Student Analytics
+
+</li>
+
+<li onclick="location.href='attendance.html'">
+
+<span>📅</span>
+
+Attendance
+
+</li>
+
+<li onclick="location.href='classes.html'">
+
+<span>🏫</span>
+
+Classes
+
+</li>
+
+<li>
+
+<span>📚</span>
+
+Subjects
+
+</li>
+
+<li onclick="location.href='marks.html'">
+
+<span>📝</span>
+
+Marks Entry
+
+</li>
+
+<li onclick="location.href='promote.html'">
+
+<span>🎓</span>
+
+Promote Students
+
+</li>
+
+<li onclick="location.href='fees.html'">
+
+<span>💰</span>
+
+Fees
+
+</li>
+
+<li onclick="logout()">
+
+<span>🚪</span>
+
+Logout
+
+</li>
+
 </ul>
-</div>
 
-<!-- MAIN -->
-<div class="main">
+</nav>
 
-<div class="topbar">
-<button class="menu-btn" onclick="toggleSidebar()">☰</button>
-<h1>Admin Dashboard</h1>
-<button onclick="logout()">Logout</button>
-</div>
+</aside>
 
-<!-- STATS -->
-<div class="stats-container">
-<div class="stat-card"><h2 id="student-count">0</h2><p>Total Students</p></div>
-<div class="stat-card"><h2 id="teacher-count">0</h2><p>Total Teachers</p></div>
-<div class="stat-card"><h2 id="admin-count">0</h2><p>Total Admins</p></div>
-</div>
+<!-- =====================================================
+MAIN CONTENT
+===================================================== -->
 
-<!-- 🔥 QUICK ACTION BUTTONS (NEW) -->
-<div class="quick-actions">
-<button onclick="window.location.href='students-analytics.html'">📊 View Students Analytics</button>
-<button onclick="window.location.href='attendance.html'">📅 Manage Attendance</button>
-</div>
+<main class="main-content">
 
-<div class="admin-container">
-<h2>Create / Manage Users</h2>
-<p id="error" class="error"></p>
+<!-- =====================================================
+TOPBAR
+===================================================== -->
 
-<input type="text" id="full_name" placeholder="Full Name">
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Temporary Password">
+<header class="topbar">
 
-<select id="role">
-<option value="">Select Role</option>
-<option value="student">Student</option>
-<option value="teacher">Teacher</option>
-<option value="admin">Admin</option>
-</select>
+<div class="top-left">
 
-<button onclick="createUser()">Create / Update User</button>
+<button
+id="menuBtn"
+class="menu-btn">
 
-<hr>
+☰
 
-<h3>Students</h3>
-<ul id="students_list"></ul>
+</button>
 
-<h3>Teachers</h3>
-<ul id="teachers_list"></ul>
+<div>
 
-<h3>Admins</h3>
-<ul id="admins_list"></ul>
+<h1>
+
+Vision School ERP
+
+</h1>
+
+<p id="todayDate">
+
+Loading...
+
+</p>
 
 </div>
 
 </div>
+
+<div class="top-center">
+
+<div class="search-box">
+
+<input
+type="text"
+id="searchBox"
+placeholder="Search students by Name, Roll No or Mobile">
+
+<button
+id="searchBtn">
+
+🔍
+
+</button>
+
 </div>
 
-<script>
-function toggleSidebar(){
-  document.querySelector(".sidebar").classList.toggle("active");
-}
-</script>
+</div>
+
+<div class="top-right">
+
+<div class="admin-info">
+
+<img
+
+id="adminPhoto"
+
+class="admin-photo"
+
+src="https://ui-avatars.com/api/?background=1565c0&color=fff&name=Admin"
+
+alt="Admin">
+
+<div>
+
+<h3 id="adminName">
+
+Administrator
+
+</h3>
+
+<p>
+
+School Administrator
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<!-- =====================================================
+WELCOME SECTION
+===================================================== -->
+
+<section class="welcome-card">
+
+<div>
+
+<h2>
+
+👋 Welcome Back
+
+</h2>
+
+<p>
+
+Manage students, teachers, attendance, classes, fees and reports from one centralized dashboard.
+
+</p>
+
+</div>
+
+<div class="welcome-actions">
+
+<button
+id="refreshDashboard"
+class="primary-btn">
+
+🔄 Refresh Dashboard
+
+</button>
+
+</div>
+
+</section>
+```html
+<!-- =====================================================
+DASHBOARD CARDS
+===================================================== -->
+
+<section class="dashboard-cards">
+
+<div class="card blue">
+
+<div class="card-info">
+
+<h2 id="totalStudents">0</h2>
+
+<p>Total Students</p>
+
+</div>
+
+<div class="card-icon">
+
+👨‍🎓
+
+</div>
+
+</div>
+
+<div class="card green">
+
+<div class="card-info">
+
+<h2 id="totalTeachers">0</h2>
+
+<p>Total Teachers</p>
+
+</div>
+
+<div class="card-icon">
+
+👨‍🏫
+
+</div>
+
+</div>
+
+<div class="card orange">
+
+<div class="card-info">
+
+<h2 id="totalClasses">0</h2>
+
+<p>Total Classes</p>
+
+</div>
+
+<div class="card-icon">
+
+🏫
+
+</div>
+
+</div>
+
+<div class="card purple">
+
+<div class="card-info">
+
+<h2 id="todayAttendance">0%</h2>
+
+<p>Today's Attendance</p>
+
+</div>
+
+<div class="card-icon">
+
+📅
+
+</div>
+
+</div>
+
+<div class="card red">
+
+<div class="card-info">
+
+<h2 id="activeStudents">0</h2>
+
+<p>Active Students</p>
+
+</div>
+
+<div class="card-icon">
+
+🟢
+
+</div>
+
+</div>
+
+<div class="card cyan">
+
+<div class="card-info">
+
+<h2 id="feeCollection">₹0</h2>
+
+<p>Fee Collection</p>
+
+</div>
+
+<div class="card-icon">
+
+💰
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+QUICK ACTIONS
+===================================================== -->
+
+<section class="quick-actions">
+
+<div class="section-title">
+
+<h2>
+
+⚡ Quick Actions
+
+</h2>
+
+<p>
+
+Frequently used administrator functions
+
+</p>
+
+</div>
+
+<div class="quick-grid">
+
+<button
+id="addStudentBtn"
+class="quick-btn">
+
+<span>➕</span>
+
+Add Student
+
+</button>
+
+<button
+id="addTeacherBtn"
+class="quick-btn">
+
+<span>👨‍🏫</span>
+
+Add Teacher
+
+</button>
+
+<button
+onclick="location.href='student_master.html'"
+class="quick-btn">
+
+<span>👨‍🎓</span>
+
+Student Master
+
+</button>
+
+<button
+onclick="location.href='teachers.html'"
+class="quick-btn">
+
+<span>📘</span>
+
+Teacher Master
+
+</button>
+
+<button
+onclick="location.href='attendance.html'"
+class="quick-btn">
+
+<span>📅</span>
+
+Attendance
+
+</button>
+
+<button
+onclick="location.href='marks.html'"
+class="quick-btn">
+
+<span>📝</span>
+
+Marks Entry
+
+</button>
+
+<button
+onclick="location.href='promote.html'"
+class="quick-btn">
+
+<span>🎓</span>
+
+Promote Students
+
+</button>
+
+<button
+onclick="location.href='fees.html'"
+class="quick-btn">
+
+<span>💰</span>
+
+Collect Fees
+
+</button>
+
+<button
+class="quick-btn">
+
+<span>📊</span>
+
+Reports
+
+</button>
+
+<button
+class="quick-btn">
+
+<span>📚</span>
+
+Subjects
+
+</button>
+
+<button
+onclick="location.href='classes.html'"
+class="quick-btn">
+
+<span>🏫</span>
+
+Classes
+
+</button>
+
+<button
+class="quick-btn">
+
+<span>⚙️</span>
+
+Settings
+
+</button>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+ANALYTICS
+===================================================== -->
+
+<section class="analytics-grid">
+
+<div class="analytics-left">
+
+<div class="section-header">
+
+<h2>
+
+📈 School Analytics
+
+</h2>
+
+<button
+onclick="refreshDashboard()"
+class="small-btn">
+
+Refresh
+
+</button>
+
+</div>
+
+<div class="chart-box">
+
+<canvas id="studentsChart"></canvas>
+
+</div>
+
+</div>
+
+<div class="analytics-right">
+
+<div class="mini-card">
+
+<h4>
+
+Today's Attendance
+
+</h4>
+
+<h2 id="attendanceCard">
+
+0%
+
+</h2>
+
+<p>
+
+Overall School
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+New Admissions
+
+</h4>
+
+<h2 id="newAdmissions">
+
+0
+
+</h2>
+
+<p>
+
+This Month
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Pending Fees
+
+</h4>
+
+<h2 id="pendingFees">
+
+₹0
+
+</h2>
+
+<p>
+
+Current Year
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Announcements
+
+</h4>
+
+<h2 id="announcementCount">
+
+0
+
+</h2>
+
+<p>
+
+Unread Notices
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Boys
+
+</h4>
+
+<h2 id="totalBoys">
+
+0
+
+</h2>
+
+<p>
+
+Registered Students
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Girls
+
+</h4>
+
+<h2 id="totalGirls">
+
+0
+
+</h2>
+
+<p>
+
+Registered Students
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Inactive Students
+
+</h4>
+
+<h2 id="inactiveStudents">
+
+0
+
+</h2>
+
+<p>
+
+Need Attention
+
+</p>
+
+</div>
+
+<div class="mini-card">
+
+<h4>
+
+Total Staff
+
+</h4>
+
+<h2 id="totalStaff">
+
+0
+
+</h2>
+
+<p>
+
+Teaching Staff
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+```
+```html
+<!-- =====================================================
+PART 1C
+RECENT STUDENTS
+===================================================== -->
+
+<section class="dashboard-section">
+
+    <div class="section-header">
+
+        <h2>👨‍🎓 Recent Student Admissions</h2>
+
+        <div>
+
+            <button class="secondary-btn"
+                    onclick="refreshStudents()">
+
+                🔄 Refresh
+
+            </button>
+
+            <button class="primary-btn"
+                    onclick="location.href='student_master.html'">
+
+                View All
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Photo</th>
+
+                    <th>Name</th>
+
+                    <th>Roll No</th>
+
+                    <th>Class</th>
+
+                    <th>Section</th>
+
+                    <th>Gender</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="recentStudents">
+
+                <tr>
+
+                    <td colspan="8" class="loading-row">
+
+                        Loading Students...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+RECENT TEACHERS
+===================================================== -->
+
+<section class="dashboard-section">
+
+    <div class="section-header">
+
+        <h2>👨‍🏫 Teachers</h2>
+
+        <div>
+
+            <button class="secondary-btn"
+                    onclick="refreshTeachers()">
+
+                🔄 Refresh
+
+            </button>
+
+            <button class="primary-btn"
+                    onclick="location.href='teachers.html'">
+
+                View All
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Photo</th>
+
+                    <th>Name</th>
+
+                    <th>Subject</th>
+
+                    <th>Mobile</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="teacherTable">
+
+                <tr>
+
+                    <td colspan="6" class="loading-row">
+
+                        Loading Teachers...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+RIGHT SIDE PANELS
+===================================================== -->
+
+<section class="dashboard-panels">
+
+    <!-- Notifications -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3>🔔 Notifications</h3>
+
+        </div>
+
+        <ul id="notificationList">
+
+            <li>No Notifications</li>
+
+        </ul>
+
+    </div>
+
+    <!-- Birthdays -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3>🎂 Today's Birthdays</h3>
+
+        </div>
+
+        <ul id="birthdayList">
+
+            <li>No Birthdays Today</li>
+
+        </ul>
+
+    </div>
+
+    <!-- Announcements -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3>📢 Announcements</h3>
+
+        </div>
+
+        <ul id="announcementList">
+
+            <li>Welcome to Vision School ERP</li>
+
+        </ul>
+
+    </div>
+
+    <!-- Quick Statistics -->
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <h3>📊 Quick Statistics</h3>
+
+        </div>
+
+        <div class="stats-list">
+
+            <div class="stat-item">
+
+                <span>Total Students</span>
+
+                <strong id="statStudents">0</strong>
+
+            </div>
+
+            <div class="stat-item">
+
+                <span>Total Teachers</span>
+
+                <strong id="statTeachers">0</strong>
+
+            </div>
+
+            <div class="stat-item">
+
+                <span>Active Students</span>
+
+                <strong id="statActive">0</strong>
+
+            </div>
+
+            <div class="stat-item">
+
+                <span>Classes</span>
+
+                <strong id="statClasses">0</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+```
+```html
+<!-- =====================================================
+PART 1D
+ADD STUDENT MODAL
+===================================================== -->
+
+<div class="modal" id="studentModal">
+
+    <div class="modal-content large-modal">
+
+        <div class="modal-header">
+
+            <h2>➕ Add New Student</h2>
+
+            <button type="button" onclick="closeStudentModal()">✕</button>
+
+        </div>
+
+        <form id="studentForm">
+
+            <div class="modal-body">
+
+                <div class="photo-upload">
+
+                    <img
+                        id="studentPreview"
+                        src="https://ui-avatars.com/api/?background=1565c0&color=fff&name=Student"
+                        alt="Student">
+
+                    <input
+                        type="file"
+                        id="studentPhoto"
+                        accept="image/*">
+
+                </div>
+
+                <div class="form-grid">
+
+                    <input type="text" id="full_name" placeholder="Student Name *" required>
+
+                    <input type="text" id="roll_number" placeholder="Roll Number *" required>
+
+                    <select id="gender" required>
+
+                        <option value="">Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+
+                    </select>
+
+                    <input type="date" id="dob">
+
+                    <select id="class_name">
+
+                        <option value="">Class</option>
+                        <option>Nursery</option>
+                        <option>LKG</option>
+                        <option>UKG</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+
+                    </select>
+
+                    <select id="section">
+
+                        <option value="">Section</option>
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+
+                    </select>
+
+                    <input type="text" id="mobile" placeholder="Mobile Number">
+
+                    <input type="text" id="blood_group" placeholder="Blood Group">
+
+                    <input type="date" id="admission_date">
+
+                    <select id="status">
+
+                        <option>Active</option>
+                        <option>Inactive</option>
+
+                    </select>
+
+                    <input type="text" id="father_name" placeholder="Father Name">
+
+                    <input type="text" id="mother_name" placeholder="Mother Name">
+
+                    <textarea
+                        id="address"
+                        rows="4"
+                        placeholder="Student Address"></textarea>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="closeStudentModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    id="saveStudentBtn"
+                    class="primary-btn">
+
+                    💾 Save Student
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+ADD TEACHER MODAL
+===================================================== -->
+
+<div class="modal" id="teacherModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>👨‍🏫 Add Teacher</h2>
+
+            <button type="button" onclick="closeTeacherModal()">✕</button>
+
+        </div>
+
+        <form id="teacherForm">
+
+            <div class="modal-body">
+
+                <div class="form-grid">
+
+                    <input type="text" id="teacher_name" placeholder="Teacher Name *">
+
+                    <input type="text" id="teacher_mobile" placeholder="Mobile">
+
+                    <input type="text" id="teacher_subject" placeholder="Subject">
+
+                    <input type="text" id="teacher_qualification" placeholder="Qualification">
+
+                    <input type="text" id="teacher_experience" placeholder="Experience">
+
+                    <select id="teacher_status">
+
+                        <option>Active</option>
+                        <option>Inactive</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="closeTeacherModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    id="saveTeacherBtn"
+                    class="primary-btn">
+
+                    💾 Save Teacher
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+TOAST
+===================================================== -->
+
+<div id="toast" class="toast">
+
+    <span id="toastMessage">
+
+        Success
+
+    </span>
+
+</div>
+
+<!-- =====================================================
+FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <p>
+
+        © 2026 Vision School ERP. All Rights Reserved.
+
+    </p>
+
+    <p>
+
+        School Administration Dashboard
+
+    </p>
+
+</footer>
+
+</main>
+
+</div>
 
 </body>
+
 </html>
+```
