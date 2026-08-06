@@ -1009,37 +1009,24 @@ let message = `
 
 🏫 Vision School ERP
 
-
 Dear Parent,
 
+Thank you for  fee payment.
 
-Student Name:
-${student.full_name}
+ Student: ${student.full_name}
+ Class: ${student.class_name}
 
+ Total Fee: ₹${fee.total_fee}
+ Fee Paid: ₹${fee.paid_fee}
+ Reciept number : ${fee.receipt_no || "-"}
+ Pending Fee: ₹${fee.due_fee}
 
-Class:
-${student.class_name}
+Kindly clear the pending amount at the earliest.
 
+Thank you for your cooperation.
 
-Fee Details:
-
-
-Total Fee:
-₹${fee.total_fee}
-
-
-Paid Amount:
-₹${fee.paid_fee}
-
-
-Pending Amount:
-₹${fee.due_fee}
-
-
-
-Thank you,
-
-Vision School
+– Principal
+VISION – The School of Excellence
 
 `;
 
