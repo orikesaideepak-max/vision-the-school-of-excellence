@@ -355,21 +355,29 @@ ${safe(student.status)}
 
 <td>
 
-<button
-class="action view"
-onclick="viewProfile('${student.id}')">
+    <button 
+        class="action view"
+        onclick="viewProfile('${student.id}')">
 
-👁 View
+        👁 View
 
-</button>
+    </button>
 
-<button
-class="action edit"
-onclick="editProfile('${student.id}')">
+    <button 
+        class="action edit"
+        onclick="editProfile('${student.id}')">
 
-✏ Edit
+        ✏ Edit
 
-</button>
+    </button>
+
+    <button 
+        class="action delete"
+        onclick="deleteStudent('${student.id}')">
+
+        🗑 Delete
+
+    </button>
 
 </td>
 
@@ -1101,6 +1109,86 @@ async function updateProfile() {
 
 }
 // ======================================================
+// DELETE STUDENT
+// ======================================================
+
+async function deleteStudent(id) {
+
+    try {
+
+        // Find the student from our loaded student list
+        const student = getStudent(id);
+
+        // If student does not exist
+        if (!student) {
+
+            alert("Student not found.");
+
+            return;
+        }
+
+        // Show confirmation message
+        const confirmDelete = confirm(
+            "Are you sure you want to delete this student?\n\n" +
+            "Name: " + safe(student.full_name) + "\n" +
+            "Roll Number: " + safe(student.roll_number) + "\n\n" +
+            "This action cannot be undone."
+        );
+
+        // User clicked Cancel
+        if (!confirmDelete) {
+
+            return;
+        }
+
+        // Show loading
+        showLoading();
+
+        // Delete student from Supabase profiles table
+        const { error } = await supabase
+            .from("profiles")
+            .delete()
+            .eq("id", id);
+
+        // If Supabase gives an error
+        if (error) {
+
+            console.error("DELETE ERROR:", error);
+
+            throw error;
+        }
+
+        // Remove student from local JavaScript array
+        profiles = profiles.filter(
+            student => String(student.id) !== String(id)
+        );
+
+        // Refresh the table
+        renderTable(profiles);
+
+        // Success message
+        alert(
+            "Student deleted successfully."
+        );
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Delete Failed\n\n" +
+            error.message
+        );
+
+    }
+    finally {
+
+        hideLoading();
+
+    }
+}
+// ======================================================
 // EXPORT STUDENTS TO CSV
 // ======================================================
 
@@ -1264,9 +1352,12 @@ window.editProfile = editProfile;
 
 window.updateProfile = updateProfile;
 
+window.deleteStudent = deleteStudent;
+
 window.closeModal = closeModal;
 
 window.closeViewModal = closeViewModal;
+
 
 // ======================================================
 // INITIALIZE PAGE

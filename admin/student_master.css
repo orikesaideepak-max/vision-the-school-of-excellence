@@ -912,5 +912,17 @@ box-shadow:var(--shadow);
 .rounded{
 border-radius:var(--radius);
 }
+.action.delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.action.delete:hover {
+    background-color: #b02a37;
+}
 
 /* ================= END ================= */
