@@ -215,7 +215,6 @@ sum + Number(f.due_fee || 0),
 );
 
 
-
 document.getElementById("totalStudents").innerText =
 totalStudents;
 
@@ -238,8 +237,18 @@ document.getElementById("totalPending").innerText =
 
 }
 
+// OPEN PENDING FEES PAGE
+function openPendingFees() {
+    window.location.href = "pending_fees.html";
+}
 
+window.openPendingFees = openPendingFees;
 
+function openCollectionFees() {
+    window.location.href = "collection_fees.html";
+}
+
+window.openCollectionFees = openCollectionFees;
 
 
 

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vision School ERP - Fee Collection</title>
+
+    <link rel="stylesheet" href="collection_fees.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+====================================================== -->
+
+<header class="header">
+
+    <div>
+
+        <h1>🏫 Vision School ERP</h1>
+
+        <p>Student Fee Collection & Term Management</p>
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     MAIN CONTAINER
+====================================================== -->
+
+<div class="container">
+
+
+    <!-- ==================================================
+         TOP SUMMARY
+    ================================================== -->
+
+    <section class="summary-section">
+
+        <div class="summary-card">
+
+            <h3>Total Students</h3>
+
+            <h2 id="totalStudents">0</h2>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Total Collection</h3>
+
+            <h2 id="totalCollection">₹0</h2>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Terms Cleared</h3>
+
+            <h2 id="termsCleared">0</h2>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Remaining Fee</h3>
+
+            <h2 id="remainingFee">₹0</h2>
+
+        </div>
+
+    </section>
+
+    <!-- ======================================================
+     TERM COLLECTION ANALYTICS
+====================================================== -->
+
+<section class="term-analytics">
+
+    <h2>📊 Term-wise Fee Collection</h2>
+
+    <p class="analytics-description">
+        Overview of fee collection and remaining amount for each term
+    </p>
+
+
+    <div class="pie-charts-container">
+
+
+        <!-- ==================================================
+             1ST TERM
+        ================================================== -->
+
+        <div class="pie-card">
+
+            <h3>📘 1st Term</h3>
+
+            <div class="pie-chart-wrapper">
+
+                <canvas id="firstTermPie"></canvas>
+
+            </div>
+
+
+            <div class="pie-details">
+
+                <p>
+                    <span>Collected:</span>
+
+                    <strong id="firstTermCollected">
+                        ₹0
+                    </strong>
+                </p>
+
+
+                <p>
+                    <span>Remaining:</span>
+
+                    <strong id="firstTermRemaining">
+                        ₹0
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <!-- 1ST TERM EXPORT -->
+
+            <button
+                class="term-export-button"
+                onclick="exportTermStudents(1)"
+            >
+                📥 Export 1st Term Pending
+            </button>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             2ND TERM
+        ================================================== -->
+
+        <div class="pie-card">
+
+            <h3>📗 2nd Term</h3>
+
+            <div class="pie-chart-wrapper">
+
+                <canvas id="secondTermPie"></canvas>
+
+            </div>
+
+
+            <div class="pie-details">
+
+                <p>
+                    <span>Collected:</span>
+
+                    <strong id="secondTermCollected">
+                        ₹0
+                    </strong>
+                </p>
+
+
+                <p>
+                    <span>Remaining:</span>
+
+                    <strong id="secondTermRemaining">
+                        ₹0
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <!-- 2ND TERM EXPORT -->
+
+            <button
+                class="term-export-button"
+                onclick="exportTermStudents(2)"
+            >
+                📥 Export 2nd Term Pending
+            </button>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             3RD TERM
+        ================================================== -->
+
+        <div class="pie-card">
+
+            <h3>📙 3rd Term</h3>
+
+            <div class="pie-chart-wrapper">
+
+                <canvas id="thirdTermPie"></canvas>
+
+            </div>
+
+
+            <div class="pie-details">
+
+                <p>
+                    <span>Collected:</span>
+
+                    <strong id="thirdTermCollected">
+                        ₹0
+                    </strong>
+                </p>
+
+
+                <p>
+                    <span>Remaining:</span>
+
+                    <strong id="thirdTermRemaining">
+                        ₹0
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <!-- 3RD TERM EXPORT -->
+
+            <button
+                class="term-export-button"
+                onclick="exportTermStudents(3)"
+            >
+                📥 Export 3rd Term Pending
+            </button>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+    <!-- ==================================================
+         SEARCH SECTION
+    ================================================== -->
+
+    <section class="search-section">
+
+        <input
+            type="text"
+            id="searchStudent"
+            placeholder="Search Student Name / Mobile"
+            oninput="filterStudents()"
+        >
+
+
+        <input
+            type="text"
+            id="searchClass"
+            placeholder="Search Class"
+            oninput="filterStudents()"
+        >
+
+
+        <button onclick="filterStudents()">
+            🔍 Search
+        </button>
+
+
+        <button onclick="clearSearch()">
+            ✖ Clear
+        </button>
+
+
+        <button onclick="exportCollectionStudents()">
+            📥 Export
+        </button>
+
+
+        <button onclick="goBack()">
+            ← Back
+        </button>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         STUDENT COUNT
+    ================================================== -->
+
+    <div class="student-count">
+
+        <span id="studentCount">
+            0 students
+        </span>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         STUDENTS
+    ================================================== -->
+
+    <section id="studentsContainer" class="students-container">
+
+        <div class="loading">
+            Loading students...
+        </div>
+
+    </section>
+
+
+</div>
+
+
+
+<script type="module" src="collection_fees.js"></script>
+
+
+</body>
+
+</html>

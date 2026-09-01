@@ -1,0 +1,502 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+}
+
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.header {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    padding: 25px 40px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 6px;
+}
+
+
+.header p {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+
+/* ======================================================
+   CONTAINER
+====================================================== */
+
+.container {
+    width: 95%;
+    max-width: 1500px;
+    margin: 25px auto;
+}
+
+
+/* ======================================================
+   SUMMARY
+====================================================== */
+
+.summary-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+
+.summary-card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.summary-card h3 {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+
+.summary-card h2 {
+    font-size: 26px;
+}
+
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+.search-section {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.search-section input {
+    flex: 1;
+    min-width: 220px;
+    padding: 12px 14px;
+    border: 1px solid #d4d8df;
+    border-radius: 7px;
+    font-size: 14px;
+    outline: none;
+}
+
+
+.search-section input:focus {
+    border-color: #2a5298;
+}
+
+
+.search-section button {
+    border: none;
+    border-radius: 7px;
+    padding: 11px 17px;
+    cursor: pointer;
+    font-size: 14px;
+    background: #2a5298;
+    color: white;
+}
+
+
+.search-section button:hover {
+    opacity: 0.9;
+}
+
+
+/* ======================================================
+   STUDENT COUNT
+====================================================== */
+
+.student-count {
+    margin: 15px 0;
+    font-weight: bold;
+    color: #555;
+}
+
+
+/* ======================================================
+   STUDENT CARD
+====================================================== */
+
+.student-card {
+    background: white;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+.student-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+}
+
+
+.student-info h2 {
+    font-size: 20px;
+    margin-bottom: 7px;
+}
+
+
+.student-info p {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+
+.student-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+.info-box {
+    padding: 12px 18px;
+    border-radius: 8px;
+    background: #f5f7fa;
+    min-width: 130px;
+}
+
+
+.info-box span {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+
+.info-box strong {
+    font-size: 17px;
+}
+
+
+/* ======================================================
+   TERMS
+====================================================== */
+
+.terms-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+
+.term-card {
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 18px;
+    background: #fafbfc;
+}
+
+
+.term-card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+
+.term-status {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+
+.term-status.cleared {
+    color: #16803c;
+}
+
+
+.term-status.pending {
+    color: #d13b3b;
+}
+
+
+.term-amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+
+.term-amounts div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+.term-amounts span {
+    color: #777;
+}
+
+
+/* ======================================================
+   GRAPH
+====================================================== */
+
+.chart-wrapper {
+    height: 230px;
+    position: relative;
+}
+
+
+/* ======================================================
+   NO DATA
+====================================================== */
+
+.empty-message {
+    background: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 12px;
+    color: #777;
+}
+
+
+.loading {
+    background: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 12px;
+    color: #555;
+}
+
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 1000px) {
+
+    .summary-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .terms-container {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .header {
+        padding: 20px;
+    }
+
+
+    .container {
+        width: 94%;
+    }
+
+
+    .summary-section {
+        grid-template-columns: 1fr;
+    }
+
+
+    .search-section {
+        flex-direction: column;
+    }
+
+
+    .search-section input,
+    .search-section button {
+        width: 100%;
+    }
+
+
+    .student-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+/* ======================================================
+   TERM ANALYTICS
+====================================================== */
+
+.term-analytics {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+.term-analytics h2 {
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+
+.analytics-description {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+
+/* ======================================================
+   PIE CHART CONTAINER
+====================================================== */
+
+.pie-charts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+
+.pie-card {
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    background: #fafbfc;
+}
+
+
+.pie-card h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+
+/* ======================================================
+   PIE CHART
+====================================================== */
+
+.pie-chart-wrapper {
+    height: 240px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.pie-chart-wrapper canvas {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+
+/* ======================================================
+   PIE DETAILS
+====================================================== */
+
+.pie-details {
+    margin-top: 15px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 12px;
+}
+
+
+.pie-details p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+
+.pie-details span {
+    color: #666;
+}
+
+
+.pie-details strong {
+    font-size: 15px;
+}
+
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 1000px) {
+
+    .pie-charts-container {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .term-analytics {
+        padding: 18px;
+    }
+
+}
+/* ======================================================
+   TERM EXPORT BUTTON
+====================================================== */
+
+.term-export-button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px 15px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #2a5298;
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.term-export-button:hover {
+    opacity: 0.9;
+}
+
+
+.term-export-button:active {
+    transform: scale(0.98);
+}
