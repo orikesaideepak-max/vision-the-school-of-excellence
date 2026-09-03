@@ -251,7 +251,9 @@ function openCollectionFees() {
 window.openCollectionFees = openCollectionFees;
 
 
-
+window.openBusFeeManagement = function () {
+    window.location.href = "bus_fee_management.html";
+};
 
 // ======================================================
 // SEARCH

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bus Fee Management</title>
+
+    <link rel="stylesheet" href="bus_fee_management.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <!-- HEADER -->
+        <header class="page-header">
+
+            <div>
+                <h1>🚌 Bus Fee Management</h1>
+                <p>Manage students, bus details and bus fees</p>
+            </div>
+
+            <button class="back-btn" onclick="goBack()">
+                ← Back
+            </button>
+
+        </header>
+
+
+        <!-- SUMMARY CARDS -->
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <div class="card-icon">🧑‍🎓</div>
+
+                <div>
+                    <h3>Bus Students</h3>
+                    <h2 id="totalBusStudents">0</h2>
+                </div>
+            </div>
+
+
+            <div class="summary-card">
+                <div class="card-icon">💰</div>
+
+                <div>
+                    <h3>Total Bus Fee</h3>
+                    <h2 id="totalBusFee">₹0</h2>
+                </div>
+            </div>
+
+
+            <div class="summary-card">
+                <div class="card-icon">💵</div>
+
+                <div>
+                    <h3>Total Collected</h3>
+                    <h2 id="totalCollected">₹0</h2>
+                </div>
+            </div>
+
+
+            <div class="summary-card pending-card">
+                <div class="card-icon">⏳</div>
+
+                <div>
+                    <h3>Total Pending</h3>
+                    <h2 id="totalPending">₹0</h2>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ADD / EDIT BUS STUDENT -->
+        <section class="form-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2 id="formTitle">➕ Add Bus Student</h2>
+                    <p>Add bus information and fee details</p>
+                </div>
+
+            </div>
+
+
+            <form id="busStudentForm">
+
+                <input
+                    type="hidden"
+                    id="editingStudentId"
+                >
+
+
+                <!-- STUDENT -->
+                <div class="form-group">
+
+                    <label for="studentSelect">
+                        Student
+                    </label>
+
+                    <select id="studentSelect" required>
+
+                        <option value="">
+                            Select Student
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CLASS -->
+                <div class="form-group">
+
+                    <label>
+                        Class
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentClass"
+                        readonly
+                        placeholder="Class"
+                    >
+
+                </div>
+
+
+                <!-- MOBILE -->
+                <div class="form-group">
+
+                    <label>
+                        Mobile
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentMobile"
+                        readonly
+                        placeholder="Mobile"
+                    >
+
+                </div>
+
+
+                <!-- BUS ROUTE -->
+                <div class="form-group">
+
+                    <label for="busRoute">
+                        Bus Route
+                    </label>
+
+                    <input
+                        type="text"
+                        id="busRoute"
+                        placeholder="Example: Rudrur - Bodhan"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BUS NUMBER -->
+                <div class="form-group">
+
+                    <label for="busNumber">
+                        Bus Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="busNumber"
+                        placeholder="Example: BUS-01"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BUS FEE -->
+                <div class="form-group">
+
+                    <label for="busFee">
+                        Total Bus Fee
+                    </label>
+
+                    <input
+                        type="number"
+                        id="busFee"
+                        min="0"
+                        step="0.01"
+                        placeholder="Enter bus fee"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PAID -->
+                <div class="form-group">
+
+                    <label for="busPaidFee">
+                        Paid Bus Fee
+                    </label>
+
+                    <input
+                        type="number"
+                        id="busPaidFee"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        placeholder="Enter paid fee"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- PENDING -->
+                <div class="form-group">
+
+                    <label>
+                        Pending Bus Fee
+                    </label>
+
+                    <input
+                        type="number"
+                        id="busDueFee"
+                        readonly
+                        value="0"
+                    >
+
+                </div>
+
+
+                <!-- BUTTONS -->
+                <div class="form-buttons">
+
+                    <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        💾 Save Bus Fee
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="cancelEditBtn"
+                        class="cancel-btn"
+                        onclick="cancelEdit()"
+                        style="display: none;"
+                    >
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- BUS STUDENTS -->
+        <section class="students-section">
+
+            <div class="section-heading list-heading">
+
+                <div>
+                    <h2>🚌 Bus Students</h2>
+                    <p>All students using school transportation</p>
+                </div>
+
+
+                <button
+                    class="export-btn"
+                    onclick="exportPendingStudents()"
+                >
+                    📤 Export Pending
+                </button>
+
+            </div>
+
+
+            <!-- SEARCH -->
+            <div class="search-row">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="🔎 Search student, mobile, class, route or bus number..."
+                    oninput="filterStudents()"
+                >
+
+
+                <button
+                    class="clear-btn"
+                    onclick="clearSearch()"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+
+            <!-- BULK ACTIONS -->
+            <div class="bulk-actions">
+
+                <label class="select-all">
+
+                    <input
+                        type="checkbox"
+                        id="selectAll"
+                        onchange="toggleSelectAll()"
+                    >
+
+                    Select All
+
+                </label>
+
+
+                <button
+                    class="whatsapp-btn"
+                    onclick="sendWhatsAppSelected()"
+                >
+                    💬 WhatsApp Selected
+                </button>
+
+
+                <button
+                    class="sms-btn"
+                    onclick="sendSMSSelected()"
+                >
+                    📱 SMS Selected
+                </button>
+
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Select
+                            </th>
+
+                            <th>
+                                Student
+                            </th>
+
+                            <th>
+                                Mobile
+                            </th>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Bus Route
+                            </th>
+
+                            <th>
+                                Bus No.
+                            </th>
+
+                            <th>
+                                Total Fee
+                            </th>
+
+                            <th>
+                                Paid
+                            </th>
+
+                            <th>
+                                Pending
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="busStudentsTable">
+
+                        <tr>
+                            <td
+                                colspan="11"
+                                class="loading"
+                            >
+                                Loading...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHART -->
+        <section class="chart-section">
+
+            <h2>📊 Bus Fee Overview</h2>
+
+            <div class="chart-container">
+
+                <canvas id="busFeeChart"></canvas>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="bus_fee_management.js"
+    ></script>
+
+</body>
+</html>
