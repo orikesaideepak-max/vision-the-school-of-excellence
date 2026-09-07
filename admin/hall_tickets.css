@@ -1,0 +1,665 @@
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f4f6;
+    color: #111827;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.page-header {
+    width: 100%;
+    background: #1d4ed8;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.page-header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back-button {
+    border: none;
+    background: white;
+    color: #1d4ed8;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background: #e5e7eb;
+}
+
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.main-container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 25px auto;
+}
+
+
+/* =====================================================
+   STATISTICS
+===================================================== */
+
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 700;
+    margin-top: 8px;
+}
+
+.stat-percent {
+    font-size: 14px;
+    margin-top: 4px;
+    color: #6b7280;
+}
+
+.stat-card.cleared {
+    border-top: 4px solid #16a34a;
+}
+
+.stat-card.pending {
+    border-top: 4px solid #dc2626;
+}
+
+
+/* =====================================================
+   TERM SECTION
+===================================================== */
+
+.term-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.term-section h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.term-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.term-button {
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    padding: 10px 22px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.term-button:hover {
+    background: #e5e7eb;
+}
+
+.term-button.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-section {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.search-section input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-section input:focus {
+    border-color: #2563eb;
+}
+
+
+.clear-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7px;
+    background: #6b7280;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   INFORMATION BAR
+===================================================== */
+
+.info-bar {
+    background: white;
+    padding: 15px 18px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.download-all-button {
+    border: none;
+    background: #16a34a;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 7px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.download-all-button:hover {
+    background: #15803d;
+}
+
+
+/* =====================================================
+   STUDENT LIST
+===================================================== */
+
+.students-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.student-card {
+    background: white;
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+}
+
+.student-name {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.student-details {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.download-button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.download-button:hover {
+    background: #1d4ed8;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.message {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    color: #6b7280;
+}
+
+
+/* =====================================================
+   HIDDEN PDF AREA
+===================================================== */
+
+.pdf-hall-ticket-container {
+    position: fixed;
+    left: -10000px;
+    top: 0;
+    width: 142mm;
+    height: 64.67mm;
+    background: white;
+    overflow: hidden;
+}
+
+
+/* =====================================================
+   =====================================================
+   HALL TICKET
+   EXACT SIZE
+   142mm × 64.67mm
+   =====================================================
+===================================================== */
+
+.hall-ticket {
+    width: 142mm !important;
+    height: 64.67mm !important;
+
+    min-width: 142mm !important;
+    max-width: 142mm !important;
+
+    min-height: 64.67mm !important;
+    max-height: 64.67mm !important;
+
+    position: relative !important;
+
+    background: #ffffff !important;
+
+    border: 0.35mm solid #222222 !important;
+
+    overflow: hidden !important;
+
+    box-sizing: border-box !important;
+
+    font-family: Arial, Helvetica, sans-serif !important;
+
+    color: #111111 !important;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.hall-ticket > div:first-child {
+    position: relative !important;
+
+    width: 100% !important;
+
+    height: 18mm !important;
+
+    border-bottom: 0.25mm solid #777777 !important;
+
+    box-sizing: border-box !important;
+
+    padding-top: 2.5mm !important;
+
+    text-align: center !important;
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.hall-ticket > div:first-child > img {
+    position: absolute !important;
+
+    left: 5mm !important;
+
+    top: 2.5mm !important;
+
+    width: 13mm !important;
+
+    height: 13mm !important;
+
+    object-fit: contain !important;
+}
+
+
+/* =====================================================
+   SCHOOL NAME
+===================================================== */
+
+.hall-ticket > div:first-child > div:nth-child(2) {
+    position: static !important;
+
+    margin-left: 12mm !important;
+
+    margin-top: 0 !important;
+
+    color: #1c3c8d !important;
+
+    font-size: 4.5mm !important;
+
+    font-weight: 800 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* =====================================================
+   TAGLINE
+===================================================== */
+
+.hall-ticket > div:first-child > div:nth-child(3) {
+    position: static !important;
+
+    margin-left: 12mm !important;
+
+    margin-top: 0.8mm !important;
+
+    color: #e9a400 !important;
+
+    font-size: 2.1mm !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* =====================================================
+   ADDRESS
+===================================================== */
+
+.hall-ticket > div:first-child > div:nth-child(4) {
+    position: static !important;
+
+    margin-left: 12mm !important;
+
+    margin-top: 0.7mm !important;
+
+    font-size: 1.7mm !important;
+
+    line-height: 1 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* =====================================================
+   HALLTICKET BOX
+===================================================== */
+
+.hall-ticket > div:first-child > div:nth-child(5) {
+    position: absolute !important;
+
+    left: 50% !important;
+
+    transform: translateX(-50%) !important;
+
+    bottom: -5mm !important;
+
+    width: 43mm !important;
+
+    height: 9mm !important;
+
+    background: #ffffff !important;
+
+    border: 0.3mm solid #222222 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    font-size: 3.5mm !important;
+
+    font-weight: 800 !important;
+
+    z-index: 20 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =====================================================
+   IMPORTANT:
+   BODY FIELD POSITIONS
+===================================================== */
+
+
+/* -----------------------------------------------------
+   NAME LABEL
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(2) {
+
+    position: absolute !important;
+
+    left: 8mm !important;
+
+    top: 25mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 700 !important;
+}
+
+
+/* -----------------------------------------------------
+   NAME VALUE
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(3) {
+
+    position: absolute !important;
+
+    left: 50mm !important;
+
+    top: 25mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 400 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* -----------------------------------------------------
+   ROLL NUMBER LABEL
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(4) {
+
+    position: absolute !important;
+
+    left: 8mm !important;
+
+    top: 36mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 700 !important;
+}
+
+
+/* -----------------------------------------------------
+   EXAM
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(5) {
+
+    position: absolute !important;
+
+    left: 78mm !important;
+
+    top: 36mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 700 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* -----------------------------------------------------
+   CLASS LABEL
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(6) {
+
+    position: absolute !important;
+
+    left: 8mm !important;
+
+    top: 48mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 700 !important;
+}
+
+
+/* -----------------------------------------------------
+   CLASS VALUE
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(7) {
+
+    position: absolute !important;
+
+    left: 50mm !important;
+
+    top: 48mm !important;
+
+    font-size: 3mm !important;
+
+    font-weight: 400 !important;
+}
+
+
+/* -----------------------------------------------------
+   AUTHORISED SIGNATURE
+----------------------------------------------------- */
+
+.hall-ticket > div:nth-child(8) {
+
+    position: absolute !important;
+
+    left: 78mm !important;
+
+    top: 49mm !important;
+
+    font-size: 2.7mm !important;
+
+    font-weight: 700 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print {
+
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    body {
+        background: white;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .statistics {
+        grid-template-columns: 1fr;
+    }
+
+    .search-section {
+        flex-direction: column;
+    }
+
+    .info-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .student-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .term-buttons {
+        flex-direction: column;
+    }
+
+}

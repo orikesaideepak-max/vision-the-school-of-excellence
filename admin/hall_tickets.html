@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Hall Tickets - Vision School ERP</title>
+
+    <link
+        rel="stylesheet"
+        href="hall_tickets.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <header class="page-header">
+
+        <div>
+
+            <h1>
+                🎫 Hall Tickets
+            </h1>
+
+            <p>
+                Vision School ERP
+            </p>
+
+        </div>
+
+
+        <button
+            class="back-button"
+            onclick="goBackToFees()"
+        >
+            ← Back
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTAINER
+    ====================================================== -->
+
+    <main class="main-container">
+
+
+        <!-- =================================================
+             STUDENT STATISTICS
+        ================================================== -->
+
+        <section class="statistics">
+
+
+            <!-- TOTAL STUDENTS -->
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Total Students
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="totalStudents"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+
+            <!-- CLEARED STUDENTS -->
+
+            <div class="stat-card cleared">
+
+                <div class="stat-title">
+                    Cleared Students
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="clearedStudents"
+                >
+                    0
+                </div>
+
+                <div
+                    class="stat-percent"
+                    id="clearedPercentage"
+                >
+                    0%
+                </div>
+
+            </div>
+
+
+
+            <!-- PENDING STUDENTS -->
+
+            <div class="stat-card pending">
+
+                <div class="stat-title">
+                    Pending Students
+                </div>
+
+                <div
+                    class="stat-number"
+                    id="pendingStudents"
+                >
+                    0
+                </div>
+
+                <div
+                    class="stat-percent"
+                    id="pendingPercentage"
+                >
+                    0%
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             TERM SELECTION
+        ================================================== -->
+
+        <section class="term-section">
+
+            <h2>
+                Select Term
+            </h2>
+
+
+            <div class="term-buttons">
+
+
+                <button
+                    id="termButton1"
+                    class="term-button active"
+                    onclick="selectTerm(1)"
+                >
+                    1st Term
+                </button>
+
+
+                <button
+                    id="termButton2"
+                    class="term-button"
+                    onclick="selectTerm(2)"
+                >
+                    2nd Term
+                </button>
+
+
+                <button
+                    id="termButton3"
+                    class="term-button"
+                    onclick="selectTerm(3)"
+                >
+                    3rd Term
+                </button>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SEARCH
+        ================================================== -->
+
+        <section class="search-section">
+
+
+            <!-- STUDENT SEARCH -->
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search student name or mobile"
+                oninput="filterHallTickets()"
+            >
+
+
+            <!-- CLASS SEARCH -->
+
+            <input
+                id="classInput"
+                type="text"
+                placeholder="Search class"
+                oninput="filterHallTickets()"
+            >
+
+
+            <!-- CLEAR SEARCH -->
+
+            <button
+                class="clear-button"
+                onclick="clearSearch()"
+            >
+                Clear
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             INFORMATION BAR
+        ================================================== -->
+
+        <section class="info-bar">
+
+
+            <!-- SELECTED TERM -->
+
+            <div>
+
+                <strong id="selectedTermText">
+                    1st Term
+                </strong>
+
+                <span>
+                    — Cleared students eligible for hall ticket
+                </span>
+
+            </div>
+
+
+            <!-- ELIGIBLE COUNT -->
+
+            <div>
+
+                Eligible:
+
+                <strong id="eligibleCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <!-- DOWNLOAD ALL -->
+
+            <button
+                class="download-all-button"
+                onclick="downloadAllHallTickets()"
+            >
+                📥 Download All Hall Tickets
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOADING MESSAGE
+        ================================================== -->
+
+        <div
+            id="loadingMessage"
+            class="message"
+        >
+            Loading students...
+        </div>
+
+
+
+        <!-- =================================================
+             EMPTY MESSAGE
+        ================================================== -->
+
+        <div
+            id="emptyMessage"
+            class="message"
+            style="display: none;"
+        >
+            No students found for the selected term.
+        </div>
+
+
+
+        <!-- =================================================
+             STUDENT LIST
+        ================================================== -->
+
+        <section
+            id="studentsContainer"
+            class="students-container"
+        >
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         HIDDEN PDF HALL TICKET CONTAINER
+
+         JavaScript creates the exact
+         142mm × 64.67mm hall ticket here.
+    ====================================================== -->
+
+    <div
+        id="pdfHallTicketContainer"
+        class="pdf-hall-ticket-container"
+    >
+    </div>
+
+
+
+    <!-- =====================================================
+         LOGO
+
+         Keep this file in the same folder:
+
+         vision_school_logo.png
+
+    ====================================================== -->
+
+
+
+    <!-- =====================================================
+         HTML2CANVAS
+    ====================================================== -->
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    ></script>
+
+
+
+    <!-- =====================================================
+         JSPDF
+    ====================================================== -->
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    ></script>
+
+
+
+    <!-- =====================================================
+         HALL TICKETS JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="hall_tickets.js"
+    ></script>
+
+
+</body>
+
+</html>

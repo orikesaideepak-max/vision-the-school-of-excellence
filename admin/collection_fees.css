@@ -500,3 +500,33 @@ body {
 .term-export-button:active {
     transform: scale(0.98);
 }
+/* Hall Tickets Button */
+.term-hall-ticket-button {
+    display: block;
+    margin: 25px auto 10px auto;
+    padding: 12px 28px;
+
+    background: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+/* Hover effect */
+.term-hall-ticket-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* Click effect */
+.term-hall-ticket-button:active {
+    transform: translateY(0);
+}

@@ -1985,6 +1985,10 @@ function escapeHTML(value) {
         );
 
 }
+// Open Hall Tickets page
+window.openHallTickets = function() {
+    window.location.href = "hall_tickets.html";
+};
 
 
 // ======================================================
