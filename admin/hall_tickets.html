@@ -54,20 +54,20 @@
 
 
     <!-- =====================================================
-         MAIN CONTAINER
+         MAIN
     ====================================================== -->
 
     <main class="main-container">
 
 
         <!-- =================================================
-             STUDENT STATISTICS
+             STATISTICS
         ================================================== -->
 
         <section class="statistics">
 
 
-            <!-- TOTAL STUDENTS -->
+            <!-- TOTAL -->
 
             <div class="stat-card">
 
@@ -86,7 +86,7 @@
 
 
 
-            <!-- CLEARED STUDENTS -->
+            <!-- CLEARED -->
 
             <div class="stat-card cleared">
 
@@ -112,7 +112,7 @@
 
 
 
-            <!-- PENDING STUDENTS -->
+            <!-- PENDING -->
 
             <div class="stat-card pending">
 
@@ -148,7 +148,7 @@
         <section class="term-section">
 
             <h2>
-                Select Term
+                Select Fee Term
             </h2>
 
 
@@ -189,13 +189,41 @@
 
 
         <!-- =================================================
+             EXAM SELECTION
+        ================================================== -->
+
+        <section class="exam-section">
+
+            <div class="exam-heading">
+
+                <h2>
+                    Select Exam
+                </h2>
+
+                <span id="examHelp">
+                    Select an exam to enable hall-ticket downloads.
+                </span>
+
+            </div>
+
+
+            <div
+                id="examButtons"
+                class="exam-buttons"
+            >
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
              SEARCH
         ================================================== -->
 
         <section class="search-section">
 
-
-            <!-- STUDENT SEARCH -->
 
             <input
                 id="searchInput"
@@ -205,8 +233,6 @@
             >
 
 
-            <!-- CLASS SEARCH -->
-
             <input
                 id="classInput"
                 type="text"
@@ -214,8 +240,6 @@
                 oninput="filterHallTickets()"
             >
 
-
-            <!-- CLEAR SEARCH -->
 
             <button
                 class="clear-button"
@@ -236,8 +260,6 @@
         <section class="info-bar">
 
 
-            <!-- SELECTED TERM -->
-
             <div>
 
                 <strong id="selectedTermText">
@@ -245,17 +267,26 @@
                 </strong>
 
                 <span>
-                    — Cleared students eligible for hall ticket
+                    — Fee status
                 </span>
 
             </div>
 
 
-            <!-- ELIGIBLE COUNT -->
+            <div>
+
+                Exam:
+
+                <strong id="selectedExamText">
+                    Not Selected
+                </strong>
+
+            </div>
+
 
             <div>
 
-                Eligible:
+                Students:
 
                 <strong id="eligibleCount">
                     0
@@ -264,11 +295,11 @@
             </div>
 
 
-            <!-- DOWNLOAD ALL -->
-
             <button
+                id="downloadAllButton"
                 class="download-all-button"
                 onclick="downloadAllHallTickets()"
+                disabled
             >
                 📥 Download All Hall Tickets
             </button>
@@ -279,7 +310,7 @@
 
 
         <!-- =================================================
-             LOADING MESSAGE
+             LOADING
         ================================================== -->
 
         <div
@@ -292,7 +323,7 @@
 
 
         <!-- =================================================
-             EMPTY MESSAGE
+             EMPTY
         ================================================== -->
 
         <div
@@ -300,7 +331,7 @@
             class="message"
             style="display: none;"
         >
-            No students found for the selected term.
+            No students found.
         </div>
 
 
@@ -321,10 +352,7 @@
 
 
     <!-- =====================================================
-         HIDDEN PDF HALL TICKET CONTAINER
-
-         JavaScript creates the exact
-         142mm × 64.67mm hall ticket here.
+         HIDDEN PDF AREA
     ====================================================== -->
 
     <div
@@ -332,17 +360,6 @@
         class="pdf-hall-ticket-container"
     >
     </div>
-
-
-
-    <!-- =====================================================
-         LOGO
-
-         Keep this file in the same folder:
-
-         vision_school_logo.png
-
-    ====================================================== -->
 
 
 
@@ -367,7 +384,7 @@
 
 
     <!-- =====================================================
-         HALL TICKETS JAVASCRIPT
+         JAVASCRIPT
     ====================================================== -->
 
     <script
