@@ -1,4 +1,6 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import {
+    createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
 // =====================================================
@@ -12,7 +14,7 @@ const supabase = createClient(
 
 
 // =====================================================
-// VARIABLES
+// GLOBAL VARIABLES
 // =====================================================
 
 let students = [];
@@ -23,29 +25,28 @@ let selectedTerm = 1;
 
 let selectedExam = "";
 
+let selectedStudents = new Set();
+
 
 // =====================================================
-// EXAM OPTIONS
+// A4 SETTINGS
 // =====================================================
 
-const examOptions = {
+const PAGE_WIDTH = 297;
 
-    1: [
-        "FA - I",
-        "FA - II"
-    ],
+const PAGE_HEIGHT = 210;
 
-    2: [
-        "SA - I",
-        "FA - III"
-    ],
+const TICKET_WIDTH = 142;
 
-    3: [
-        "SA - II",
-        "FA - IV"
-    ]
+const TICKET_HEIGHT = 64.67;
 
-};
+const MARGIN_X = 5;
+
+const MARGIN_Y = 5;
+
+const GAP_X = 3;
+
+const GAP_Y = 3;
 
 
 // =====================================================
@@ -123,16 +124,7 @@ async function loadHallTicketData() {
             feeResult.data || [];
 
 
-        // ---------------------------------------------
-        // INITIAL DISPLAY
-        // ---------------------------------------------
-
-        createExamButtons();
-
-        updateStatistics();
-
         displayHallTickets();
-
 
     } catch (error) {
 
@@ -141,7 +133,6 @@ async function loadHallTicketData() {
         alert(
             "Something went wrong."
         );
-
 
     } finally {
 
@@ -158,28 +149,34 @@ async function loadHallTicketData() {
 
 function getFee(studentId) {
 
-    for (
-        let i = 0;
-        i < fees.length;
-        i++
-    ) {
+    const fee =
+        fees.find(
+            function(item) {
 
-        if (
-            fees[i].student_id === studentId
-        ) {
+                return String(
+                    item.student_id
+                ) === String(
+                    studentId
+                );
+            }
+        );
 
-            return fees[i];
-        }
+
+    if (fee) {
+
+        return fee;
     }
 
 
-    return null;
+    return {
+        total_fee: 0,
+        paid_fee: 0
+    };
 }
 
 
 // =====================================================
-// CALCULATE THREE TERMS
-// SAME LOGIC AS FEE COLLECTION
+// CALCULATE TERMS
 // =====================================================
 
 function calculateTerms(
@@ -196,26 +193,30 @@ function calculateTerms(
 
 
     // ---------------------------------------------
-    // DIVIDE TOTAL FEE INTO 3 TERMS
+    // SPLIT TOTAL FEE INTO 3 TERMS
     // ---------------------------------------------
 
-    const term1 =
+    const term1Total =
         Math.floor(
             totalFee / 3
         );
 
 
-    const term2 =
+    const term2Total =
         Math.floor(
             totalFee / 3
         );
 
 
-    const term3 =
+    const term3Total =
         totalFee -
-        term1 -
-        term2;
+        term1Total -
+        term2Total;
 
+
+    // ---------------------------------------------
+    // DISTRIBUTE PAID AMOUNT
+    // ---------------------------------------------
 
     let remainingPaid =
         Math.max(
@@ -224,94 +225,85 @@ function calculateTerms(
         );
 
 
-    // ---------------------------------------------
-    // TERM 1
-    // ---------------------------------------------
-
     const term1Paid =
         Math.min(
             remainingPaid,
-            term1
+            term1Total
         );
 
 
-    remainingPaid -=
+    remainingPaid =
+        remainingPaid -
         term1Paid;
 
-
-    const term1Remaining =
-        term1 -
-        term1Paid;
-
-
-    // ---------------------------------------------
-    // TERM 2
-    // ---------------------------------------------
 
     const term2Paid =
         Math.min(
             remainingPaid,
-            term2
+            term2Total
         );
 
 
-    remainingPaid -=
+    remainingPaid =
+        remainingPaid -
         term2Paid;
 
-
-    const term2Remaining =
-        term2 -
-        term2Paid;
-
-
-    // ---------------------------------------------
-    // TERM 3
-    // ---------------------------------------------
 
     const term3Paid =
         Math.min(
             remainingPaid,
-            term3
+            term3Total
         );
 
 
-    const term3Remaining =
-        term3 -
-        term3Paid;
-
+    // ---------------------------------------------
+    // RETURN TERM DETAILS
+    // ---------------------------------------------
 
     return {
 
         term1: {
 
-            total: term1,
+            total: term1Total,
 
             paid: term1Paid,
 
-            remaining: term1Remaining
-
+            remaining:
+                Math.max(
+                    0,
+                    term1Total -
+                    term1Paid
+                )
         },
 
 
         term2: {
 
-            total: term2,
+            total: term2Total,
 
             paid: term2Paid,
 
-            remaining: term2Remaining
-
+            remaining:
+                Math.max(
+                    0,
+                    term2Total -
+                    term2Paid
+                )
         },
 
 
         term3: {
 
-            total: term3,
+            total: term3Total,
 
             paid: term3Paid,
 
-            remaining: term3Remaining
-
+            remaining:
+                Math.max(
+                    0,
+                    term3Total -
+                    term3Paid
+                )
         }
 
     };
@@ -319,7 +311,7 @@ function calculateTerms(
 
 
 // =====================================================
-// GET SELECTED TERM DATA
+// GET TERM DATA
 // =====================================================
 
 function getTermData(student) {
@@ -328,29 +320,21 @@ function getTermData(student) {
         getFee(student.id);
 
 
-    if (!fee) {
-
-        return {
-
-            total: 0,
-
-            paid: 0,
-
-            remaining: 0
-
-        };
-    }
-
-
     const totalFee =
         Number(
-            fee.total_fee || 0
+            fee.total_fee ||
+            fee.total ||
+            fee.amount ||
+            0
         );
 
 
     const paidFee =
         Number(
-            fee.paid_fee || 0
+            fee.paid_fee ||
+            fee.paid ||
+            fee.amount_paid ||
+            0
         );
 
 
@@ -378,7 +362,7 @@ function getTermData(student) {
 
 
 // =====================================================
-// IS CLEARED
+// CHECK CLEARED
 // =====================================================
 
 function isCleared(student) {
@@ -387,8 +371,26 @@ function isCleared(student) {
         getTermData(student);
 
 
-    return (
-        termData.remaining <= 0
+    return Number(
+        termData.remaining
+    ) <= 0;
+}
+
+
+// =====================================================
+// MONEY FORMAT
+// =====================================================
+
+function formatMoney(amount) {
+
+    return Number(
+        amount || 0
+    ).toLocaleString(
+        "en-IN",
+        {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }
     );
 }
 
@@ -416,22 +418,41 @@ function getTermName(term) {
 
 
 // =====================================================
-// GET EXAM OPTIONS
+// EXAM OPTIONS
 // =====================================================
 
-function getCurrentExamOptions() {
+function getExamOptions() {
 
-    return examOptions[
-        selectedTerm
+    if (selectedTerm === 1) {
+
+        return [
+            "FA - I",
+            "FA - II"
+        ];
+    }
+
+
+    if (selectedTerm === 2) {
+
+        return [
+            "SA - I",
+            "FA - III"
+        ];
+    }
+
+
+    return [
+        "SA - II",
+        "FA - IV"
     ];
 }
 
 
 // =====================================================
-// CREATE EXAM BUTTONS
+// DISPLAY EXAM BUTTONS
 // =====================================================
 
-function createExamButtons() {
+function displayExamButtons() {
 
     const container =
         document.getElementById(
@@ -439,20 +460,17 @@ function createExamButtons() {
         );
 
 
-    container.innerHTML = "";
+    if (!container) {
+
+        return;
+    }
 
 
     const options =
-        getCurrentExamOptions();
+        getExamOptions();
 
 
-    selectedExam = "";
-
-
-    document.getElementById(
-        "selectedExamText"
-    ).textContent =
-        "Not Selected";
+    container.innerHTML = "";
 
 
     for (
@@ -460,10 +478,6 @@ function createExamButtons() {
         i < options.length;
         i++
     ) {
-
-        const exam =
-            options[i];
-
 
         const button =
             document.createElement(
@@ -476,13 +490,26 @@ function createExamButtons() {
 
 
         button.textContent =
-            exam;
+            options[i];
+
+
+        if (
+            selectedExam ===
+            options[i]
+        ) {
+
+            button.classList.add(
+                "active"
+            );
+        }
 
 
         button.onclick =
             function() {
 
-                selectExam(exam);
+                selectExam(
+                    options[i]
+                );
             };
 
 
@@ -492,7 +519,41 @@ function createExamButtons() {
     }
 
 
-    updateDownloadAllButton();
+    const selectedExamText =
+        document.getElementById(
+            "selectedExamText"
+        );
+
+
+    if (selectedExamText) {
+
+        selectedExamText.textContent =
+            selectedExam === ""
+                ? "Not Selected"
+                : selectedExam;
+    }
+
+
+    const examHelp =
+        document.getElementById(
+            "examHelp"
+        );
+
+
+    if (examHelp) {
+
+        if (selectedExam === "") {
+
+            examHelp.textContent =
+                "Select an exam to enable hall-ticket downloads.";
+
+        } else {
+
+            examHelp.textContent =
+                "Selected exam: " +
+                selectedExam;
+        }
+    }
 }
 
 
@@ -500,206 +561,107 @@ function createExamButtons() {
 // SELECT EXAM
 // =====================================================
 
-window.selectExam = function(exam) {
+window.selectExam =
+    function(exam) {
 
-    selectedExam =
-        exam;
+        selectedExam = exam;
 
+        selectedStudents.clear();
 
-    const buttons =
-        document.querySelectorAll(
-            ".exam-button"
-        );
+        displayExamButtons();
 
-
-    for (
-        let i = 0;
-        i < buttons.length;
-        i++
-    ) {
-
-        buttons[i].classList.remove(
-            "active"
-        );
-
-
-        if (
-            buttons[i].textContent === exam
-        ) {
-
-            buttons[i].classList.add(
-                "active"
-            );
-        }
-    }
-
-
-    document.getElementById(
-        "selectedExamText"
-    ).textContent =
-        exam;
-
-
-    displayHallTickets();
-
-    updateDownloadAllButton();
-};
+        displayHallTickets();
+    };
 
 
 // =====================================================
-// SELECT TERM
+// GET FILTERED STUDENTS
 // =====================================================
 
-window.selectTerm = function(term) {
+function getFilteredStudents() {
 
-    selectedTerm =
-        Number(term);
-
-
-    // ---------------------------------------------
-    // ACTIVE TERM BUTTON
-    // ---------------------------------------------
-
-    const buttons =
-        document.querySelectorAll(
-            ".term-button"
-        );
-
-
-    for (
-        let i = 0;
-        i < buttons.length;
-        i++
-    ) {
-
-        buttons[i].classList.remove(
-            "active"
-        );
-    }
-
-
-    const activeButton =
+    const searchInput =
         document.getElementById(
-            "termButton" +
-            selectedTerm
+            "searchInput"
         );
 
 
-    if (activeButton) {
-
-        activeButton.classList.add(
-            "active"
+    const classInput =
+        document.getElementById(
+            "classInput"
         );
-    }
 
 
-    // ---------------------------------------------
-    // CREATE NEW EXAM OPTIONS
-    // ---------------------------------------------
-
-    createExamButtons();
-
-
-    // ---------------------------------------------
-    // UPDATE PAGE
-    // ---------------------------------------------
-
-    updateStatistics();
-
-    displayHallTickets();
-};
+    const search =
+        String(
+            searchInput
+                ? searchInput.value
+                : ""
+        )
+        .toLowerCase()
+        .trim();
 
 
-// =====================================================
-// UPDATE STATISTICS
-// =====================================================
-
-function updateStatistics() {
-
-    const total =
-        students.length;
-
-
-    let cleared = 0;
-
-    let pending = 0;
+    const classSearch =
+        String(
+            classInput
+                ? classInput.value
+                : ""
+        )
+        .toLowerCase()
+        .trim();
 
 
-    for (
-        let i = 0;
-        i < students.length;
-        i++
-    ) {
+    let data =
+        students.filter(
+            function(student) {
 
-        if (
-            isCleared(
-                students[i]
-            )
-        ) {
-
-            cleared++;
-
-        } else {
-
-            pending++;
-        }
-    }
+                const name =
+                    String(
+                        student.full_name ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-    let clearedPercentage = 0;
-
-    let pendingPercentage = 0;
-
-
-    if (total > 0) {
-
-        clearedPercentage =
-            (
-                cleared /
-                total
-            ) *
-            100;
+                const mobile =
+                    String(
+                        student.mobile ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-        pendingPercentage =
-            (
-                pending /
-                total
-            ) *
-            100;
-    }
+                const className =
+                    String(
+                        student.class_name ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-    document.getElementById(
-        "totalStudents"
-    ).textContent =
-        total;
+                const matchStudent =
+                    search === "" ||
+                    name.includes(search) ||
+                    mobile.includes(search);
 
 
-    document.getElementById(
-        "clearedStudents"
-    ).textContent =
-        cleared;
+                const matchClass =
+                    classSearch === "" ||
+                    className.includes(
+                        classSearch
+                    );
 
 
-    document.getElementById(
-        "pendingStudents"
-    ).textContent =
-        pending;
+                return (
+                    matchStudent &&
+                    matchClass
+                );
+            }
+        );
 
 
-    document.getElementById(
-        "clearedPercentage"
-    ).textContent =
-        clearedPercentage.toFixed(1) +
-        "%";
-
-
-    document.getElementById(
-        "pendingPercentage"
-    ).textContent =
-        pendingPercentage.toFixed(1) +
-        "%";
+    return data;
 }
 
 
@@ -711,16 +673,12 @@ function getClassOrder(
     className
 ) {
 
-    if (!className) {
-
-        return 999;
-    }
-
-
     const value =
-        String(className)
-            .toLowerCase()
-            .trim();
+        String(
+            className || ""
+        )
+        .toLowerCase()
+        .trim();
 
 
     if (
@@ -729,7 +687,7 @@ function getClassOrder(
         )
     ) {
 
-        return 1;
+        return 0;
     }
 
 
@@ -739,7 +697,7 @@ function getClassOrder(
         )
     ) {
 
-        return 2;
+        return 1;
     }
 
 
@@ -749,24 +707,22 @@ function getClassOrder(
         )
     ) {
 
-        return 3;
+        return 2;
     }
 
 
-    const number =
+    const match =
         value.match(
             /[0-9]+/
         );
 
 
-    if (number) {
+    if (match) {
 
-        return (
-            3 +
+        return 2 +
             Number(
-                number[0]
-            )
-        );
+                match[0]
+            );
     }
 
 
@@ -809,13 +765,15 @@ function sortStudents(data) {
             const nameA =
                 String(
                     a.full_name || ""
-                );
+                )
+                .toLowerCase();
 
 
             const nameB =
                 String(
                     b.full_name || ""
-                );
+                )
+                .toLowerCase();
 
 
             return nameA.localeCompare(
@@ -827,98 +785,7 @@ function sortStudents(data) {
 
 
 // =====================================================
-// GET FILTERED STUDENTS
-// =====================================================
-
-function getFilteredStudents() {
-
-    let data =
-        students.slice();
-
-
-    const searchElement =
-        document.getElementById(
-            "searchInput"
-        );
-
-
-    const classElement =
-        document.getElementById(
-            "classInput"
-        );
-
-
-    const search =
-        String(
-            searchElement.value || ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    const classSearch =
-        String(
-            classElement.value || ""
-        )
-        .toLowerCase()
-        .trim();
-
-
-    data =
-        data.filter(
-            function(student) {
-
-                const name =
-                    String(
-                        student.full_name || ""
-                    )
-                    .toLowerCase();
-
-
-                const mobile =
-                    String(
-                        student.mobile || ""
-                    )
-                    .toLowerCase();
-
-
-                const className =
-                    String(
-                        student.class_name || ""
-                    )
-                    .toLowerCase();
-
-
-                const searchMatch =
-                    search === "" ||
-                    name.includes(search) ||
-                    mobile.includes(search);
-
-
-                const classMatch =
-                    classSearch === "" ||
-                    className.includes(
-                        classSearch
-                    );
-
-
-                return (
-                    searchMatch &&
-                    classMatch
-                );
-            }
-        );
-
-
-    sortStudents(data);
-
-
-    return data;
-}
-
-
-// =====================================================
-// DISPLAY STUDENTS
+// DISPLAY HALL TICKETS
 // =====================================================
 
 function displayHallTickets() {
@@ -935,36 +802,140 @@ function displayHallTickets() {
         );
 
 
-    const termText =
-        document.getElementById(
-            "selectedTermText"
-        );
+    if (!container) {
+
+        return;
+    }
 
 
-    termText.textContent =
+    // ---------------------------------------------
+    // TERM TEXT
+    // ---------------------------------------------
+
+    document.getElementById(
+        "selectedTermText"
+    ).textContent =
         getTermName(
             selectedTerm
         );
 
 
-    const data =
+    // ---------------------------------------------
+    // FILTER
+    // ---------------------------------------------
+
+    let data =
         getFilteredStudents();
+
+
+    sortStudents(data);
+
+
+    // ---------------------------------------------
+    // STATISTICS
+    // ---------------------------------------------
+
+    const total =
+        data.length;
+
+
+    let clearedCount = 0;
+
+
+    for (
+        let i = 0;
+        i < data.length;
+        i++
+    ) {
+
+        if (
+            isCleared(
+                data[i]
+            )
+        ) {
+
+            clearedCount++;
+        }
+    }
+
+
+    const pendingCount =
+        total -
+        clearedCount;
+
+
+    const clearedPercentage =
+        total === 0
+            ? 0
+            : Math.round(
+                (
+                    clearedCount /
+                    total
+                ) * 100
+            );
+
+
+    const pendingPercentage =
+        total === 0
+            ? 0
+            : Math.round(
+                (
+                    pendingCount /
+                    total
+                ) * 100
+            );
+
+
+    document.getElementById(
+        "totalStudents"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "clearedStudents"
+    ).textContent =
+        clearedCount;
+
+
+    document.getElementById(
+        "pendingStudents"
+    ).textContent =
+        pendingCount;
+
+
+    document.getElementById(
+        "clearedPercentage"
+    ).textContent =
+        clearedPercentage +
+        "%";
+
+
+    document.getElementById(
+        "pendingPercentage"
+    ).textContent =
+        pendingPercentage +
+        "%";
 
 
     document.getElementById(
         "eligibleCount"
     ).textContent =
-        data.length;
+        clearedCount;
 
 
-    if (
-        data.length === 0
-    ) {
+    // ---------------------------------------------
+    // EMPTY
+    // ---------------------------------------------
+
+    if (data.length === 0) {
 
         container.innerHTML = "";
 
         emptyMessage.style.display =
             "block";
+
+        createSelectionToolbar();
 
         updateDownloadAllButton();
 
@@ -976,7 +947,18 @@ function displayHallTickets() {
         "none";
 
 
-    let html = "";
+    // ---------------------------------------------
+    // SELECTION TOOLBAR
+    // ---------------------------------------------
+
+    createSelectionToolbar();
+
+
+    // ---------------------------------------------
+    // STUDENT CARDS
+    // ---------------------------------------------
+
+    container.innerHTML = "";
 
 
     for (
@@ -989,244 +971,566 @@ function displayHallTickets() {
             data[i];
 
 
+        const cleared =
+            isCleared(
+                student
+            );
+
+
         const termData =
             getTermData(
                 student
             );
 
 
-        const cleared =
-            termData.remaining <= 0;
+        const card =
+            document.createElement(
+                "div"
+            );
 
 
-        html +=
-            '<div class="student-card">';
+        card.className =
+            "student-card";
 
 
-        // ---------------------------------------------
-        // STUDENT HEADER
-        // ---------------------------------------------
+        if (
+            selectedStudents.has(
+                String(
+                    student.id
+                )
+            )
+        ) {
 
-        html +=
-            '<div class="student-header">';
-
-
-        html +=
-            '<div class="student-info">';
-
-
-        html +=
-            '<h2>' +
-            escapeHTML(
-                student.full_name ||
-                "Unknown Student"
-            ) +
-            '</h2>';
-
-
-        html +=
-            '<p>📱 Mobile: ' +
-            escapeHTML(
-                student.mobile ||
-                "-"
-            ) +
-            '</p>';
-
-
-        html +=
-            '<p>🎓 Class: ' +
-            escapeHTML(
-                student.class_name ||
-                "-"
-            ) +
-            '</p>';
-
-
-        html +=
-            '</div>';
-
-
-        html +=
-            '</div>';
-
-
-        // ---------------------------------------------
-        // FEE DETAILS
-        // ---------------------------------------------
-
-        html +=
-            '<div class="fee-details">';
-
-
-        html +=
-            '<div class="fee-box">';
-
-
-        html +=
-            '<span>' +
-            getTermName(
-                selectedTerm
-            ) +
-            ' Total' +
-            '</span>';
-
-
-        html +=
-            '<strong>₹' +
-            formatMoney(
-                termData.total
-            ) +
-            '</strong>';
-
-
-        html +=
-            '</div>';
-
-
-        html +=
-            '<div class="fee-box">';
-
-
-        html +=
-            '<span>Paid</span>';
-
-
-        html +=
-            '<strong>₹' +
-            formatMoney(
-                termData.paid
-            ) +
-            '</strong>';
-
-
-        html +=
-            '</div>';
-
-
-        if (cleared) {
-
-            html +=
-                '<div class="fee-box cleared-box">';
-
-
-            html +=
-                '<span>Balance</span>';
-
-
-            html +=
-                '<strong>₹0</strong>';
-
-
-            html +=
-                '</div>';
-
-        } else {
-
-            html +=
-                '<div class="fee-box pending-box">';
-
-
-            html +=
-                '<span>Pending Balance</span>';
-
-
-            html +=
-                '<strong>₹' +
-                formatMoney(
-                    termData.remaining
-                ) +
-                '</strong>';
-
-
-            html +=
-                '</div>';
+            card.classList.add(
+                "selected"
+            );
         }
 
 
-        html +=
-            '</div>';
+        // -----------------------------------------
+        // CHECKBOX
+        // -----------------------------------------
+
+        const checkArea =
+            document.createElement(
+                "div"
+            );
 
 
-        // ---------------------------------------------
-        // STATUS
-        // ---------------------------------------------
-
-        html +=
-            '<div class="status-row">';
+        checkArea.className =
+            "student-check-area";
 
 
-        if (cleared) {
-
-            html +=
-                '<div class="status-cleared">' +
-                '✓ FEE CLEARED' +
-                '</div>';
-
-        } else {
-
-            html +=
-                '<div class="status-pending">' +
-                '⚠ PENDING ₹' +
-                formatMoney(
-                    termData.remaining
-                ) +
-                '</div>';
-        }
+        const checkbox =
+            document.createElement(
+                "input"
+            );
 
 
-        // ---------------------------------------------
-        // DOWNLOAD
-        // ---------------------------------------------
+        checkbox.type =
+            "checkbox";
 
-        if (cleared) {
 
-            if (selectedExam !== "") {
+        checkbox.className =
+            "hall-ticket-checkbox";
 
-                html +=
-                    '<button ' +
-                    'class="student-download-button" ' +
-                    'onclick="downloadHallTicket(\'' +
-                    student.id +
-                    '\')">' +
-                    '📥 Download Hall Ticket' +
-                    '</button>';
 
-            } else {
+        checkbox.checked =
+            selectedStudents.has(
+                String(
+                    student.id
+                )
+            );
 
-                html +=
-                    '<button ' +
-                    'class="student-download-button" ' +
-                    'disabled>' +
-                    'Select Exam First' +
-                    '</button>';
+
+        checkbox.disabled =
+            !cleared;
+
+
+        checkbox.addEventListener(
+            "change",
+            function() {
+
+                toggleStudentSelection(
+                    student.id
+                );
+
+                if (
+                    checkbox.checked
+                ) {
+
+                    card.classList.add(
+                        "selected"
+                    );
+
+                } else {
+
+                    card.classList.remove(
+                        "selected"
+                    );
+                }
             }
+        );
+
+
+        checkArea.appendChild(
+            checkbox
+        );
+
+
+        // -----------------------------------------
+        // STUDENT INFO
+        // -----------------------------------------
+
+        const info =
+            document.createElement(
+                "div"
+            );
+
+
+        info.className =
+            "student-info";
+
+
+        const name =
+            document.createElement(
+                "div"
+            );
+
+
+        name.className =
+            "student-name";
+
+
+        name.textContent =
+            student.full_name ||
+            "Unknown Student";
+
+
+        const classText =
+            document.createElement(
+                "div"
+            );
+
+
+        classText.className =
+            "student-details";
+
+
+        classText.textContent =
+            "Class: " +
+            (
+                student.class_name ||
+                "Not Available"
+            );
+
+
+        const mobileText =
+            document.createElement(
+                "div"
+            );
+
+
+        mobileText.className =
+            "student-details";
+
+
+        mobileText.textContent =
+            "Mobile: " +
+            (
+                student.mobile ||
+                "Not Available"
+            );
+
+
+        info.appendChild(
+            name
+        );
+
+
+        info.appendChild(
+            classText
+        );
+
+
+        info.appendChild(
+            mobileText
+        );
+
+
+        // -----------------------------------------
+        // STATUS
+        // -----------------------------------------
+
+        const status =
+            document.createElement(
+                "div"
+            );
+
+
+        status.className =
+            "student-status";
+
+
+        if (cleared) {
+
+            status.classList.add(
+                "status-cleared"
+            );
+
+
+            status.textContent =
+                "✓ Cleared";
 
         } else {
 
-            html +=
-                '<button ' +
-                'class="student-download-button" ' +
-                'disabled>' +
-                '🔒 Download Disabled' +
-                '</button>';
+            status.classList.add(
+                "status-pending"
+            );
+
+
+            status.textContent =
+                "Pending";
         }
 
 
-        html +=
-            '</div>';
+        // -----------------------------------------
+        // BALANCE
+        // -----------------------------------------
+
+        const balance =
+            document.createElement(
+                "div"
+            );
 
 
-        html +=
-            '</div>';
+        if (cleared) {
+
+            balance.className =
+                "cleared-balance";
+
+
+            balance.textContent =
+                "Balance: ₹0";
+
+        } else {
+
+            balance.className =
+                "pending-balance";
+
+
+            balance.textContent =
+                "Pending: ₹" +
+                formatMoney(
+                    termData.remaining
+                );
+        }
+
+
+        // -----------------------------------------
+        // DOWNLOAD BUTTON
+        // -----------------------------------------
+
+        const downloadButton =
+            document.createElement(
+                "button"
+            );
+
+
+        downloadButton.className =
+            "student-download-button";
+
+
+        if (cleared) {
+
+            downloadButton.textContent =
+                "📥 Download";
+
+
+            downloadButton.onclick =
+                function() {
+
+                    downloadHallTicket(
+                        student.id
+                    );
+                };
+
+        } else {
+
+            downloadButton.textContent =
+                "🔒 Download Disabled";
+
+
+            downloadButton.disabled =
+                true;
+        }
+
+
+        // -----------------------------------------
+        // ADD TO CARD
+        // -----------------------------------------
+
+        card.appendChild(
+            checkArea
+        );
+
+
+        card.appendChild(
+            info
+        );
+
+
+        card.appendChild(
+            status
+        );
+
+
+        card.appendChild(
+            balance
+        );
+
+
+        card.appendChild(
+            downloadButton
+        );
+
+
+        container.appendChild(
+            card
+        );
     }
-
-
-    container.innerHTML =
-        html;
 
 
     updateDownloadAllButton();
 }
+
+
+// =====================================================
+// CREATE SELECTION TOOLBAR
+// =====================================================
+
+function createSelectionToolbar() {
+
+    const container =
+        document.getElementById(
+            "studentsContainer"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    const oldToolbar =
+        document.getElementById(
+            "selectionToolbar"
+        );
+
+
+    if (oldToolbar) {
+
+        oldToolbar.remove();
+    }
+
+
+    const toolbar =
+        document.createElement(
+            "div"
+        );
+
+
+    toolbar.id =
+        "selectionToolbar";
+
+
+    toolbar.className =
+        "selection-toolbar";
+
+
+    toolbar.innerHTML =
+        '<button class="select-all-button" onclick="selectAllVisibleStudents()">☑ Select All</button>' +
+
+        '<button class="clear-selection-button" onclick="clearSelectedStudents()">☐ Clear Selection</button>' +
+
+        '<button class="download-selected-button" onclick="downloadSelectedHallTickets()">📥 Download Selected Hall Tickets</button>' +
+
+        '<span id="selectedCountText">Selected: ' +
+
+        selectedStudents.size +
+
+        '</span>';
+
+
+    container.parentNode.insertBefore(
+        toolbar,
+        container
+    );
+}
+
+
+// =====================================================
+// SELECT ALL
+// =====================================================
+
+window.selectAllVisibleStudents =
+    function() {
+
+        const data =
+            getFilteredStudents();
+
+
+        for (
+            let i = 0;
+            i < data.length;
+            i++
+        ) {
+
+            if (
+                isCleared(
+                    data[i]
+                )
+            ) {
+
+                selectedStudents.add(
+                    String(
+                        data[i].id
+                    )
+                );
+            }
+        }
+
+
+        displayHallTickets();
+    };
+
+
+// =====================================================
+// CLEAR SELECTION
+// =====================================================
+
+window.clearSelectedStudents =
+    function() {
+
+        selectedStudents.clear();
+
+        displayHallTickets();
+    };
+
+
+// =====================================================
+// TOGGLE SELECTION
+// =====================================================
+
+window.toggleStudentSelection =
+    function(studentId) {
+
+        const id =
+            String(
+                studentId
+            );
+
+
+        if (
+            selectedStudents.has(id)
+        ) {
+
+            selectedStudents.delete(
+                id
+            );
+
+        } else {
+
+            selectedStudents.add(
+                id
+            );
+        }
+
+
+        updateSelectedCount();
+    };
+
+
+// =====================================================
+// UPDATE SELECTED COUNT
+// =====================================================
+
+function updateSelectedCount() {
+
+    const element =
+        document.getElementById(
+            "selectedCountText"
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            "Selected: " +
+            selectedStudents.size;
+    }
+}
+
+
+// =====================================================
+// SELECT TERM
+// =====================================================
+
+window.selectTerm =
+    function(termNumber) {
+
+        selectedTerm =
+            Number(
+                termNumber
+            );
+
+
+        // Reset exam
+        selectedExam =
+            "";
+
+
+        // Reset selected students
+        selectedStudents.clear();
+
+
+        // Active button
+        const buttons =
+            document.querySelectorAll(
+                ".term-button"
+            );
+
+
+        buttons.forEach(
+            function(button) {
+
+                button.classList.remove(
+                    "active"
+                );
+            }
+        );
+
+
+        const selectedButton =
+            document.getElementById(
+                "termButton" +
+                selectedTerm
+            );
+
+
+        if (selectedButton) {
+
+            selectedButton.classList.add(
+                "active"
+            );
+        }
+
+
+        displayExamButtons();
+
+        displayHallTickets();
+    };
 
 
 // =====================================================
@@ -1237,7 +1541,6 @@ window.filterHallTickets =
     function() {
 
         displayHallTickets();
-
     };
 
 
@@ -1259,12 +1562,11 @@ window.clearSearch =
 
 
         displayHallTickets();
-
     };
 
 
 // =====================================================
-// UPDATE DOWNLOAD ALL
+// UPDATE DOWNLOAD ALL BUTTON
 // =====================================================
 
 function updateDownloadAllButton() {
@@ -1285,33 +1587,256 @@ function updateDownloadAllButton() {
         getFilteredStudents();
 
 
-    const clearedStudents =
-        data.filter(
-            function(student) {
+    let clearedCount = 0;
 
-                return isCleared(
-                    student
-                );
-            }
-        );
+
+    for (
+        let i = 0;
+        i < data.length;
+        i++
+    ) {
+
+        if (
+            isCleared(
+                data[i]
+            )
+        ) {
+
+            clearedCount++;
+        }
+    }
 
 
     if (
         selectedExam !== "" &&
-        clearedStudents.length > 0
+        clearedCount > 0
     ) {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
     } else {
 
-        button.disabled = true;
+        button.disabled =
+            true;
     }
 }
 
 
 // =====================================================
-// DOWNLOAD ONE HALL TICKET
+// CREATE HALL TICKET
+// =====================================================
+
+function createHallTicket(
+    student
+) {
+
+    const studentName =
+        escapeHTML(
+            student.full_name ||
+            ""
+        );
+
+
+    const className =
+        escapeHTML(
+            student.class_name ||
+            ""
+        );
+
+
+    const exam =
+        escapeHTML(
+            selectedExam
+        );
+
+
+    let html = "";
+
+
+    html +=
+        '<div class="hall-ticket">';
+
+
+    // ---------------------------------------------
+    // HEADER
+    // ---------------------------------------------
+
+    html +=
+        '<div class="hall-header">';
+
+
+    html +=
+        '<img class="hall-logo" ' +
+        'src="vision_school_logo.png" ' +
+        'crossorigin="anonymous" ' +
+        'alt="Vision School Logo">';
+
+
+    html +=
+        '<div class="hall-school-name">' +
+        'VISION THE SCHOOL OF EXCELLENCE' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-tagline">' +
+        '“A NEW ERA OF EDUCATION AWAITS”' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-address">' +
+        'Sri ram colony, Jalapally, balapur (M), RR (Dist), Pincode 500005.' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-title-box">' +
+        'HALLTICKET' +
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    // ---------------------------------------------
+    // BODY
+    // ---------------------------------------------
+
+    html +=
+        '<div class="hall-body">';
+
+
+    // NAME
+
+    html +=
+        '<div class="hall-name-label">' +
+        'Name of the Student :' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-name-value">' +
+        studentName +
+        '</div>';
+
+
+    // ROLL
+
+    html +=
+        '<div class="hall-roll-label">' +
+        'Roll No / VSX ID :' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-roll-value">' +
+        '________________' +
+        '</div>';
+
+
+    // EXAM
+
+    html +=
+        '<div class="hall-exam">' +
+        'Exam : ' +
+        exam +
+        '</div>';
+
+
+    // CLASS
+
+    html +=
+        '<div class="hall-class-label">' +
+        'Class :' +
+        '</div>';
+
+
+    html +=
+        '<div class="hall-class-value">' +
+        className +
+        '</div>';
+
+
+    // SIGNATURE
+
+    html +=
+        '<div class="hall-signature">' +
+        'Authorised Signature with Stamp' +
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// PREPARE PDF TICKET
+// =====================================================
+
+function preparePdfTicket(
+    student
+) {
+
+    const container =
+        document.getElementById(
+            "pdfHallTicketContainer"
+        );
+
+
+    container.innerHTML =
+        createHallTicket(
+            student
+        );
+
+
+    container.style.display =
+        "block";
+
+
+    container.style.width =
+        TICKET_WIDTH +
+        "mm";
+
+
+    container.style.height =
+        TICKET_HEIGHT +
+        "mm";
+
+
+    const ticket =
+        container.querySelector(
+            ".hall-ticket"
+        );
+
+
+    ticket.style.width =
+        TICKET_WIDTH +
+        "mm";
+
+
+    ticket.style.height =
+        TICKET_HEIGHT +
+        "mm";
+
+
+    return ticket;
+}
+
+
+// =====================================================
+// DOWNLOAD ONE
+// TOP-LEFT POSITION
 // =====================================================
 
 window.downloadHallTicket =
@@ -1321,8 +1846,9 @@ window.downloadHallTicket =
             students.find(
                 function(item) {
 
-                    return (
-                        item.id ===
+                    return String(
+                        item.id
+                    ) === String(
                         studentId
                     );
                 }
@@ -1360,7 +1886,9 @@ window.downloadHallTicket =
         // ---------------------------------------------
 
         if (
-            !isCleared(student)
+            !isCleared(
+                student
+            )
         ) {
 
             const termData =
@@ -1381,21 +1909,9 @@ window.downloadHallTicket =
         }
 
 
-        const container =
-            document.getElementById(
-                "pdfHallTicketContainer"
-            );
-
-
-        container.innerHTML =
-            createHallTicket(
+        const ticket =
+            preparePdfTicket(
                 student
-            );
-
-
-        const hallTicket =
-            container.querySelector(
-                ".hall-ticket"
             );
 
 
@@ -1403,7 +1919,7 @@ window.downloadHallTicket =
 
             const canvas =
                 await html2canvas(
-                    hallTicket,
+                    ticket,
                     {
                         scale: 2,
 
@@ -1433,43 +1949,18 @@ window.downloadHallTicket =
                 );
 
 
-            const pageWidth =
-                pdf.internal.pageSize.getWidth();
-
-
-            const pageHeight =
-                pdf.internal.pageSize.getHeight();
-
-
-            const ticketWidth =
-                142;
-
-
-            const ticketHeight =
-                64.67;
-
-
-            const x =
-                (
-                    pageWidth -
-                    ticketWidth
-                ) / 2;
-
-
-            const y =
-                (
-                    pageHeight -
-                    ticketHeight
-                ) / 2;
-
+            // -----------------------------------------
+            // IMPORTANT
+            // INDIVIDUAL TICKET = FIRST POSITION
+            // -----------------------------------------
 
             pdf.addImage(
                 image,
                 "PNG",
-                x,
-                y,
-                ticketWidth,
-                ticketHeight
+                MARGIN_X,
+                MARGIN_Y,
+                TICKET_WIDTH,
+                TICKET_HEIGHT
             );
 
 
@@ -1486,10 +1977,10 @@ window.downloadHallTicket =
 
             const examName =
                 selectedExam
-                    .replace(
-                        /[^a-zA-Z0-9]/g,
-                        "_"
-                    );
+                .replace(
+                    /[^a-zA-Z0-9]/g,
+                    "_"
+                );
 
 
             pdf.save(
@@ -1502,25 +1993,279 @@ window.downloadHallTicket =
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             alert(
                 "Failed to create hall ticket."
             );
 
+        } finally {
+
+            clearPdfContainer();
+        }
+    };
+
+
+// =====================================================
+// DOWNLOAD SELECTED
+// =====================================================
+
+window.downloadSelectedHallTickets =
+    async function() {
+
+        if (
+            selectedExam === ""
+        ) {
+
+            alert(
+                "Please select an exam first."
+            );
+
+            return;
+        }
+
+
+        if (
+            selectedStudents.size === 0
+        ) {
+
+            alert(
+                "Please select at least one student."
+            );
+
+            return;
+        }
+
+
+        let data =
+            students.filter(
+                function(student) {
+
+                    return selectedStudents.has(
+                        String(
+                            student.id
+                        )
+                    );
+                }
+            );
+
+
+        // ---------------------------------------------
+        // ONLY CLEARED
+        // ---------------------------------------------
+
+        data =
+            data.filter(
+                function(student) {
+
+                    return isCleared(
+                        student
+                    );
+                }
+            );
+
+
+        sortStudents(data);
+
+
+        if (
+            data.length === 0
+        ) {
+
+            alert(
+                "No selected students are eligible."
+            );
+
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                "Download " +
+                data.length +
+                " selected hall tickets for " +
+                selectedExam +
+                "?"
+            );
+
+
+        if (!confirmed) {
+
+            return;
+        }
+
+
+        const container =
+            document.getElementById(
+                "pdfHallTicketContainer"
+            );
+
+
+        try {
+
+            const jsPDF =
+                window.jspdf.jsPDF;
+
+
+            const pdf =
+                new jsPDF(
+                    "landscape",
+                    "mm",
+                    "a4"
+                );
+
+
+            for (
+                let i = 0;
+                i < data.length;
+                i++
+            ) {
+
+                const student =
+                    data[i];
+
+
+                const ticket =
+                    preparePdfTicket(
+                        student
+                    );
+
+
+                const canvas =
+                    await html2canvas(
+                        ticket,
+                        {
+                            scale: 2,
+
+                            useCORS: true,
+
+                            backgroundColor:
+                                "#ffffff"
+                        }
+                    );
+
+
+                const image =
+                    canvas.toDataURL(
+                        "image/png"
+                    );
+
+
+                // -----------------------------------------
+                // POSITION
+                // 2 COLUMNS × 3 ROWS
+                // -----------------------------------------
+
+                const position =
+                    i % 6;
+
+
+                const column =
+                    position % 2;
+
+
+                const row =
+                    Math.floor(
+                        position / 2
+                    );
+
+
+                const x =
+                    MARGIN_X +
+                    (
+                        column *
+                        (
+                            TICKET_WIDTH +
+                            GAP_X
+                        )
+                    );
+
+
+                const y =
+                    MARGIN_Y +
+                    (
+                        row *
+                        (
+                            TICKET_HEIGHT +
+                            GAP_Y
+                        )
+                    );
+
+
+                pdf.addImage(
+                    image,
+                    "PNG",
+                    x,
+                    y,
+                    TICKET_WIDTH,
+                    TICKET_HEIGHT
+                );
+
+
+                clearPdfContainer();
+
+
+                // -----------------------------------------
+                // NEW A4 PAGE AFTER 6 TICKETS
+                // -----------------------------------------
+
+                if (
+                    i <
+                        data.length - 1 &&
+                    position === 5
+                ) {
+
+                    pdf.addPage();
+                }
+            }
+
+
+            const examName =
+                selectedExam
+                .replace(
+                    /[^a-zA-Z0-9]/g,
+                    "_"
+                );
+
+
+            pdf.save(
+                getTermName(
+                    selectedTerm
+                )
+                .replace(
+                    " ",
+                    "_"
+                ) +
+                "_" +
+                examName +
+                "_Selected_Hall_Tickets.pdf"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "Failed to create selected hall tickets."
+            );
 
         } finally {
 
-            container.innerHTML = "";
+            clearPdfContainer();
         }
     };
 
 
 // =====================================================
 // DOWNLOAD ALL
-// A4 LANDSCAPE
-// 2 COLUMNS × 3 ROWS
-// 6 HALL TICKETS
 // =====================================================
 
 window.downloadAllHallTickets =
@@ -1557,6 +2302,9 @@ window.downloadAllHallTickets =
             );
 
 
+        sortStudents(data);
+
+
         if (
             data.length === 0
         ) {
@@ -1585,12 +2333,6 @@ window.downloadAllHallTickets =
         }
 
 
-        const container =
-            document.getElementById(
-                "pdfHallTicketContainer"
-            );
-
-
         try {
 
             const jsPDF =
@@ -1605,74 +2347,6 @@ window.downloadAllHallTickets =
                 );
 
 
-            // -----------------------------------------
-            // A4 LANDSCAPE
-            // 297 × 210 mm
-            // -----------------------------------------
-
-            const pageWidth = 297;
-
-            const pageHeight = 210;
-
-
-            // -----------------------------------------
-            // EXACT TICKET SIZE
-            // -----------------------------------------
-
-            const ticketWidth = 142;
-
-            const ticketHeight = 64.67;
-
-
-            // -----------------------------------------
-            // SPACING
-            // -----------------------------------------
-
-            const marginX = 5;
-
-            const marginY = 5;
-
-            const gapX = 3;
-
-            const gapY = 3;
-
-
-            // -----------------------------------------
-            // POSITIONS
-            // -----------------------------------------
-
-            const x1 =
-                marginX;
-
-
-            const x2 =
-                marginX +
-                ticketWidth +
-                gapX;
-
-
-            const y1 =
-                marginY;
-
-
-            const y2 =
-                marginY +
-                ticketHeight +
-                gapY;
-
-
-            const y3 =
-                marginY +
-                (
-                    ticketHeight +
-                    gapY
-                ) * 2;
-
-
-            // -----------------------------------------
-            // DOWNLOAD 6 PER PAGE
-            // -----------------------------------------
-
             for (
                 let i = 0;
                 i < data.length;
@@ -1683,21 +2357,15 @@ window.downloadAllHallTickets =
                     data[i];
 
 
-                container.innerHTML =
-                    createHallTicket(
+                const ticket =
+                    preparePdfTicket(
                         student
-                    );
-
-
-                const hallTicket =
-                    container.querySelector(
-                        ".hall-ticket"
                     );
 
 
                 const canvas =
                     await html2canvas(
-                        hallTicket,
+                        ticket,
                         {
                             scale: 2,
 
@@ -1715,103 +2383,91 @@ window.downloadAllHallTickets =
                     );
 
 
-                // -------------------------------------
-                // PAGE NUMBER
-                // -------------------------------------
+                // -----------------------------------------
+                // 2 COLUMNS
+                // 3 ROWS
+                // -----------------------------------------
 
                 const position =
                     i % 6;
 
 
-                if (
-                    i > 0 &&
-                    position === 0
-                ) {
-
-                    pdf.addPage();
-                }
+                const column =
+                    position % 2;
 
 
-                let x = x1;
-
-                let y = y1;
-
-
-                // -------------------------------------
-                // COLUMN
-                // -------------------------------------
-
-                if (
-                    position === 1 ||
-                    position === 3 ||
-                    position === 5
-                ) {
-
-                    x = x2;
-                }
+                const row =
+                    Math.floor(
+                        position / 2
+                    );
 
 
-                // -------------------------------------
-                // ROW
-                // -------------------------------------
-
-                if (
-                    position === 2 ||
-                    position === 3
-                ) {
-
-                    y = y2;
-                }
+                const x =
+                    MARGIN_X +
+                    (
+                        column *
+                        (
+                            TICKET_WIDTH +
+                            GAP_X
+                        )
+                    );
 
 
-                if (
-                    position === 4 ||
-                    position === 5
-                ) {
+                const y =
+                    MARGIN_Y +
+                    (
+                        row *
+                        (
+                            TICKET_HEIGHT +
+                            GAP_Y
+                        )
+                    );
 
-                    y = y3;
-                }
-
-
-                // -------------------------------------
-                // ADD TICKET
-                // -------------------------------------
 
                 pdf.addImage(
                     image,
                     "PNG",
                     x,
                     y,
-                    ticketWidth,
-                    ticketHeight
+                    TICKET_WIDTH,
+                    TICKET_HEIGHT
                 );
+
+
+                clearPdfContainer();
+
+
+                // -----------------------------------------
+                // NEW PAGE AFTER 6
+                // -----------------------------------------
+
+                if (
+                    i <
+                        data.length - 1 &&
+                    position === 5
+                ) {
+
+                    pdf.addPage();
+                }
             }
 
 
-            // -----------------------------------------
-            // SAVE
-            // -----------------------------------------
+            const examName =
+                selectedExam
+                .replace(
+                    /[^a-zA-Z0-9]/g,
+                    "_"
+                );
 
-            const termName =
+
+            pdf.save(
                 getTermName(
                     selectedTerm
                 )
                 .replace(
                     " ",
                     "_"
-                );
-
-
-            const examName =
-                selectedExam
-                    .replace(
-                        /[^a-zA-Z0-9]/g,
-                        "_"
-                    );
-
-
-            pdf.save(
-                termName +
+                ) +
                 "_" +
                 examName +
                 "_All_Hall_Tickets.pdf"
@@ -1820,242 +2476,51 @@ window.downloadAllHallTickets =
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                error
+            );
+
 
             alert(
                 "Failed to create hall tickets."
             );
 
-
         } finally {
 
-            container.innerHTML = "";
+            clearPdfContainer();
         }
     };
 
 
 // =====================================================
-// CREATE HALL TICKET
+// CLEAR PDF CONTAINER
 // =====================================================
 
-function createHallTicket(student) {
+function clearPdfContainer() {
 
-    const name =
-        escapeHTML(
-            student.full_name ||
-            "________________"
+    const container =
+        document.getElementById(
+            "pdfHallTicketContainer"
         );
 
 
-    const className =
-        escapeHTML(
-            student.class_name ||
-            "________________"
-        );
+    if (!container) {
+
+        return;
+    }
 
 
-    const exam =
-        escapeHTML(
-            selectedExam ||
-            "________________"
-        );
+    container.innerHTML =
+        "";
 
 
-    let html = "";
-
-
-    // =================================================
-    // OUTER
-    // =================================================
-
-    html +=
-        '<div class="hall-ticket">';
-
-
-    // =================================================
-    // HEADER
-    // =================================================
-
-    html +=
-        '<div class="hall-header">';
-
-
-    // LOGO
-
-    html +=
-        '<img ' +
-        'class="hall-logo" ' +
-        'src="vision_school_logo.png" ' +
-        'alt="Vision School Logo">';
-
-
-    // SCHOOL NAME
-
-    html +=
-        '<div class="hall-school-name">' +
-        'VISION THE SCHOOL OF EXCELLENCE' +
-        '</div>';
-
-
-    // TAGLINE
-
-    html +=
-        '<div class="hall-tagline">' +
-        '"A NEW ERA OF EDUCATION AWAITS"' +
-        '</div>';
-
-
-    // ADDRESS
-
-    html +=
-        '<div class="hall-address">' +
-        'Sri ram colony, Jalpally, balapur (M), RR (Dist), Pincode 500005.' +
-        '</div>';
-
-
-    // HALL TICKET
-
-    html +=
-        '<div class="hall-title-box">' +
-        'HALLTICKET' +
-        '</div>';
-
-
-    html +=
-        '</div>';
-
-
-    // =================================================
-    // BODY
-    // =================================================
-
-    html +=
-        '<div class="hall-body">';
-
-
-    // NAME LABEL
-
-    html +=
-        '<div class="hall-name-label">' +
-        'Name of the Student :' +
-        '</div>';
-
-
-    // NAME VALUE
-
-    html +=
-        '<div class="hall-name-value">' +
-        name +
-        '</div>';
-
-
-    // ROLL LABEL
-
-    html +=
-        '<div class="hall-roll-label">' +
-        'Roll No / VSX ID :' +
-        '</div>';
-
-
-    // ROLL VALUE
-
-    html +=
-        '<div class="hall-roll-value">' +
-        '________________' +
-        '</div>';
-
-
-    // EXAM
-
-    html +=
-        '<div class="hall-exam">' +
-        'Exam : ' +
-        exam +
-        '</div>';
-
-
-    // CLASS LABEL
-
-    html +=
-        '<div class="hall-class-label">' +
-        'Class :' +
-        '</div>';
-
-
-    // CLASS VALUE
-
-    html +=
-        '<div class="hall-class-value">' +
-        className +
-        '</div>';
-
-
-    // SIGNATURE
-
-    html +=
-        '<div class="hall-signature">' +
-        'Authorised Signature with Stamp' +
-        '</div>';
-
-
-    html +=
-        '</div>';
-
-
-    html +=
-        '</div>';
-
-
-    return html;
+    container.style.display =
+        "none";
 }
 
 
 // =====================================================
-// FORMAT MONEY
-// =====================================================
-
-function formatMoney(value) {
-
-    return Number(
-        value || 0
-    ).toLocaleString(
-        "en-IN"
-    );
-}
-
-
-// =====================================================
-// ESCAPE HTML
-// =====================================================
-
-function escapeHTML(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
-
-
-// =====================================================
-// BACK
+// BACK TO FEE COLLECTION
 // =====================================================
 
 window.goBackToFees =
@@ -2067,7 +2532,43 @@ window.goBackToFees =
 
 
 // =====================================================
-// START
+// ESCAPE HTML
 // =====================================================
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+}
+
+
+// =====================================================
+// INITIAL LOAD
+// =====================================================
+
+displayExamButtons();
 
 loadHallTicketData();
