@@ -29,7 +29,186 @@ let selectedStudents = new Set();
 
 
 // =====================================================
+// SA SETTINGS
+// =====================================================
+
+const SA_SETTINGS_KEY =
+    "vision_school_sa_exam_settings_v2";
+
+
+// =====================================================
+// DEFAULT SA SETTINGS
+// =====================================================
+
+const DEFAULT_SA_SETTINGS = {
+
+    academicYear: "2026–27",
+
+    "SA - I": {
+
+        groupA: [
+            "2026-10-05",
+            "2026-10-06",
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09"
+        ],
+
+        groupB: [
+            "2026-10-01",
+            "2026-10-03",
+            "2026-10-05",
+            "2026-10-06",
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09"
+        ],
+
+        groupC: [
+            "2026-10-01",
+            "2026-10-03",
+            "2026-10-05",
+            "2026-10-06",
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09"
+        ]
+    },
+
+    "SA - II": {
+
+        groupA: [
+            "2027-02-01",
+            "2027-02-02",
+            "2027-02-03",
+            "2027-02-04",
+            "2027-02-05"
+        ],
+
+        groupB: [
+            "2027-02-01",
+            "2027-02-03",
+            "2027-02-05",
+            "2027-02-06",
+            "2027-02-08",
+            "2027-02-09",
+            "2027-02-10"
+        ],
+
+        groupC: [
+            "2027-02-01",
+            "2027-02-03",
+            "2027-02-05",
+            "2027-02-06",
+            "2027-02-08",
+            "2027-02-09",
+            "2027-02-10"
+        ]
+    }
+};
+
+
+// =====================================================
+// LOAD SA SETTINGS
+// =====================================================
+
+function loadSASettings() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                SA_SETTINGS_KEY
+            );
+
+        if (!saved) {
+
+            return JSON.parse(
+                JSON.stringify(
+                    DEFAULT_SA_SETTINGS
+                )
+            );
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        return {
+
+            ...JSON.parse(
+                JSON.stringify(
+                    DEFAULT_SA_SETTINGS
+                )
+            ),
+
+            ...parsed,
+
+            "SA - I": {
+
+                ...DEFAULT_SA_SETTINGS["SA - I"],
+
+                ...(parsed["SA - I"] || {})
+            },
+
+            "SA - II": {
+
+                ...DEFAULT_SA_SETTINGS["SA - II"],
+
+                ...(parsed["SA - II"] || {})
+            }
+        };
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load SA settings:",
+            error
+        );
+
+        return JSON.parse(
+            JSON.stringify(
+                DEFAULT_SA_SETTINGS
+            )
+        );
+    }
+}
+
+
+let saSettings = loadSASettings();
+
+
+// =====================================================
+// SAVE SA SETTINGS
+// =====================================================
+
+function persistSASettings() {
+
+    try {
+
+        localStorage.setItem(
+            SA_SETTINGS_KEY,
+            JSON.stringify(
+                saSettings
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Failed to save SA settings:",
+            error
+        );
+    }
+}
+
+
+// =====================================================
 // A4 SETTINGS
+// =====================================================
+
+// =====================================================
+// FA SYSTEM
+// DO NOT CHANGE THESE VALUES
 // =====================================================
 
 const PAGE_WIDTH = 297;
@@ -50,6 +229,2351 @@ const GAP_Y = 3;
 
 
 // =====================================================
+// SA SYSTEM
+// SEPARATE FROM FA
+// =====================================================
+
+const SA_PAGE_WIDTH = 210;
+
+const SA_PAGE_HEIGHT = 297;
+
+const SA_MARGIN_X = 3;
+
+const SA_MARGIN_Y = 3;
+
+const SA_TICKET_WIDTH = 204;
+
+const SA_TICKET_HEIGHT = 95;
+
+const SA_GAP_Y = 3;
+
+
+// -------------------------------------------------
+// PRINCIPAL SIGNATURE IMAGE (SA hall tickets)
+// Put the principal's scanned signature image next
+// to hall_tickets.html (e.g. "principal_signature.png")
+// and set the file name here. Leave empty ("") to
+// keep only the signature line.
+// -------------------------------------------------
+const SA_PRINCIPAL_SIGNATURE_IMAGE = "";
+
+
+// =====================================================
+// INJECT SA CSS
+// THIS ALSO PREVENTS ORANGE BACKGROUND
+// =====================================================
+
+function injectSAStyles() {
+
+    if (
+        document.getElementById(
+            "visionSAInjectedStyles"
+        )
+    ) {
+
+        return;
+    }
+
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+    style.id =
+        "visionSAInjectedStyles";
+
+
+    style.textContent = `
+
+        /* ==========================================
+           SA EDITOR
+           ========================================== */
+
+        .sa-settings-panel {
+
+            margin: 15px 0;
+
+            padding: 18px;
+
+            background: #ffffff !important;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,0.08);
+
+        }
+
+        .sa-settings-title {
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+
+            color: #111827;
+
+        }
+
+        .sa-settings-description {
+
+            font-size: 13px;
+
+            color: #6b7280;
+
+            margin-bottom: 15px;
+
+        }
+
+        .sa-settings-row {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(170px, 1fr));
+
+            gap: 12px;
+
+            margin-bottom: 15px;
+
+        }
+
+        .sa-setting-group {
+
+            border: 1px solid #dbeafe;
+
+            border-radius: 10px;
+
+            padding: 12px;
+
+            background: #f8fbff !important;
+
+        }
+
+        .sa-setting-group h4 {
+
+            margin: 0 0 10px 0;
+
+            color: #1d4ed8;
+
+            font-size: 15px;
+
+        }
+
+        .sa-date-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-bottom: 7px;
+
+        }
+
+        .sa-date-number {
+
+            width: 22px;
+
+            font-size: 12px;
+
+            color: #555;
+
+        }
+
+        .sa-date-input {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 7px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 6px;
+
+            background: #fff !important;
+
+        }
+
+        .sa-settings-actions {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-top: 10px;
+
+        }
+
+        .sa-save-button {
+
+            border: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 9px 16px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+
+        }
+
+        .sa-reset-button {
+
+            border: 1px solid #dc2626;
+
+            background: white !important;
+
+            color: #dc2626;
+
+            padding: 9px 16px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+
+        }
+
+        .sa-settings-status {
+
+            font-size: 13px;
+
+            color: #15803d;
+
+            margin-top: 8px;
+
+        }
+
+
+        /* ==========================================
+           SA HALL TICKET
+           ========================================== */
+
+        .sa-hall-ticket {
+
+            width: 204mm !important;
+
+            height: 95mm !important;
+
+            min-width: 204mm !important;
+
+            max-width: 204mm !important;
+
+            min-height: 95mm !important;
+
+            max-height: 95mm !important;
+
+            box-sizing: border-box !important;
+
+            position: relative !important;
+
+            overflow: hidden !important;
+
+            background: #ffffff !important;
+
+            color: #111111 !important;
+
+            border: 0.6mm solid #1e40af !important;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif !important;
+
+        }
+
+        .sa-hall-ticket * {
+
+            box-sizing: border-box;
+
+        }
+
+        .sa-frame {
+
+            position: absolute;
+
+            left: 1.4mm;
+
+            top: 1.4mm;
+
+            right: 1.4mm;
+
+            bottom: 1.4mm;
+
+            border: 0.45mm solid #d4a017;
+
+            pointer-events: none;
+
+            background: transparent !important;
+
+        }
+
+        .sa-header {
+
+            position: absolute;
+
+            left: 0;
+
+            top: 0;
+
+            width: 100%;
+
+            height: 29mm;
+
+            background: #ffffff !important;
+
+        }
+
+        .sa-logo {
+
+            position: absolute;
+
+            left: 7mm;
+
+            top: 4mm;
+
+            width: 21mm;
+
+            height: 21mm;
+
+            object-fit: contain;
+
+            background: white !important;
+
+        }
+
+        .sa-school-name {
+
+            position: absolute;
+
+            left: 30mm;
+
+            top: 2mm;
+
+            width: 169mm;
+
+            text-align: center;
+
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            font-size: 7.2mm;
+
+            line-height: 8mm;
+
+            font-weight: 700;
+
+            color: #0039d8;
+
+            white-space: nowrap;
+
+        }
+
+        .sa-tagline {
+
+            position: absolute;
+
+            right: 7mm;
+
+            top: 10.5mm;
+
+            font-size: 2.4mm;
+
+            font-weight: 700;
+
+            color: #f59e0b;
+
+            white-space: nowrap;
+
+        }
+
+        .sa-assessment-title {
+
+            position: absolute;
+
+            left: 0;
+
+            top: 13mm;
+
+            width: 100%;
+
+            text-align: center;
+
+            font-size: 4.7mm;
+
+            line-height: 5.2mm;
+
+            font-weight: 800;
+
+            color: #111111;
+
+        }
+
+        .sa-hall-title {
+
+            position: absolute;
+
+            left: 0;
+
+            top: 18mm;
+
+            width: 100%;
+
+            text-align: center;
+
+            font-size: 4.5mm;
+
+            line-height: 5mm;
+
+            font-weight: 800;
+
+            color: #111111;
+
+        }
+
+        .sa-academic-year {
+
+            position: absolute;
+
+            left: 0;
+
+            top: 23mm;
+
+            width: 100%;
+
+            text-align: center;
+
+            font-size: 3.2mm;
+
+            font-weight: 700;
+
+            color: #111111;
+
+        }
+
+        .sa-header-divider {
+
+            position: absolute;
+
+            left: 3mm;
+
+            right: 3mm;
+
+            top: 27.6mm;
+
+            border-top: 0.4mm solid #1e40af;
+
+        }
+
+
+        /* ==========================================
+           STUDENT DETAILS
+           ========================================== */
+
+        .sa-student-details {
+
+            position: absolute;
+
+            left: 3mm;
+
+            top: 28mm;
+
+            width: 198mm;
+
+            height: 14mm;
+
+            border: 0.25mm solid #222;
+
+            display: grid;
+
+            grid-template-columns:
+                24mm 1fr 22mm 1fr;
+
+            grid-template-rows:
+                7mm 7mm;
+
+            background: white !important;
+
+            font-size: 2.6mm;
+
+            font-weight: 700;
+
+        }
+
+        .sa-detail-label {
+
+            display: flex;
+
+            align-items: center;
+
+            padding-left: 2mm;
+
+            border-right: 0.2mm solid #555;
+
+            border-bottom: 0.2mm solid #555;
+
+            background: #ffffff !important;
+
+        }
+
+        .sa-detail-value {
+
+            display: flex;
+
+            align-items: center;
+
+            padding-left: 2mm;
+
+            border-right: 0.2mm solid #555;
+
+            border-bottom: 0.2mm solid #555;
+
+            font-weight: 400;
+
+            background: #ffffff !important;
+
+        }
+
+
+        /* ==========================================
+           SA EXAM TABLE
+           ========================================== */
+
+        .sa-exam-table {
+
+            position: absolute;
+
+            left: 3mm;
+
+            top: 42mm;
+
+            width: 198mm;
+
+            border-collapse: collapse;
+
+            table-layout: fixed;
+
+            font-size: 2.35mm;
+
+            background: #ffffff !important;
+
+            color: #111111 !important;
+
+        }
+
+        .sa-exam-table th,
+
+        .sa-exam-table td {
+
+            border: 0.25mm solid #555;
+
+            text-align: center;
+
+            vertical-align: middle;
+
+            padding: 0.8mm;
+
+            background: #ffffff !important;
+
+        }
+
+        .sa-exam-table thead th {
+
+            height: 8mm;
+
+            background: #dff1ff !important;
+
+            font-weight: 700;
+
+        }
+
+        .sa-exam-table .sa-left-header {
+
+            width: 21mm;
+
+            background: #dff1ff !important;
+
+            font-weight: 700;
+
+        }
+
+        .sa-exam-table tbody td {
+
+            height: 6mm;
+
+        }
+
+        .sa-exam-table .sa-subject-label {
+
+            background: #dff1ff !important;
+
+            font-weight: 700;
+
+        }
+
+        .sa-exam-table .sa-signature-row {
+
+            height: 7mm;
+
+        }
+
+
+        /* ==========================================
+           SIGNATURES
+           ========================================== */
+
+        .sa-signature-left {
+
+            position: absolute;
+
+            left: 12mm;
+
+            bottom: 7mm;
+
+            width: 72mm;
+
+            text-align: center;
+
+            font-size: 2.5mm;
+
+            font-weight: 700;
+
+            border-top: 0.25mm solid #222;
+
+            padding-top: 1.5mm;
+
+        }
+
+        .sa-signature-right {
+
+            position: absolute;
+
+            right: 12mm;
+
+            bottom: 7mm;
+
+            width: 72mm;
+
+            text-align: center;
+
+            font-size: 2.5mm;
+
+            font-weight: 700;
+
+            border-top: 0.25mm solid #222;
+
+            padding-top: 1.5mm;
+
+        }
+
+        .sa-principal-sign {
+
+            position: absolute;
+
+            right: 12mm;
+
+            bottom: 12mm;
+
+            width: 72mm;
+
+            height: 6.5mm;
+
+            text-align: center;
+
+        }
+
+        .sa-principal-sign img {
+
+            height: 6.5mm;
+
+            max-width: 60mm;
+
+            object-fit: contain;
+
+        }
+
+
+        /* ==========================================
+           CUT LINE
+           ========================================== */
+
+        .sa-cut-line {
+
+            position: absolute;
+
+            left: 2mm;
+
+            right: 2mm;
+
+            bottom: 0.8mm;
+
+            height: 3mm;
+
+            border-top: 0.25mm dashed #222;
+
+            text-align: center;
+
+            font-size: 2.1mm;
+
+            line-height: 3mm;
+
+            background: white !important;
+
+        }
+
+        .sa-cut-line::before {
+
+            content: "✂";
+
+            position: absolute;
+
+            left: 0;
+
+            top: -2mm;
+
+            font-size: 3mm;
+
+            background: white;
+
+        }
+
+        .sa-cut-line::after {
+
+            content: "✂";
+
+            position: absolute;
+
+            right: 0;
+
+            top: -2mm;
+
+            font-size: 3mm;
+
+            background: white;
+
+        }
+
+
+        /* ==========================================
+           PRINT
+           ========================================== */
+
+        @media print {
+
+            .sa-hall-ticket {
+
+                background: white !important;
+
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(style);
+}
+
+
+// =====================================================
+// DATE FORMAT
+// =====================================================
+
+function formatSADate(dateValue) {
+
+    if (!dateValue) {
+
+        return {
+            date: "",
+            day: ""
+        };
+    }
+
+
+    const date =
+        new Date(
+            dateValue + "T00:00:00"
+        );
+
+
+    if (isNaN(date.getTime())) {
+
+        return {
+            date: dateValue,
+            day: ""
+        };
+    }
+
+
+    const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ];
+
+
+    const day =
+        dayNames[
+            date.getDay()
+        ];
+
+
+    const parts =
+        dateValue.split("-");
+
+
+    const formatted =
+        parts[2] +
+        "." +
+        parts[1] +
+        "." +
+        parts[0];
+
+
+    return {
+        date: formatted,
+        day: day
+    };
+}
+
+
+// =====================================================
+// GET SA GROUP
+// =====================================================
+
+function getSAGroup(student) {
+
+    const className =
+        String(
+            student.class_name || ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    if (
+        className.includes("nursery") ||
+        className.includes("lkg") ||
+        className.includes("ukg")
+    ) {
+
+        return "groupA";
+    }
+
+
+    const match =
+        className.match(
+            /[0-9]+/
+        );
+
+
+    if (match) {
+
+        const classNumber =
+            Number(
+                match[0]
+            );
+
+
+        if (
+            classNumber >= 1 &&
+            classNumber <= 5
+        ) {
+
+            return "groupB";
+        }
+
+
+        if (
+            classNumber >= 6 &&
+            classNumber <= 10
+        ) {
+
+            return "groupC";
+        }
+    }
+
+
+    // Default
+    return "groupB";
+}
+
+
+// =====================================================
+// GET SA DATES
+// =====================================================
+
+function getSADates(student) {
+
+    const group =
+        getSAGroup(
+            student
+        );
+
+
+    const examSettings =
+        saSettings[
+            selectedExam
+        ] ||
+        saSettings["SA - I"];
+
+
+    return (
+        examSettings[group] ||
+        []
+    );
+}
+
+
+// =====================================================
+// SA SUBJECTS - NURSERY/LKG/UKG
+// (matches screenshot pattern 1)
+// =====================================================
+
+function getGroupASubjectRows() {
+
+    return [
+
+        {
+            label: "Nursery",
+            subjects: [
+                "–",
+                "English",
+                "Mathematics",
+                "EVS",
+                "Drawing"
+            ]
+        },
+
+        {
+            label: "LKG",
+            subjects: [
+                "Telugu",
+                "Hindi",
+                "English",
+                "Mathematics",
+                "EVS"
+            ]
+        },
+
+        {
+            label: "UKG",
+            subjects: [
+                "Telugu",
+                "Hindi",
+                "English",
+                "Mathematics",
+                "EVS"
+            ]
+        },
+
+        {
+            label: "Invigilator<br>Signature",
+            subjects: [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        }
+
+    ];
+}
+
+
+// =====================================================
+// SA SUBJECTS - CLASSES 1 TO 5
+// (matches screenshot pattern 2)
+// =====================================================
+
+function getGroupBSubjectRows() {
+
+    return [
+
+        {
+            label: "Subject",
+            subjects: [
+                "–",
+                "Social Studies<br>(IV – V)",
+                "Telugu<br>(I – V)",
+                "English<br>(I – V)",
+                "Mathematics<br>(I – V)",
+                "EVS (I – III)<br>Science (IV – V)",
+                "Hindi<br>(I – V)"
+            ]
+        },
+
+        {
+            label: "Invigilator<br>Signature",
+            subjects: [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        }
+
+    ];
+}
+
+
+// =====================================================
+// SA SUBJECTS - CLASSES 6 TO 10
+// (matches screenshot pattern 3)
+// =====================================================
+
+function getGroupCSubjectRows() {
+
+    return [
+
+        {
+            label: "Subject<br>(VI – VII)",
+            subjects: [
+                "First Language<br>(Telugu / Hindi)",
+                "Second Language<br>(Telugu / Hindi)",
+                "English",
+                "Mathematics",
+                "General Science",
+                "Social Studies",
+                "–"
+            ]
+        },
+
+        {
+            label: "Subject<br>(VIII – X)",
+            subjects: [
+                "Mathematics",
+                "Physical Science",
+                "Biological Science",
+                "Social Studies",
+                "First Language<br>(Telugu / Hindi)",
+                "Second Language<br>(Telugu / Hindi)",
+                "English"
+            ]
+        },
+
+        {
+            label: "Invigilator<br>Signature",
+            subjects: [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        }
+
+    ];
+}
+
+
+// =====================================================
+// GET ROMAN NUMBER
+// SA - I -> I, SA - II -> II
+// =====================================================
+
+function getSARomanNumber() {
+
+    if (
+        selectedExam === "SA - II"
+    ) {
+
+        return "II";
+    }
+
+
+    return "I";
+}
+
+
+// =====================================================
+// CREATE SA HEADER
+// =====================================================
+
+function createSAHeader() {
+
+    const roman =
+        getSARomanNumber();
+
+
+    let html = "";
+
+
+    html +=
+        '<div class="sa-header">';
+
+
+    html +=
+        '<img ' +
+        'class="sa-logo" ' +
+        'src="vision_school_logo.png" ' +
+        'crossorigin="anonymous" ' +
+        'alt="Vision School Logo">';
+
+
+    html +=
+        '<div class="sa-school-name">' +
+        escapeHTML(
+            saSettings.schoolName ||
+            "VISION – THE SCHOOL OF EXCELLENCE"
+        ) +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-tagline">' +
+        escapeHTML(
+            saSettings.schoolTagline ||
+            "A NEW ERA OF EDUCATION AWAITS"
+        ) +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-assessment-title">' +
+        'SUMMATIVE ASSESSMENT – ' +
+        roman +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-hall-title">' +
+        'HALL TICKET' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-academic-year">' +
+        'ACADEMIC YEAR: ' +
+        escapeHTML(
+            saSettings.academicYear
+        ) +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-header-divider"></div>';
+
+
+    html +=
+        '</div>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// CREATE SA STUDENT DETAILS
+// =====================================================
+
+function createSAStudentDetails(
+    student
+) {
+
+    const studentName =
+        escapeHTML(
+            student.full_name ||
+            ""
+        );
+
+
+    const className =
+        escapeHTML(
+            student.class_name ||
+            ""
+        );
+
+
+    const rollNumber =
+        escapeHTML(
+            student.roll_number ||
+            ""
+        );
+
+
+    const fatherName =
+        escapeHTML(
+            student.father_name ||
+            ""
+        );
+
+
+    let html = "";
+
+
+    html +=
+        '<div class="sa-student-details">';
+
+
+    html +=
+        '<div class="sa-detail-label">' +
+        'Student Name :' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-value">' +
+        studentName +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-label">' +
+        'Class :' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-value">' +
+        className +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-label">' +
+        'VSX ID / Roll No. :' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-value">' +
+        (
+            rollNumber !==
+            "" ?
+            rollNumber :
+            "________________"
+        ) +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-label">' +
+        'Parent Name :' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-detail-value">' +
+        (
+            fatherName !==
+            "" ?
+            fatherName :
+            "________________"
+        ) +
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// CREATE SA TABLE
+// =====================================================
+
+function createSATable(
+    student
+) {
+
+    const group =
+        getSAGroup(
+            student
+        );
+
+
+    const dates =
+        getSADates(
+            student
+        );
+
+
+    let rows;
+
+
+    if (group === "groupA") {
+
+        rows =
+            getGroupASubjectRows();
+
+    } else if (group === "groupC") {
+
+        rows =
+            getGroupCSubjectRows();
+
+    } else {
+
+        rows =
+            getGroupBSubjectRows();
+    }
+
+
+    let html = "";
+
+
+    html +=
+        '<table class="sa-exam-table">';
+
+
+    html +=
+        '<thead>';
+
+
+    html +=
+        '<tr>';
+
+
+    html +=
+        '<th class="sa-left-header">' +
+        'Date' +
+        '</th>';
+
+
+    for (
+        let i = 0;
+        i < dates.length;
+        i++
+    ) {
+
+        const formatted =
+            formatSADate(
+                dates[i]
+            );
+
+
+        html +=
+            '<th>' +
+            escapeHTML(
+                formatted.date
+            ) +
+            '<br>' +
+            '(' +
+            escapeHTML(
+                formatted.day
+            ) +
+            ')' +
+            '</th>';
+    }
+
+
+    html +=
+        '</tr>';
+
+
+    html +=
+        '</thead>';
+
+
+    html +=
+        '<tbody>';
+
+
+    for (
+        let r = 0;
+        r < rows.length;
+        r++
+    ) {
+
+        const row =
+            rows[r];
+
+
+        const isSignature =
+            row.label
+                .toLowerCase()
+                .includes(
+                    "signature"
+                );
+
+
+        html +=
+            '<tr class="' +
+            (
+                isSignature
+                    ? "sa-signature-row"
+                    : ""
+            ) +
+            '">';
+
+
+        html +=
+            '<td class="sa-subject-label">' +
+            row.label +
+            '</td>';
+
+
+        for (
+            let c = 0;
+            c < dates.length;
+            c++
+        ) {
+
+            html +=
+                '<td>' +
+                (
+                    row.subjects[c] ||
+                    ""
+                ) +
+                '</td>';
+        }
+
+
+        html +=
+            '</tr>';
+    }
+
+
+    html +=
+        '</tbody>';
+
+
+    html +=
+        '</table>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// CREATE SA HALL TICKET
+// =====================================================
+
+function createSAHallTicket(
+    student
+) {
+
+    let html = "";
+
+
+    html +=
+        '<div class="sa-hall-ticket">';
+
+
+    html +=
+        '<div class="sa-frame"></div>';
+
+
+    html +=
+        createSAHeader();
+
+
+    html +=
+        createSAStudentDetails(
+            student
+        );
+
+
+    html +=
+        createSATable(
+            student
+        );
+
+
+    html +=
+        '<div class="sa-signature-left">' +
+        'Class Incharge Signature' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-signature-right">' +
+        'Principal Signature' +
+        '</div>';
+
+
+    if (
+        typeof SA_PRINCIPAL_SIGNATURE_IMAGE !==
+            "undefined" &&
+        SA_PRINCIPAL_SIGNATURE_IMAGE !==
+            ""
+    ) {
+
+        html +=
+            '<div class="sa-principal-sign">' +
+            '<img src="' +
+            SA_PRINCIPAL_SIGNATURE_IMAGE +
+            '" alt="">' +
+            '</div>';
+    }
+
+
+    html +=
+        '<div class="sa-cut-line">' +
+        'CUT HERE' +
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// SA SETTINGS EDITOR
+// =====================================================
+
+function createSASettingsEditor() {
+
+    const existing =
+        document.getElementById(
+            "saSettingsPanel"
+        );
+
+
+    if (existing) {
+
+        existing.remove();
+    }
+
+
+    // If the page contains the modal-based SA settings UI,
+    // drive that instead of injecting the floating panel.
+
+    if (
+        document.getElementById(
+            "saSettingsModal"
+        )
+    ) {
+
+        updateSASettingsSection();
+
+        return;
+    }
+
+
+    if (
+        selectedExam !== "SA - I" &&
+        selectedExam !== "SA - II"
+    ) {
+
+        return;
+    }
+
+
+    const studentsContainer =
+        document.getElementById(
+            "studentsContainer"
+        );
+
+
+    if (!studentsContainer) {
+
+        return;
+    }
+
+
+    const panel =
+        document.createElement(
+            "div"
+        );
+
+
+    panel.id =
+        "saSettingsPanel";
+
+    panel.className =
+        "sa-settings-panel";
+
+
+    const examSettings =
+        saSettings[
+            selectedExam
+        ];
+
+
+    let html = "";
+
+
+    html +=
+        '<div class="sa-settings-title">' +
+        '⚙ SA Exam Settings' +
+        '</div>';
+
+
+    html +=
+        '<div class="sa-settings-description">' +
+        'Edit the Academic Year and examination dates for ' +
+        escapeHTML(
+            selectedExam
+        ) +
+        '. These settings are used when downloading SA hall tickets.' +
+        '</div>';
+
+
+    // Academic year
+
+    html +=
+        '<div class="sa-settings-row">';
+
+
+    html +=
+        '<div>' +
+        '<label><strong>Academic Year</strong></label>' +
+        '<input ' +
+        'id="saAcademicYearInput" ' +
+        'type="text" ' +
+        'value="' +
+        escapeHTML(
+            saSettings.academicYear
+        ) +
+        '" ' +
+        'style="width:100%;padding:8px;margin-top:5px;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;">' +
+        '</div>';
+
+
+    html +=
+        '</div>';
+
+
+    html +=
+        '<div class="sa-settings-row">';
+
+
+    html +=
+        createSAEditorGroup(
+            "Nursery / LKG / UKG",
+            "groupA",
+            examSettings.groupA
+        );
+
+
+    html +=
+        createSAEditorGroup(
+            "Classes 1 – 5",
+            "groupB",
+            examSettings.groupB
+        );
+
+
+    html +=
+        createSAEditorGroup(
+            "Classes 6 – 10",
+            "groupC",
+            examSettings.groupC
+        );
+
+
+    html +=
+        '</div>';
+
+
+    html +=
+        '<div class="sa-settings-actions">' +
+
+        '<button ' +
+        'class="sa-save-button" ' +
+        'onclick="saveSAExamSettings()">' +
+        '💾 Save SA Settings' +
+        '</button>' +
+
+        '<button ' +
+        'class="sa-reset-button" ' +
+        'onclick="resetSAExamSettings()">' +
+        '↻ Reset This Exam' +
+        '</button>' +
+
+        '</div>';
+
+
+    html +=
+        '<div id="saSettingsStatus" class="sa-settings-status"></div>';
+
+
+    panel.innerHTML =
+        html;
+
+
+    studentsContainer.parentNode.insertBefore(
+        panel,
+        studentsContainer
+    );
+}
+
+
+// =====================================================
+// CREATE SA EDITOR GROUP
+// =====================================================
+
+function createSAEditorGroup(
+    title,
+    groupName,
+    dates
+) {
+
+    let html = "";
+
+
+    html +=
+        '<div class="sa-setting-group">';
+
+
+    html +=
+        '<h4>' +
+        title +
+        '</h4>';
+
+
+    for (
+        let i = 0;
+        i < dates.length;
+        i++
+    ) {
+
+        html +=
+            '<div class="sa-date-row">';
+
+
+        html +=
+            '<span class="sa-date-number">' +
+            (i + 1) +
+            '</span>';
+
+
+        html +=
+            '<input ' +
+            'class="sa-date-input" ' +
+            'data-sa-group="' +
+            groupName +
+            '" ' +
+            'data-sa-index="' +
+            i +
+            '" ' +
+            'type="date" ' +
+            'value="' +
+            escapeHTML(
+                dates[i]
+            ) +
+            '">';
+
+
+        html +=
+            '</div>';
+    }
+
+
+    html +=
+        '</div>';
+
+
+    return html;
+}
+
+
+// =====================================================
+// SA SETTINGS MODAL SUPPORT
+// Used when the page contains #saSettingsModal
+// =====================================================
+
+function updateSASettingsSection() {
+
+    const section =
+        document.getElementById(
+            "saSettingsSection"
+        );
+
+
+    if (section) {
+
+        section.style.display =
+            (
+                selectedExam === "SA - I" ||
+                selectedExam === "SA - II"
+            )
+                ? "block"
+                : "none";
+    }
+
+
+    updateSASettingsSummary();
+}
+
+
+function updateSASettingsSummary() {
+
+    const summary =
+        document.getElementById(
+            "saSettingsSummary"
+        );
+
+
+    if (!summary) {
+
+        return;
+    }
+
+
+    if (
+        selectedExam !== "SA - I" &&
+        selectedExam !== "SA - II"
+    ) {
+
+        summary.innerHTML = "";
+
+        return;
+    }
+
+
+    const examSettings =
+        saSettings[selectedExam] ||
+        {};
+
+
+    const countDates =
+        function(list) {
+
+            return (
+                list || []
+            ).filter(
+                function(d) {
+
+                    return !!d;
+                }
+            ).length;
+        };
+
+
+    summary.innerHTML =
+        "<strong>" +
+        escapeHTML(
+            selectedExam
+        ) +
+        "</strong> · Academic Year: " +
+        escapeHTML(
+            saSettings.academicYear ||
+            ""
+        ) +
+        " &nbsp;|&nbsp; Nursery/LKG/UKG: " +
+        countDates(
+            examSettings.groupA
+        ) +
+        " dates &nbsp;|&nbsp; Classes 1–5: " +
+        countDates(
+            examSettings.groupB
+        ) +
+        " dates &nbsp;|&nbsp; Classes 6–10: " +
+        countDates(
+            examSettings.groupC
+        ) +
+        " dates";
+}
+
+
+function fillSADateInputs(
+    prefix,
+    dates
+) {
+
+    for (
+        let i = 0;
+        i < dates.length;
+        i++
+    ) {
+
+        const input =
+            document.getElementById(
+                prefix +
+                "Date" +
+                (i + 1)
+            );
+
+
+        if (input) {
+
+            input.value =
+                dates[i] ||
+                "";
+        }
+
+
+        updateDateDay(
+            prefix +
+            "Date" +
+            (i + 1),
+            prefix +
+            "Day" +
+            (i + 1)
+        );
+    }
+}
+
+
+function readSADateInputs(
+    prefix,
+    count
+) {
+
+    const dates = [];
+
+
+    for (
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        const input =
+            document.getElementById(
+                prefix +
+                "Date" +
+                i
+            );
+
+
+        dates.push(
+            input
+                ? input.value
+                : ""
+        );
+    }
+
+
+    return dates;
+}
+
+
+window.updateDateDay =
+    function(
+        dateInputId,
+        daySpanId
+    ) {
+
+        const input =
+            document.getElementById(
+                dateInputId
+            );
+
+
+        const span =
+            document.getElementById(
+                daySpanId
+            );
+
+
+        if (
+            !input ||
+            !span
+        ) {
+
+            return;
+        }
+
+
+        if (!input.value) {
+
+            span.textContent = "";
+
+            return;
+        }
+
+
+        const formatted =
+            formatSADate(
+                input.value
+            );
+
+
+        span.textContent =
+            formatted.day
+                ? "(" +
+                formatted.day +
+                ")"
+                : "";
+    };
+
+
+window.openSASettings =
+    function() {
+
+        if (
+            selectedExam !== "SA - I" &&
+            selectedExam !== "SA - II"
+        ) {
+
+            alert(
+                "Please select SA - I or SA - II first."
+            );
+
+            return;
+        }
+
+
+        const modal =
+            document.getElementById(
+                "saSettingsModal"
+            );
+
+
+        if (!modal) {
+
+            return;
+        }
+
+
+        const examSettings =
+            saSettings[selectedExam] ||
+            {};
+
+
+        const nameEl =
+            document.getElementById(
+                "settingsExamName"
+            );
+
+
+        if (nameEl) {
+
+            nameEl.textContent =
+                selectedExam;
+        }
+
+
+        const yearInput =
+            document.getElementById(
+                "academicYearInput"
+            );
+
+
+        if (yearInput) {
+
+            yearInput.value =
+                saSettings.academicYear ||
+                "";
+        }
+
+
+        const schoolInput =
+            document.getElementById(
+                "schoolNameInput"
+            );
+
+
+        if (schoolInput) {
+
+            schoolInput.value =
+                saSettings.schoolName ||
+                "VISION – THE SCHOOL OF EXCELLENCE";
+        }
+
+
+        const taglineInput =
+            document.getElementById(
+                "schoolTaglineInput"
+            );
+
+
+        if (taglineInput) {
+
+            taglineInput.value =
+                saSettings.schoolTagline ||
+                "A NEW ERA OF EDUCATION AWAITS";
+        }
+
+
+        fillSADateInputs(
+            "t1",
+            examSettings.groupA ||
+            []
+        );
+
+
+        fillSADateInputs(
+            "t2",
+            examSettings.groupB ||
+            []
+        );
+
+
+        fillSADateInputs(
+            "t3",
+            examSettings.groupC ||
+            []
+        );
+
+
+        modal.style.display =
+            "block";
+    };
+
+
+window.closeSASettings =
+    function() {
+
+        const modal =
+            document.getElementById(
+                "saSettingsModal"
+            );
+
+
+        if (modal) {
+
+            modal.style.display =
+                "none";
+        }
+    };
+
+
+window.saveSASettings =
+    function() {
+
+        if (
+            selectedExam !== "SA - I" &&
+            selectedExam !== "SA - II"
+        ) {
+
+            return;
+        }
+
+
+        const yearInput =
+            document.getElementById(
+                "academicYearInput"
+            );
+
+
+        if (yearInput) {
+
+            saSettings.academicYear =
+                yearInput.value.trim() ||
+                "2026–27";
+        }
+
+
+        const schoolInput =
+            document.getElementById(
+                "schoolNameInput"
+            );
+
+
+        if (schoolInput) {
+
+            saSettings.schoolName =
+                schoolInput.value.trim() ||
+                "VISION – THE SCHOOL OF EXCELLENCE";
+        }
+
+
+        const taglineInput =
+            document.getElementById(
+                "schoolTaglineInput"
+            );
+
+
+        if (taglineInput) {
+
+            saSettings.schoolTagline =
+                taglineInput.value.trim() ||
+                "A NEW ERA OF EDUCATION AWAITS";
+        }
+
+
+        saSettings[selectedExam] = {
+
+            groupA:
+                readSADateInputs(
+                    "t1",
+                    5
+                ),
+
+            groupB:
+                readSADateInputs(
+                    "t2",
+                    7
+                ),
+
+            groupC:
+                readSADateInputs(
+                    "t3",
+                    7
+                )
+        };
+
+
+        persistSASettings();
+
+
+        closeSASettings();
+
+        updateSASettingsSection();
+
+        displayHallTickets();
+    };
+
+
+// =====================================================
+// SAVE SA EXAM SETTINGS
+// =====================================================
+
+window.saveSAExamSettings =
+    function() {
+
+        if (
+            selectedExam !== "SA - I" &&
+            selectedExam !== "SA - II"
+        ) {
+
+            return;
+        }
+
+
+        const yearInput =
+            document.getElementById(
+                "saAcademicYearInput"
+            );
+
+
+        if (yearInput) {
+
+            saSettings.academicYear =
+                yearInput.value.trim() ||
+                "2026–27";
+        }
+
+
+        const inputs =
+            document.querySelectorAll(
+                ".sa-date-input"
+            );
+
+
+        inputs.forEach(
+            function(input) {
+
+                const group =
+                    input.dataset.saGroup;
+
+                const index =
+                    Number(
+                        input.dataset.saIndex
+                    );
+
+
+                if (
+                    saSettings[selectedExam] &&
+                    saSettings[selectedExam][group]
+                ) {
+
+                    saSettings[selectedExam][group][index] =
+                        input.value;
+                }
+            }
+        );
+
+
+        persistSASettings();
+
+
+        const status =
+            document.getElementById(
+                "saSettingsStatus"
+            );
+
+
+        if (status) {
+
+            status.textContent =
+                "✓ SA settings saved successfully.";
+
+            setTimeout(
+                function() {
+
+                    status.textContent =
+                        "";
+
+                },
+                2500
+            );
+        }
+
+
+        displayHallTickets();
+    };
+
+
+// =====================================================
+// RESET SA EXAM SETTINGS
+// =====================================================
+
+window.resetSAExamSettings =
+    function() {
+
+        if (
+            selectedExam !== "SA - I" &&
+            selectedExam !== "SA - II"
+        ) {
+
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                "Reset " +
+                selectedExam +
+                " settings to the default dates?"
+            );
+
+
+        if (!confirmed) {
+
+            return;
+        }
+
+
+        saSettings[selectedExam] =
+            JSON.parse(
+                JSON.stringify(
+                    DEFAULT_SA_SETTINGS[
+                        selectedExam
+                    ]
+                )
+            );
+
+
+        persistSASettings();
+
+
+        createSASettingsEditor();
+
+        displayHallTickets();
+    };
+
+
+// =====================================================
 // LOAD DATA
 // =====================================================
 
@@ -66,16 +2590,34 @@ async function loadHallTicketData() {
         // LOAD STUDENTS
         // ---------------------------------------------
 
-        const studentResult =
+        let studentResult =
             await supabase
                 .from("profiles")
                 .select(
-                    "id,full_name,mobile,class_name"
+                    "id,full_name,mobile,class_name,roll_number,father_name"
                 )
                 .eq(
                     "role",
                     "student"
                 );
+
+
+        // Fallback: if roll_number / father_name columns
+        // do not exist yet, load without them.
+
+        if (studentResult.error) {
+
+            studentResult =
+                await supabase
+                    .from("profiles")
+                    .select(
+                        "id,full_name,mobile,class_name"
+                    )
+                    .eq(
+                        "role",
+                        "student"
+                    );
+        }
 
 
         if (studentResult.error) {
@@ -187,14 +2729,9 @@ function calculateTerms(
     totalFee =
         Number(totalFee) || 0;
 
-
     paidFee =
         Number(paidFee) || 0;
 
-
-    // ---------------------------------------------
-    // SPLIT TOTAL FEE INTO 3 TERMS
-    // ---------------------------------------------
 
     const term1Total =
         Math.floor(
@@ -213,10 +2750,6 @@ function calculateTerms(
         term1Total -
         term2Total;
 
-
-    // ---------------------------------------------
-    // DISTRIBUTE PAID AMOUNT
-    // ---------------------------------------------
 
     let remainingPaid =
         Math.max(
@@ -256,10 +2789,6 @@ function calculateTerms(
         );
 
 
-    // ---------------------------------------------
-    // RETURN TERM DETAILS
-    // ---------------------------------------------
-
     return {
 
         term1: {
@@ -276,7 +2805,6 @@ function calculateTerms(
                 )
         },
 
-
         term2: {
 
             total: term2Total,
@@ -290,7 +2818,6 @@ function calculateTerms(
                     term2Paid
                 )
         },
-
 
         term3: {
 
@@ -317,7 +2844,9 @@ function calculateTerms(
 function getTermData(student) {
 
     const fee =
-        getFee(student.id);
+        getFee(
+            student.id
+        );
 
 
     const totalFee =
@@ -368,7 +2897,9 @@ function getTermData(student) {
 function isCleared(student) {
 
     const termData =
-        getTermData(student);
+        getTermData(
+            student
+        );
 
 
     return Number(
@@ -427,7 +2958,8 @@ function getExamOptions() {
 
         return [
             "FA - I",
-            "FA - II"
+            "FA - II",
+            "SA - I"
         ];
     }
 
@@ -435,7 +2967,6 @@ function getExamOptions() {
     if (selectedTerm === 2) {
 
         return [
-            "SA - I",
             "FA - III"
         ];
     }
@@ -554,6 +3085,11 @@ function displayExamButtons() {
                 selectedExam;
         }
     }
+
+
+    // Show SA editor only for SA
+
+    createSASettingsEditor();
 }
 
 
@@ -564,11 +3100,15 @@ function displayExamButtons() {
 window.selectExam =
     function(exam) {
 
-        selectedExam = exam;
+        selectedExam =
+            exam;
+
 
         selectedStudents.clear();
 
+
         displayExamButtons();
+
 
         displayHallTickets();
     };
@@ -790,6 +3330,9 @@ function sortStudents(data) {
 
 function displayHallTickets() {
 
+    injectSAStyles();
+
+
     const container =
         document.getElementById(
             "studentsContainer"
@@ -808,10 +3351,6 @@ function displayHallTickets() {
     }
 
 
-    // ---------------------------------------------
-    // TERM TEXT
-    // ---------------------------------------------
-
     document.getElementById(
         "selectedTermText"
     ).textContent =
@@ -820,20 +3359,12 @@ function displayHallTickets() {
         );
 
 
-    // ---------------------------------------------
-    // FILTER
-    // ---------------------------------------------
-
     let data =
         getFilteredStudents();
 
 
     sortStudents(data);
 
-
-    // ---------------------------------------------
-    // STATISTICS
-    // ---------------------------------------------
 
     const total =
         data.length;
@@ -924,10 +3455,6 @@ function displayHallTickets() {
         clearedCount;
 
 
-    // ---------------------------------------------
-    // EMPTY
-    // ---------------------------------------------
-
     if (data.length === 0) {
 
         container.innerHTML = "";
@@ -947,16 +3474,8 @@ function displayHallTickets() {
         "none";
 
 
-    // ---------------------------------------------
-    // SELECTION TOOLBAR
-    // ---------------------------------------------
-
     createSelectionToolbar();
 
-
-    // ---------------------------------------------
-    // STUDENT CARDS
-    // ---------------------------------------------
 
     container.innerHTML = "";
 
@@ -1007,10 +3526,6 @@ function displayHallTickets() {
         }
 
 
-        // -----------------------------------------
-        // CHECKBOX
-        // -----------------------------------------
-
         const checkArea =
             document.createElement(
                 "div"
@@ -1055,6 +3570,7 @@ function displayHallTickets() {
                     student.id
                 );
 
+
                 if (
                     checkbox.checked
                 ) {
@@ -1077,10 +3593,6 @@ function displayHallTickets() {
             checkbox
         );
 
-
-        // -----------------------------------------
-        // STUDENT INFO
-        // -----------------------------------------
 
         const info =
             document.createElement(
@@ -1158,10 +3670,6 @@ function displayHallTickets() {
         );
 
 
-        // -----------------------------------------
-        // STATUS
-        // -----------------------------------------
-
         const status =
             document.createElement(
                 "div"
@@ -1194,10 +3702,6 @@ function displayHallTickets() {
         }
 
 
-        // -----------------------------------------
-        // BALANCE
-        // -----------------------------------------
-
         const balance =
             document.createElement(
                 "div"
@@ -1226,10 +3730,6 @@ function displayHallTickets() {
                 );
         }
 
-
-        // -----------------------------------------
-        // DOWNLOAD BUTTON
-        // -----------------------------------------
 
         const downloadButton =
             document.createElement(
@@ -1265,10 +3765,6 @@ function displayHallTickets() {
                 true;
         }
 
-
-        // -----------------------------------------
-        // ADD TO CARD
-        // -----------------------------------------
 
         card.appendChild(
             checkArea
@@ -1350,6 +3846,7 @@ function createSelectionToolbar() {
 
 
     toolbar.innerHTML =
+
         '<button class="select-all-button" onclick="selectAllVisibleStudents()">☑ Select All</button>' +
 
         '<button class="clear-selection-button" onclick="clearSelectedStudents()">☐ Clear Selection</button>' +
@@ -1486,16 +3983,13 @@ window.selectTerm =
             );
 
 
-        // Reset exam
         selectedExam =
             "";
 
 
-        // Reset selected students
         selectedStudents.clear();
 
 
-        // Active button
         const buttons =
             document.querySelectorAll(
                 ".term-button"
@@ -1551,14 +4045,28 @@ window.filterHallTickets =
 window.clearSearch =
     function() {
 
-        document.getElementById(
-            "searchInput"
-        ).value = "";
+        const search =
+            document.getElementById(
+                "searchInput"
+            );
 
 
-        document.getElementById(
-            "classInput"
-        ).value = "";
+        const classInput =
+            document.getElementById(
+                "classInput"
+            );
+
+
+        if (search) {
+
+            search.value = "";
+        }
+
+
+        if (classInput) {
+
+            classInput.value = "";
+        }
 
 
         displayHallTickets();
@@ -1624,7 +4132,8 @@ function updateDownloadAllButton() {
 
 
 // =====================================================
-// CREATE HALL TICKET
+// CREATE FA HALL TICKET
+// ORIGINAL FA SYSTEM - NOT CHANGED
 // =====================================================
 
 function createHallTicket(
@@ -1657,10 +4166,6 @@ function createHallTicket(
     html +=
         '<div class="hall-ticket">';
 
-
-    // ---------------------------------------------
-    // HEADER
-    // ---------------------------------------------
 
     html +=
         '<div class="hall-header">';
@@ -1701,15 +4206,9 @@ function createHallTicket(
         '</div>';
 
 
-    // ---------------------------------------------
-    // BODY
-    // ---------------------------------------------
-
     html +=
         '<div class="hall-body">';
 
-
-    // NAME
 
     html +=
         '<div class="hall-name-label">' +
@@ -1723,8 +4222,6 @@ function createHallTicket(
         '</div>';
 
 
-    // ROLL
-
     html +=
         '<div class="hall-roll-label">' +
         'Roll No / VSX ID :' +
@@ -1737,16 +4234,12 @@ function createHallTicket(
         '</div>';
 
 
-    // EXAM
-
     html +=
         '<div class="hall-exam">' +
         'Exam : ' +
         exam +
         '</div>';
 
-
-    // CLASS
 
     html +=
         '<div class="hall-class-label">' +
@@ -1759,8 +4252,6 @@ function createHallTicket(
         className +
         '</div>';
 
-
-    // SIGNATURE
 
     html +=
         '<div class="hall-signature">' +
@@ -1793,6 +4284,77 @@ function preparePdfTicket(
             "pdfHallTicketContainer"
         );
 
+
+    // =================================================
+    // SA
+    // =================================================
+
+    if (
+        selectedExam === "SA - I" ||
+        selectedExam === "SA - II"
+    ) {
+
+        container.innerHTML =
+            createSAHallTicket(
+                student
+            );
+
+
+        container.style.display =
+            "block";
+
+
+        container.style.width =
+            SA_TICKET_WIDTH +
+            "mm";
+
+
+        container.style.height =
+            SA_TICKET_HEIGHT +
+            "mm";
+
+
+        const ticket =
+            container.querySelector(
+                ".sa-hall-ticket"
+            );
+
+
+        ticket.style.width =
+            SA_TICKET_WIDTH +
+            "mm";
+
+
+        ticket.style.height =
+            SA_TICKET_HEIGHT +
+            "mm";
+
+
+        // IMPORTANT:
+        // Force white background
+
+        ticket.style.setProperty(
+            "background",
+            "#ffffff",
+            "important"
+        );
+
+
+        ticket.style.setProperty(
+            "background-color",
+            "#ffffff",
+            "important"
+        );
+
+
+        return ticket;
+    }
+
+
+    // =================================================
+    // FA
+    // ORIGINAL SYSTEM
+    // =================================================
 
     container.innerHTML =
         createHallTicket(
@@ -1836,7 +4398,6 @@ function preparePdfTicket(
 
 // =====================================================
 // DOWNLOAD ONE
-// TOP-LEFT POSITION
 // =====================================================
 
 window.downloadHallTicket =
@@ -1865,10 +4426,6 @@ window.downloadHallTicket =
         }
 
 
-        // ---------------------------------------------
-        // CHECK EXAM
-        // ---------------------------------------------
-
         if (
             selectedExam === ""
         ) {
@@ -1880,10 +4437,6 @@ window.downloadHallTicket =
             return;
         }
 
-
-        // ---------------------------------------------
-        // CHECK FEE
-        // ---------------------------------------------
 
         if (
             !isCleared(
@@ -1941,6 +4494,69 @@ window.downloadHallTicket =
                 window.jspdf.jsPDF;
 
 
+            // =================================================
+            // SA INDIVIDUAL
+            // A4 PORTRAIT
+            // =================================================
+
+            if (
+                selectedExam === "SA - I" ||
+                selectedExam === "SA - II"
+            ) {
+
+                const pdf =
+                    new jsPDF(
+                        "portrait",
+                        "mm",
+                        "a4"
+                    );
+
+
+                pdf.addImage(
+                    image,
+                    "PNG",
+                    SA_MARGIN_X,
+                    SA_MARGIN_Y,
+                    SA_TICKET_WIDTH,
+                    SA_TICKET_HEIGHT
+                );
+
+
+                const studentName =
+                    String(
+                        student.full_name ||
+                        "Student"
+                    )
+                    .replace(
+                        /[^a-zA-Z0-9]/g,
+                        "_"
+                    );
+
+
+                const examName =
+                    selectedExam.replace(
+                        /[^a-zA-Z0-9]/g,
+                        "_"
+                    );
+
+
+                pdf.save(
+                    studentName +
+                    "_" +
+                    examName +
+                    "_Hall_Ticket.pdf"
+                );
+
+
+                return;
+            }
+
+
+            // =================================================
+            // FA INDIVIDUAL
+            // ORIGINAL LANDSCAPE
+            // =================================================
+
             const pdf =
                 new jsPDF(
                     "landscape",
@@ -1948,11 +4564,6 @@ window.downloadHallTicket =
                     "a4"
                 );
 
-
-            // -----------------------------------------
-            // IMPORTANT
-            // INDIVIDUAL TICKET = FIRST POSITION
-            // -----------------------------------------
 
             pdf.addImage(
                 image,
@@ -1976,8 +4587,7 @@ window.downloadHallTicket =
 
 
             const examName =
-                selectedExam
-                .replace(
+                selectedExam.replace(
                     /[^a-zA-Z0-9]/g,
                     "_"
                 );
@@ -1989,7 +4599,6 @@ window.downloadHallTicket =
                 examName +
                 "_Hall_Ticket.pdf"
             );
-
 
         } catch (error) {
 
@@ -2053,10 +4662,6 @@ window.downloadSelectedHallTickets =
             );
 
 
-        // ---------------------------------------------
-        // ONLY CLEARED
-        // ---------------------------------------------
-
         data =
             data.filter(
                 function(student) {
@@ -2099,17 +4704,134 @@ window.downloadSelectedHallTickets =
         }
 
 
-        const container =
-            document.getElementById(
-                "pdfHallTicketContainer"
-            );
-
-
         try {
 
             const jsPDF =
                 window.jspdf.jsPDF;
 
+
+            // =================================================
+            // SA SELECTED
+            // 3 PER A4 PORTRAIT
+            // =================================================
+
+            if (
+                selectedExam === "SA - I" ||
+                selectedExam === "SA - II"
+            ) {
+
+                const pdf =
+                    new jsPDF(
+                        "portrait",
+                        "mm",
+                        "a4"
+                    );
+
+
+                for (
+                    let i = 0;
+                    i < data.length;
+                    i++
+                ) {
+
+                    const ticket =
+                        preparePdfTicket(
+                            data[i]
+                        );
+
+
+                    const canvas =
+                        await html2canvas(
+                            ticket,
+                            {
+                                scale: 2,
+
+                                useCORS: true,
+
+                                backgroundColor:
+                                    "#ffffff"
+                            }
+                        );
+
+
+                    const image =
+                        canvas.toDataURL(
+                            "image/png"
+                        );
+
+
+                    const position =
+                        i % 3;
+
+
+                    const x =
+                        SA_MARGIN_X;
+
+
+                    const y =
+                        SA_MARGIN_Y +
+                        (
+                            position *
+                            (
+                                SA_TICKET_HEIGHT +
+                                SA_GAP_Y
+                            )
+                        );
+
+
+                    pdf.addImage(
+                        image,
+                        "PNG",
+                        x,
+                        y,
+                        SA_TICKET_WIDTH,
+                        SA_TICKET_HEIGHT
+                    );
+
+
+                    clearPdfContainer();
+
+
+                    if (
+                        i <
+                            data.length - 1 &&
+                        position === 2
+                    ) {
+
+                        pdf.addPage();
+                    }
+                }
+
+
+                const examName =
+                    selectedExam.replace(
+                        /[^a-zA-Z0-9]/g,
+                        "_"
+                    );
+
+
+                pdf.save(
+                    getTermName(
+                        selectedTerm
+                    )
+                    .replace(
+                        " ",
+                        "_"
+                    ) +
+                    "_" +
+                    examName +
+                    "_Selected_Hall_Tickets.pdf"
+                );
+
+
+                return;
+            }
+
+
+            // =================================================
+            // FA SELECTED
+            // ORIGINAL 6 PER A4 LANDSCAPE
+            // =================================================
 
             const pdf =
                 new jsPDF(
@@ -2125,13 +4847,9 @@ window.downloadSelectedHallTickets =
                 i++
             ) {
 
-                const student =
-                    data[i];
-
-
                 const ticket =
                     preparePdfTicket(
-                        student
+                        data[i]
                     );
 
 
@@ -2154,11 +4872,6 @@ window.downloadSelectedHallTickets =
                         "image/png"
                     );
 
-
-                // -----------------------------------------
-                // POSITION
-                // 2 COLUMNS × 3 ROWS
-                // -----------------------------------------
 
                 const position =
                     i % 6;
@@ -2209,24 +4922,19 @@ window.downloadSelectedHallTickets =
                 clearPdfContainer();
 
 
-                // -----------------------------------------
-                // NEW A4 PAGE AFTER 6 TICKETS
-                // -----------------------------------------
-
                 if (
                     i <
                         data.length - 1 &&
-                    position === 5
-                ) {
+                        position === 5
+                    ) {
 
-                    pdf.addPage();
-                }
+                        pdf.addPage();
+                    }
             }
 
 
             const examName =
-                selectedExam
-                .replace(
+                selectedExam.replace(
                     /[^a-zA-Z0-9]/g,
                     "_"
                 );
@@ -2244,7 +4952,6 @@ window.downloadSelectedHallTickets =
                 examName +
                 "_Selected_Hall_Tickets.pdf"
             );
-
 
         } catch (error) {
 
@@ -2286,10 +4993,6 @@ window.downloadAllHallTickets =
         let data =
             getFilteredStudents();
 
-
-        // ---------------------------------------------
-        // ONLY CLEARED STUDENTS
-        // ---------------------------------------------
 
         data =
             data.filter(
@@ -2339,6 +5042,133 @@ window.downloadAllHallTickets =
                 window.jspdf.jsPDF;
 
 
+            // =================================================
+            // SA ALL
+            // 3 PER A4 PORTRAIT
+            // =================================================
+
+            if (
+                selectedExam === "SA - I" ||
+                selectedExam === "SA - II"
+            ) {
+
+                const pdf =
+                    new jsPDF(
+                        "portrait",
+                        "mm",
+                        "a4"
+                    );
+
+
+                for (
+                    let i = 0;
+                    i < data.length;
+                    i++
+                ) {
+
+                    const student =
+                        data[i];
+
+
+                    const ticket =
+                        preparePdfTicket(
+                            student
+                        );
+
+
+                    const canvas =
+                        await html2canvas(
+                            ticket,
+                            {
+                                scale: 2,
+
+                                useCORS: true,
+
+                                backgroundColor:
+                                    "#ffffff"
+                            }
+                        );
+
+
+                    const image =
+                        canvas.toDataURL(
+                            "image/png"
+                        );
+
+
+                    const position =
+                        i % 3;
+
+
+                    const x =
+                        SA_MARGIN_X;
+
+
+                    const y =
+                        SA_MARGIN_Y +
+                        (
+                            position *
+                            (
+                                SA_TICKET_HEIGHT +
+                                SA_GAP_Y
+                            )
+                        );
+
+
+                    pdf.addImage(
+                        image,
+                        "PNG",
+                        x,
+                        y,
+                        SA_TICKET_WIDTH,
+                        SA_TICKET_HEIGHT
+                    );
+
+
+                    clearPdfContainer();
+
+
+                    if (
+                        i <
+                            data.length - 1 &&
+                        position === 2
+                    ) {
+
+                        pdf.addPage();
+                    }
+                }
+
+
+                const examName =
+                    selectedExam.replace(
+                        /[^a-zA-Z0-9]/g,
+                        "_"
+                    );
+
+
+                pdf.save(
+                    getTermName(
+                        selectedTerm
+                    )
+                    .replace(
+                        " ",
+                        "_"
+                    ) +
+                    "_" +
+                    examName +
+                    "_All_Hall_Tickets.pdf"
+                );
+
+
+                return;
+            }
+
+
+            // =================================================
+            // FA ALL
+            // ORIGINAL 6 PER A4 LANDSCAPE
+            // =================================================
+
             const pdf =
                 new jsPDF(
                     "landscape",
@@ -2382,11 +5212,6 @@ window.downloadAllHallTickets =
                         "image/png"
                     );
 
-
-                // -----------------------------------------
-                // 2 COLUMNS
-                // 3 ROWS
-                // -----------------------------------------
 
                 const position =
                     i % 6;
@@ -2437,24 +5262,19 @@ window.downloadAllHallTickets =
                 clearPdfContainer();
 
 
-                // -----------------------------------------
-                // NEW PAGE AFTER 6
-                // -----------------------------------------
-
                 if (
                     i <
                         data.length - 1 &&
-                    position === 5
-                ) {
+                        position === 5
+                    ) {
 
-                    pdf.addPage();
-                }
+                        pdf.addPage();
+                    }
             }
 
 
             const examName =
-                selectedExam
-                .replace(
+                selectedExam.replace(
                     /[^a-zA-Z0-9]/g,
                     "_"
                 );
@@ -2473,7 +5293,6 @@ window.downloadAllHallTickets =
                 "_All_Hall_Tickets.pdf"
             );
 
-
         } catch (error) {
 
             console.error(
@@ -2482,7 +5301,7 @@ window.downloadAllHallTickets =
 
 
             alert(
-                "Failed to create hall tickets."
+                "Failed to create all hall tickets."
             );
 
         } finally {
@@ -2568,6 +5387,8 @@ function escapeHTML(
 // =====================================================
 // INITIAL LOAD
 // =====================================================
+
+injectSAStyles();
 
 displayExamButtons();
 

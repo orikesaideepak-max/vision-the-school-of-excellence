@@ -10,7 +10,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Hall Tickets - Vision School ERP</title>
+    <meta
+        name="theme-color"
+        content="#111827"
+    >
+
+    <title>
+        Hall Tickets - Vision School ERP
+    </title>
 
     <link
         rel="stylesheet"
@@ -210,6 +217,478 @@
 
 
         <!-- =================================================
+             SA SETTINGS
+        ================================================== -->
+
+        <section
+            id="saSettingsSection"
+            class="sa-settings-section"
+            style="display:none;"
+        >
+
+            <div class="sa-settings-heading">
+
+                <div>
+
+                    <h2>
+                        SA Hall Ticket Settings
+                    </h2>
+
+                    <p>
+                        Edit academic year and examination dates.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="editSASettingsButton"
+                    class="edit-settings-button"
+                    onclick="openSASettings()"
+                >
+                    ✏️ Edit SA Settings
+                </button>
+
+            </div>
+
+
+            <div
+                id="saSettingsSummary"
+                class="sa-settings-summary"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SA SETTINGS MODAL
+        ================================================== -->
+
+        <div
+            id="saSettingsModal"
+            class="sa-modal"
+            style="display:none;"
+        >
+
+            <div class="sa-modal-content">
+
+
+                <div class="sa-modal-header">
+
+                    <div>
+
+                        <h2>
+                            SA Hall Ticket Settings
+                        </h2>
+
+                        <p>
+                            Settings for
+                            <strong id="settingsExamName">
+                                SA - I
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="sa-close-button"
+                        onclick="closeSASettings()"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+
+                <!-- ACADEMIC YEAR -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Academic Year
+                    </label>
+
+                    <input
+                        id="academicYearInput"
+                        type="text"
+                        placeholder="2026–27"
+                    >
+
+                </div>
+
+
+
+                <!-- SCHOOL NAME -->
+
+                <div class="settings-field">
+
+                    <label>
+                        School Name
+                    </label>
+
+                    <input
+                        id="schoolNameInput"
+                        type="text"
+                        value="VISION – THE SCHOOL OF EXCELLENCE"
+                    >
+
+                </div>
+
+
+
+                <!-- TAGLINE -->
+
+                <div class="settings-field">
+
+                    <label>
+                        Tagline
+                    </label>
+
+                    <input
+                        id="schoolTaglineInput"
+                        type="text"
+                        value="A NEW ERA OF EDUCATION AWAITS"
+                    >
+
+                </div>
+
+
+
+                <!-- TEMPLATE 1 -->
+
+                <div class="date-group">
+
+                    <h3>
+                        Template 1 — Nursery / LKG / UKG
+                    </h3>
+
+                    <p>
+                        Enter the 5 examination dates.
+                    </p>
+
+
+                    <div class="date-grid">
+
+                        <div class="date-field">
+
+                            <label>
+                                Date 1
+                            </label>
+
+                            <input
+                                id="t1Date1"
+                                type="date"
+                                onchange="updateDateDay('t1Date1','t1Day1')"
+                            >
+
+                            <span id="t1Day1">
+                            </span>
+
+                        </div>
+
+
+                        <div class="date-field">
+
+                            <label>
+                                Date 2
+                            </label>
+
+                            <input
+                                id="t1Date2"
+                                type="date"
+                                onchange="updateDateDay('t1Date2','t1Day2')"
+                            >
+
+                            <span id="t1Day2">
+                            </span>
+
+                        </div>
+
+
+                        <div class="date-field">
+
+                            <label>
+                                Date 3
+                            </label>
+
+                            <input
+                                id="t1Date3"
+                                type="date"
+                                onchange="updateDateDay('t1Date3','t1Day3')"
+                            >
+
+                            <span id="t1Day3">
+                            </span>
+
+                        </div>
+
+
+                        <div class="date-field">
+
+                            <label>
+                                Date 4
+                            </label>
+
+                            <input
+                                id="t1Date4"
+                                type="date"
+                                onchange="updateDateDay('t1Date4','t1Day4')"
+                            >
+
+                            <span id="t1Day4">
+                            </span>
+
+                        </div>
+
+
+                        <div class="date-field">
+
+                            <label>
+                                Date 5
+                            </label>
+
+                            <input
+                                id="t1Date5"
+                                type="date"
+                                onchange="updateDateDay('t1Date5','t1Day5')"
+                            >
+
+                            <span id="t1Day5">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TEMPLATE 2 -->
+
+                <div class="date-group">
+
+                    <h3>
+                        Template 2 — 1st to 5th
+                    </h3>
+
+                    <p>
+                        Enter the 7 examination dates.
+                    </p>
+
+
+                    <div class="date-grid">
+
+                        <div class="date-field">
+                            <label>Date 1</label>
+                            <input
+                                id="t2Date1"
+                                type="date"
+                                onchange="updateDateDay('t2Date1','t2Day1')"
+                            >
+                            <span id="t2Day1"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 2</label>
+                            <input
+                                id="t2Date2"
+                                type="date"
+                                onchange="updateDateDay('t2Date2','t2Day2')"
+                            >
+                            <span id="t2Day2"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 3</label>
+                            <input
+                                id="t2Date3"
+                                type="date"
+                                onchange="updateDateDay('t2Date3','t2Day3')"
+                            >
+                            <span id="t2Day3"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 4</label>
+                            <input
+                                id="t2Date4"
+                                type="date"
+                                onchange="updateDateDay('t2Date4','t2Day4')"
+                            >
+                            <span id="t2Day4"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 5</label>
+                            <input
+                                id="t2Date5"
+                                type="date"
+                                onchange="updateDateDay('t2Date5','t2Day5')"
+                            >
+                            <span id="t2Day5"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 6</label>
+                            <input
+                                id="t2Date6"
+                                type="date"
+                                onchange="updateDateDay('t2Date6','t2Day6')"
+                            >
+                            <span id="t2Day6"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 7</label>
+                            <input
+                                id="t2Date7"
+                                type="date"
+                                onchange="updateDateDay('t2Date7','t2Day7')"
+                            >
+                            <span id="t2Day7"></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TEMPLATE 3 -->
+
+                <div class="date-group">
+
+                    <h3>
+                        Template 3 — 6th to 10th
+                    </h3>
+
+                    <p>
+                        Enter the 7 examination dates.
+                    </p>
+
+
+                    <div class="date-grid">
+
+                        <div class="date-field">
+                            <label>Date 1</label>
+                            <input
+                                id="t3Date1"
+                                type="date"
+                                onchange="updateDateDay('t3Date1','t3Day1')"
+                            >
+                            <span id="t3Day1"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 2</label>
+                            <input
+                                id="t3Date2"
+                                type="date"
+                                onchange="updateDateDay('t3Date2','t3Day2')"
+                            >
+                            <span id="t3Day2"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 3</label>
+                            <input
+                                id="t3Date3"
+                                type="date"
+                                onchange="updateDateDay('t3Date3','t3Day3')"
+                            >
+                            <span id="t3Day3"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 4</label>
+                            <input
+                                id="t3Date4"
+                                type="date"
+                                onchange="updateDateDay('t3Date4','t3Day4')"
+                            >
+                            <span id="t3Day4"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 5</label>
+                            <input
+                                id="t3Date5"
+                                type="date"
+                                onchange="updateDateDay('t3Date5','t3Day5')"
+                            >
+                            <span id="t3Day5"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 6</label>
+                            <input
+                                id="t3Date6"
+                                type="date"
+                                onchange="updateDateDay('t3Date6','t3Day6')"
+                            >
+                            <span id="t3Day6"></span>
+                        </div>
+
+
+                        <div class="date-field">
+                            <label>Date 7</label>
+                            <input
+                                id="t3Date7"
+                                type="date"
+                                onchange="updateDateDay('t3Date7','t3Day7')"
+                            >
+                            <span id="t3Day7"></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="settings-actions">
+
+                    <button
+                        class="cancel-settings-button"
+                        onclick="closeSASettings()"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        class="save-settings-button"
+                        onclick="saveSASettings()"
+                    >
+                        💾 Save Settings
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
              SEARCH
         ================================================== -->
 
@@ -320,7 +799,7 @@
         <div
             id="emptyMessage"
             class="message"
-            style="display: none;"
+            style="display:none;"
         >
             No students found.
         </div>
