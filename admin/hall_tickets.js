@@ -258,6 +258,17 @@ const SA_GAP_Y = 3;
 const SA_PRINCIPAL_SIGNATURE_IMAGE = "";
 
 
+// -------------------------------------------------
+// BATCH SIZE FOR BULK HALL TICKET DOWNLOADS
+// Large downloads are split into separate PDF files
+// of this many tickets each. Browsers / jsPDF fail
+// with "RangeError: Invalid string length" when one
+// PDF string gets too big (seen at 121 tickets), so
+// keep this at 50 or lower.
+// -------------------------------------------------
+const HALL_TICKET_BATCH_SIZE = 50;
+
+
 // =====================================================
 // INJECT SA CSS
 // THIS ALSO PREVENTS ORANGE BACKGROUND
@@ -4622,6 +4633,150 @@ window.downloadHallTicket =
 // DOWNLOAD SELECTED
 // =====================================================
 
+// =====================================================
+// BATCH DOWNLOAD PROGRESS
+// =====================================================
+
+function showBatchProgress(
+    current,
+    total
+) {
+
+    let overlay =
+        document.getElementById(
+            "batchProgressOverlay"
+        );
+
+
+    if (!overlay) {
+
+        overlay =
+            document.createElement(
+                "div"
+            );
+
+        overlay.id =
+            "batchProgressOverlay";
+
+        overlay.style.position =
+            "fixed";
+
+        overlay.style.top =
+            "0";
+
+        overlay.style.left =
+            "0";
+
+        overlay.style.width =
+            "100%";
+
+        overlay.style.height =
+            "100%";
+
+        overlay.style.backgroundColor =
+            "rgba(0, 0, 0, 0.65)";
+
+        overlay.style.zIndex =
+            "99999";
+
+        overlay.style.display =
+            "flex";
+
+        overlay.style.alignItems =
+            "center";
+
+        overlay.style.justifyContent =
+            "center";
+
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+        box.style.backgroundColor =
+            "#ffffff";
+
+        box.style.padding =
+            "26px 34px";
+
+        box.style.borderRadius =
+            "12px";
+
+        box.style.textAlign =
+            "center";
+
+        box.style.fontFamily =
+            "Arial, sans-serif";
+
+        box.style.color =
+            "#1a1a1a";
+
+
+        box.innerHTML =
+            '<div style="font-size:17px;font-weight:bold;margin-bottom:10px;">' +
+            'Preparing hall tickets...' +
+            '</div>' +
+            '<div id="batchProgressText" style="font-size:15px;">' +
+            '</div>';
+
+
+        overlay.appendChild(
+            box
+        );
+
+
+        document.body.appendChild(
+            overlay
+        );
+    }
+
+
+    const label =
+        document.getElementById(
+            "batchProgressText"
+        );
+
+
+    if (label) {
+
+        label.textContent =
+            current +
+            " / " +
+            total;
+    }
+}
+
+
+function hideBatchProgress() {
+
+    const overlay =
+        document.getElementById(
+            "batchProgressOverlay"
+        );
+
+
+    if (overlay) {
+
+        overlay.remove();
+    }
+}
+
+
+function letUiPaint() {
+
+    return new Promise(
+        function(resolve) {
+
+            setTimeout(
+                resolve,
+                30
+            );
+        }
+    );
+}
+
+
 window.downloadSelectedHallTickets =
     async function() {
 
@@ -4688,13 +4843,24 @@ window.downloadSelectedHallTickets =
         }
 
 
+        const batchCount =
+            Math.ceil(
+                data.length /
+                HALL_TICKET_BATCH_SIZE
+            );
+
+
         const confirmed =
             confirm(
                 "Download " +
                 data.length +
                 " selected hall tickets for " +
                 selectedExam +
-                "?"
+                (
+                    batchCount > 1 ?
+                    " (" + batchCount + " PDF files, 50 per file)?" :
+                    "?"
+                )
             );
 
 
@@ -4720,24 +4886,241 @@ window.downloadSelectedHallTickets =
                 selectedExam === "SA - II"
             ) {
 
+                const totalBatches =
+                    Math.ceil(
+                        data.length /
+                        HALL_TICKET_BATCH_SIZE
+                    );
+
+
+                let doneCount =
+                    0;
+
+
+                showBatchProgress(
+                    0,
+                    data.length
+                );
+
+
+                for (
+                    let b = 0;
+                    b < totalBatches;
+                    b++
+                ) {
+
+                    const pdf =
+                        new jsPDF(
+                            "portrait",
+                            "mm",
+                            "a4"
+                        );
+
+
+                    const batch =
+                        data.slice(
+                            b *
+                            HALL_TICKET_BATCH_SIZE,
+                            (b + 1) *
+                            HALL_TICKET_BATCH_SIZE
+                        );
+
+
+                    for (
+                        let i = 0;
+                        i < batch.length;
+                        i++
+                    ) {
+
+                        doneCount++;
+
+
+                        showBatchProgress(
+                            doneCount,
+                            data.length
+                        );
+
+
+                        await letUiPaint();
+
+
+
+                        const ticket =
+                            preparePdfTicket(
+                                batch[i]
+                            );
+
+
+
+                        const canvas =
+                            await html2canvas(
+                                ticket,
+                                {
+                                    scale: 2,
+
+                                    useCORS: true,
+
+                                    backgroundColor:
+                                        "#ffffff"
+                                }
+                            );
+
+
+                        const image =
+                            canvas.toDataURL(
+                                "image/png"
+                            );
+
+
+                        const position =
+                            i % 3;
+
+
+                        const x =
+                            SA_MARGIN_X;
+
+
+                        const y =
+                            SA_MARGIN_Y +
+                            (
+                                position *
+                                (
+                                    SA_TICKET_HEIGHT +
+                                    SA_GAP_Y
+                                )
+                            );
+
+
+                        pdf.addImage(
+                            image,
+                            "PNG",
+                            x,
+                            y,
+                            SA_TICKET_WIDTH,
+                            SA_TICKET_HEIGHT
+                        );
+
+
+                        clearPdfContainer();
+
+
+                        if (
+                            i <
+                                batch.length - 1 &&
+                            position === 2
+                        ) {
+
+                            pdf.addPage();
+                        }
+                    }
+
+
+                    const examName =
+                        selectedExam.replace(
+                            /[^a-zA-Z0-9]/g,
+                            "_"
+                        );
+
+
+                    const partSuffix =
+                        totalBatches > 1 ?
+                        "_Part" + (b + 1) :
+                        "";
+
+
+                    pdf.save(
+                        getTermName(
+                            selectedTerm
+                        )
+                        .replace(
+                            " ",
+                            "_"
+                        ) +
+                        "_" +
+                        examName +
+                        "_Selected_Hall_Tickets" +
+                        partSuffix +
+                        ".pdf"
+                    );
+
+
+                    await letUiPaint();
+                }
+
+
+                return;
+            }
+
+
+            // =================================================
+            // FA SELECTED
+            // ORIGINAL 6 PER A4 LANDSCAPE
+            // =================================================
+
+            const totalBatches =
+                Math.ceil(
+                    data.length /
+                    HALL_TICKET_BATCH_SIZE
+                );
+
+
+            let doneCount =
+                0;
+
+
+            showBatchProgress(
+                0,
+                data.length
+            );
+
+
+            for (
+                let b = 0;
+                b < totalBatches;
+                b++
+            ) {
+
                 const pdf =
                     new jsPDF(
-                        "portrait",
+                        "landscape",
                         "mm",
                         "a4"
                     );
 
 
+                const batch =
+                    data.slice(
+                        b *
+                        HALL_TICKET_BATCH_SIZE,
+                        (b + 1) *
+                        HALL_TICKET_BATCH_SIZE
+                    );
+
+
                 for (
                     let i = 0;
-                    i < data.length;
+                    i < batch.length;
                     i++
                 ) {
 
+                    doneCount++;
+
+
+                    showBatchProgress(
+                        doneCount,
+                        data.length
+                    );
+
+
+                    await letUiPaint();
+
+
+
                     const ticket =
                         preparePdfTicket(
-                            data[i]
+                            batch[i]
                         );
+
 
 
                     const canvas =
@@ -4761,20 +5144,37 @@ window.downloadSelectedHallTickets =
 
 
                     const position =
-                        i % 3;
+                        i % 6;
+
+
+                    const column =
+                        position % 2;
+
+
+                    const row =
+                        Math.floor(
+                            position / 2
+                        );
 
 
                     const x =
-                        SA_MARGIN_X;
+                        MARGIN_X +
+                        (
+                            column *
+                            (
+                                TICKET_WIDTH +
+                                GAP_X
+                            )
+                        );
 
 
                     const y =
-                        SA_MARGIN_Y +
+                        MARGIN_Y +
                         (
-                            position *
+                            row *
                             (
-                                SA_TICKET_HEIGHT +
-                                SA_GAP_Y
+                                TICKET_HEIGHT +
+                                GAP_Y
                             )
                         );
 
@@ -4784,8 +5184,8 @@ window.downloadSelectedHallTickets =
                         "PNG",
                         x,
                         y,
-                        SA_TICKET_WIDTH,
-                        SA_TICKET_HEIGHT
+                        TICKET_WIDTH,
+                        TICKET_HEIGHT
                     );
 
 
@@ -4794,12 +5194,12 @@ window.downloadSelectedHallTickets =
 
                     if (
                         i <
-                            data.length - 1 &&
-                        position === 2
-                    ) {
+                            batch.length - 1 &&
+                            position === 5
+                        ) {
 
-                        pdf.addPage();
-                    }
+                            pdf.addPage();
+                        }
                 }
 
 
@@ -4808,6 +5208,12 @@ window.downloadSelectedHallTickets =
                         /[^a-zA-Z0-9]/g,
                         "_"
                     );
+
+
+                const partSuffix =
+                    totalBatches > 1 ?
+                    "_Part" + (b + 1) :
+                    "";
 
 
                 pdf.save(
@@ -4820,138 +5226,14 @@ window.downloadSelectedHallTickets =
                     ) +
                     "_" +
                     examName +
-                    "_Selected_Hall_Tickets.pdf"
+                    "_Selected_Hall_Tickets" +
+                    partSuffix +
+                    ".pdf"
                 );
 
 
-                return;
+                await letUiPaint();
             }
-
-
-            // =================================================
-            // FA SELECTED
-            // ORIGINAL 6 PER A4 LANDSCAPE
-            // =================================================
-
-            const pdf =
-                new jsPDF(
-                    "landscape",
-                    "mm",
-                    "a4"
-                );
-
-
-            for (
-                let i = 0;
-                i < data.length;
-                i++
-            ) {
-
-                const ticket =
-                    preparePdfTicket(
-                        data[i]
-                    );
-
-
-                const canvas =
-                    await html2canvas(
-                        ticket,
-                        {
-                            scale: 2,
-
-                            useCORS: true,
-
-                            backgroundColor:
-                                "#ffffff"
-                        }
-                    );
-
-
-                const image =
-                    canvas.toDataURL(
-                        "image/png"
-                    );
-
-
-                const position =
-                    i % 6;
-
-
-                const column =
-                    position % 2;
-
-
-                const row =
-                    Math.floor(
-                        position / 2
-                    );
-
-
-                const x =
-                    MARGIN_X +
-                    (
-                        column *
-                        (
-                            TICKET_WIDTH +
-                            GAP_X
-                        )
-                    );
-
-
-                const y =
-                    MARGIN_Y +
-                    (
-                        row *
-                        (
-                            TICKET_HEIGHT +
-                            GAP_Y
-                        )
-                    );
-
-
-                pdf.addImage(
-                    image,
-                    "PNG",
-                    x,
-                    y,
-                    TICKET_WIDTH,
-                    TICKET_HEIGHT
-                );
-
-
-                clearPdfContainer();
-
-
-                if (
-                    i <
-                        data.length - 1 &&
-                        position === 5
-                    ) {
-
-                        pdf.addPage();
-                    }
-            }
-
-
-            const examName =
-                selectedExam.replace(
-                    /[^a-zA-Z0-9]/g,
-                    "_"
-                );
-
-
-            pdf.save(
-                getTermName(
-                    selectedTerm
-                )
-                .replace(
-                    " ",
-                    "_"
-                ) +
-                "_" +
-                examName +
-                "_Selected_Hall_Tickets.pdf"
-            );
 
         } catch (error) {
 
@@ -4967,6 +5249,7 @@ window.downloadSelectedHallTickets =
         } finally {
 
             clearPdfContainer();
+            hideBatchProgress();
         }
     };
 
@@ -5020,13 +5303,24 @@ window.downloadAllHallTickets =
         }
 
 
+        const batchCount =
+            Math.ceil(
+                data.length /
+                HALL_TICKET_BATCH_SIZE
+            );
+
+
         const confirmed =
             confirm(
                 "Download " +
                 data.length +
                 " hall tickets for " +
                 selectedExam +
-                "?"
+                (
+                    batchCount > 1 ?
+                    " (" + batchCount + " PDF files, 50 per file)?" :
+                    "?"
+                )
             );
 
 
@@ -5052,22 +5346,243 @@ window.downloadAllHallTickets =
                 selectedExam === "SA - II"
             ) {
 
+                const totalBatches =
+                    Math.ceil(
+                        data.length /
+                        HALL_TICKET_BATCH_SIZE
+                    );
+
+
+                let doneCount =
+                    0;
+
+
+                showBatchProgress(
+                    0,
+                    data.length
+                );
+
+
+                for (
+                    let b = 0;
+                    b < totalBatches;
+                    b++
+                ) {
+
+                    const pdf =
+                        new jsPDF(
+                            "portrait",
+                            "mm",
+                            "a4"
+                        );
+
+
+                    const batch =
+                        data.slice(
+                            b *
+                            HALL_TICKET_BATCH_SIZE,
+                            (b + 1) *
+                            HALL_TICKET_BATCH_SIZE
+                        );
+
+
+                    for (
+                        let i = 0;
+                        i < batch.length;
+                        i++
+                    ) {
+
+                        doneCount++;
+
+
+                        showBatchProgress(
+                            doneCount,
+                            data.length
+                        );
+
+
+                        await letUiPaint();
+
+
+
+                        const student =
+                            batch[i];
+
+
+
+                        const ticket =
+                            preparePdfTicket(
+                                student
+                            );
+
+
+                        const canvas =
+                            await html2canvas(
+                                ticket,
+                                {
+                                    scale: 2,
+
+                                    useCORS: true,
+
+                                    backgroundColor:
+                                        "#ffffff"
+                                }
+                            );
+
+
+                        const image =
+                            canvas.toDataURL(
+                                "image/png"
+                            );
+
+
+                        const position =
+                            i % 3;
+
+
+                        const x =
+                            SA_MARGIN_X;
+
+
+                        const y =
+                            SA_MARGIN_Y +
+                            (
+                                position *
+                                (
+                                    SA_TICKET_HEIGHT +
+                                    SA_GAP_Y
+                                )
+                            );
+
+
+                        pdf.addImage(
+                            image,
+                            "PNG",
+                            x,
+                            y,
+                            SA_TICKET_WIDTH,
+                            SA_TICKET_HEIGHT
+                        );
+
+
+                        clearPdfContainer();
+
+
+                        if (
+                            i <
+                                batch.length - 1 &&
+                            position === 2
+                        ) {
+
+                            pdf.addPage();
+                        }
+                    }
+
+
+                    const examName =
+                        selectedExam.replace(
+                            /[^a-zA-Z0-9]/g,
+                            "_"
+                        );
+
+
+                    const partSuffix =
+                        totalBatches > 1 ?
+                        "_Part" + (b + 1) :
+                        "";
+
+
+                    pdf.save(
+                        getTermName(
+                            selectedTerm
+                        )
+                        .replace(
+                            " ",
+                            "_"
+                        ) +
+                        "_" +
+                        examName +
+                        "_All_Hall_Tickets" +
+                        partSuffix +
+                        ".pdf"
+                    );
+
+
+                    await letUiPaint();
+                }
+
+
+                return;
+            }
+
+
+            // =================================================
+            // FA ALL
+            // ORIGINAL 6 PER A4 LANDSCAPE
+            // =================================================
+
+            const totalBatches =
+                Math.ceil(
+                    data.length /
+                    HALL_TICKET_BATCH_SIZE
+                );
+
+
+            let doneCount =
+                0;
+
+
+            showBatchProgress(
+                0,
+                data.length
+            );
+
+
+            for (
+                let b = 0;
+                b < totalBatches;
+                b++
+            ) {
+
                 const pdf =
                     new jsPDF(
-                        "portrait",
+                        "landscape",
                         "mm",
                         "a4"
                     );
 
 
+                const batch =
+                    data.slice(
+                        b *
+                        HALL_TICKET_BATCH_SIZE,
+                        (b + 1) *
+                        HALL_TICKET_BATCH_SIZE
+                    );
+
+
                 for (
                     let i = 0;
-                    i < data.length;
+                    i < batch.length;
                     i++
                 ) {
 
+                    doneCount++;
+
+
+                    showBatchProgress(
+                        doneCount,
+                        data.length
+                    );
+
+
+                    await letUiPaint();
+
+
+
                     const student =
-                        data[i];
+                        batch[i];
+
 
 
                     const ticket =
@@ -5097,20 +5612,37 @@ window.downloadAllHallTickets =
 
 
                     const position =
-                        i % 3;
+                        i % 6;
+
+
+                    const column =
+                        position % 2;
+
+
+                    const row =
+                        Math.floor(
+                            position / 2
+                        );
 
 
                     const x =
-                        SA_MARGIN_X;
+                        MARGIN_X +
+                        (
+                            column *
+                            (
+                                TICKET_WIDTH +
+                                GAP_X
+                            )
+                        );
 
 
                     const y =
-                        SA_MARGIN_Y +
+                        MARGIN_Y +
                         (
-                            position *
+                            row *
                             (
-                                SA_TICKET_HEIGHT +
-                                SA_GAP_Y
+                                TICKET_HEIGHT +
+                                GAP_Y
                             )
                         );
 
@@ -5120,8 +5652,8 @@ window.downloadAllHallTickets =
                         "PNG",
                         x,
                         y,
-                        SA_TICKET_WIDTH,
-                        SA_TICKET_HEIGHT
+                        TICKET_WIDTH,
+                        TICKET_HEIGHT
                     );
 
 
@@ -5130,12 +5662,12 @@ window.downloadAllHallTickets =
 
                     if (
                         i <
-                            data.length - 1 &&
-                        position === 2
-                    ) {
+                            batch.length - 1 &&
+                            position === 5
+                        ) {
 
-                        pdf.addPage();
-                    }
+                            pdf.addPage();
+                        }
                 }
 
 
@@ -5144,6 +5676,12 @@ window.downloadAllHallTickets =
                         /[^a-zA-Z0-9]/g,
                         "_"
                     );
+
+
+                const partSuffix =
+                    totalBatches > 1 ?
+                    "_Part" + (b + 1) :
+                    "";
 
 
                 pdf.save(
@@ -5156,142 +5694,14 @@ window.downloadAllHallTickets =
                     ) +
                     "_" +
                     examName +
-                    "_All_Hall_Tickets.pdf"
+                    "_All_Hall_Tickets" +
+                    partSuffix +
+                    ".pdf"
                 );
 
 
-                return;
+                await letUiPaint();
             }
-
-
-            // =================================================
-            // FA ALL
-            // ORIGINAL 6 PER A4 LANDSCAPE
-            // =================================================
-
-            const pdf =
-                new jsPDF(
-                    "landscape",
-                    "mm",
-                    "a4"
-                );
-
-
-            for (
-                let i = 0;
-                i < data.length;
-                i++
-            ) {
-
-                const student =
-                    data[i];
-
-
-                const ticket =
-                    preparePdfTicket(
-                        student
-                    );
-
-
-                const canvas =
-                    await html2canvas(
-                        ticket,
-                        {
-                            scale: 2,
-
-                            useCORS: true,
-
-                            backgroundColor:
-                                "#ffffff"
-                        }
-                    );
-
-
-                const image =
-                    canvas.toDataURL(
-                        "image/png"
-                    );
-
-
-                const position =
-                    i % 6;
-
-
-                const column =
-                    position % 2;
-
-
-                const row =
-                    Math.floor(
-                        position / 2
-                    );
-
-
-                const x =
-                    MARGIN_X +
-                    (
-                        column *
-                        (
-                            TICKET_WIDTH +
-                            GAP_X
-                        )
-                    );
-
-
-                const y =
-                    MARGIN_Y +
-                    (
-                        row *
-                        (
-                            TICKET_HEIGHT +
-                            GAP_Y
-                        )
-                    );
-
-
-                pdf.addImage(
-                    image,
-                    "PNG",
-                    x,
-                    y,
-                    TICKET_WIDTH,
-                    TICKET_HEIGHT
-                );
-
-
-                clearPdfContainer();
-
-
-                if (
-                    i <
-                        data.length - 1 &&
-                        position === 5
-                    ) {
-
-                        pdf.addPage();
-                    }
-            }
-
-
-            const examName =
-                selectedExam.replace(
-                    /[^a-zA-Z0-9]/g,
-                    "_"
-                );
-
-
-            pdf.save(
-                getTermName(
-                    selectedTerm
-                )
-                .replace(
-                    " ",
-                    "_"
-                ) +
-                "_" +
-                examName +
-                "_All_Hall_Tickets.pdf"
-            );
 
         } catch (error) {
 
@@ -5307,6 +5717,7 @@ window.downloadAllHallTickets =
         } finally {
 
             clearPdfContainer();
+            hideBatchProgress();
         }
     };
 
